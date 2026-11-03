@@ -143,7 +143,9 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const imageSrc=String(config.brand?.logo||'');
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg)$/i.test(imageSrc);
   const [logo, qr]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,config.settings?.showQr?fetchImage(root+'qr.png'):null]);
-  const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W;canvas.height=H;
+  const scale=[1,2,3].includes(Number(options.scale))?Number(options.scale):1;
+  const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
+  ctx.scale(scale,scale);
   const c=config.theme||{},green=c.green||'#064b43',soft=c.greenLight||'#37765e',gold=c.gold||'#c99a42',cream=c.cream||'#f8f5ea',ink=c.ink||'#103f38';
   if((config.design?.preset||'royal')!=='heritage') { renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate}); return canvas; }
   ctx.fillStyle=cream;ctx.fillRect(0,0,W,H);pattern(ctx,gold,ink);

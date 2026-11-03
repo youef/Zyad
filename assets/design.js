@@ -21,13 +21,13 @@ function clockText(iso){
  return {weekday:fmt({weekday:'long'}),date:fmt({day:'numeric',month:'long',year:'numeric'})};
 }
 function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
- const {green,gold,ink,soft,dark}=colors;const best=highlight&&n===nearest;
+ const {green,gold,ink,soft,dark}=colors;const best=highlight&&nearest!==null&&item.mode!=='manual'&&n===nearest;
  c.save();c.shadowColor='rgba(5,44,33,.10)';c.shadowBlur=15;c.shadowOffsetY=5;
  round(c,x,y,w,h,18,dark?(best?'#285047':'#16352f'):(best?'#fff5df':'#ffffff'),best?gold:(dark?'#31564b':'#e4eadf'),best?2.5:1);c.restore();
  round(c,x+w-7,y+14,3,h-28,2,best?gold:soft);
  if(best)label(c,'✦',x+21,y+22,19,gold);
  label(c,String(n??0).padStart(2,'0'),x+w/2,y+h*(compact?.39:.40),compact?44:56,dark?'#fff7de':green,w-24,'center','900');
- if(showUnit&&!compact)label(c,n===0?'اليوم':'يوم',x+w/2,y+h*.63,16,best?gold:soft);
+ if(showUnit&&!compact)label(c,item.mode==='manual'?'قيمة':n===0?'اليوم':'يوم',x+w/2,y+h*.63,16,best?gold:soft);
  c.fillStyle=dark?'#476458':'#e8ede8';c.fillRect(x+24,y+h*.74,w-48,1);
  label(c,item.label||'موعد',x+w/2,y+h*.86,compact?20:23,dark?'#e9efe5':ink,w-18);
 }
@@ -41,7 +41,7 @@ export function renderPremium(ctx,cfg,iso,tools){
  let grad=ctx.createLinearGradient(0,0,1080,476);grad.addColorStop(0,dark?'#1b4740':green);grad.addColorStop(1,dark?'#082c25':modern?soft:'#093b33');
  if(modern)round(ctx,39,36,1002,446,32,grad);else{ctx.fillStyle=grad;ctx.fillRect(0,0,1080,480);}
  ctx.lineWidth=2.5;ctx.strokeStyle=rgba(gold,.72);
- if(!modern){ctx.strokeRect(45,47,990,390);ctx.strokeRect(65,66,950,354);}
+ if(!modern){ctx.strokeRect(45,47,990,265);ctx.strokeRect(65,66,950,231);}
  else{ctx.beginPath();ctx.moveTo(95,450);ctx.lineTo(984,450);ctx.stroke();}
  for(const x of [137,942]){star(ctx,x,104,24,gold,.9);if(!modern)star(ctx,x,397,16,gold,.7);}
  label(ctx,cfg.brand?.name||'بطاقتي اليومية',540,90,36,'#f6e8ca',640);
@@ -67,8 +67,9 @@ export function renderPremium(ctx,cfg,iso,tools){
  label(ctx,'المواعيد والعدّادات',999,830,42,dark?'#fcf2e1':ink,730,'right','900');
  ctx.fillStyle=gold;ctx.fillRect(70,829,90,4);
  const items=(cfg.counters||[]).filter(item=>item.enabled!==false).slice(0,24);
- const nearest=items.length?Math.min(...items.map(i=>tools.remaining(i,iso)??99999)):null;
- const next=items.find(i=>tools.remaining(i,iso)===nearest);
+ const timed=items.filter(item=>item.mode!=='manual');
+ const nearest=timed.length?Math.min(...timed.map(i=>tools.remaining(i,iso)??99999)):null;
+ const next=timed.find(i=>tools.remaining(i,iso)===nearest);
  if(next&&des.highlightNext!==false)label(ctx,'الأقرب: '+next.label,72,830,20,dark?'#e3c68f':soft,444,'left');
  const rows=Math.max(1,Math.ceil(items.length/4)),compact=des.density==='compact'||rows>4;
  const h=Math.min(compact?116:155,Math.floor((1598-883)/rows)-11),space=compact?10:14;
