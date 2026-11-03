@@ -152,11 +152,11 @@ export function mountPlanner(config,selected=saToday()){
     }
     attach(heading,h,stats);
     const range=elem('label','planner-range','مدى عرض المستقبل');
-    const select=elem('select');select.setAttribute('aria-label','عدد الأشهر القادمة');
-    for(const n of [6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);select.append(option);}
-    select.value=String(horizon);
-    select.onchange=()=>{horizon=Number(select.value);rows=futureEvents(data,fromDate,horizon);chosenMonth=monthKey(fromDate);chosenDate='';render();};
-    range.append(select);
+    const rangePicker=elem('select');rangePicker.setAttribute('aria-label','عدد الأشهر القادمة');
+    for(const n of [6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);rangePicker.append(option);}
+    rangePicker.value=String(horizon);
+    rangePicker.onchange=()=>{horizon=Number(rangePicker.value);rows=futureEvents(data,fromDate,horizon);chosenMonth=monthKey(fromDate);chosenDate='';render();};
+    range.append(rangePicker);
     const months=elem('div','planner-months');months.id='planner-months';
     const content=elem('div','planner-content'),aside=elem('aside','planner-calendar'),right=elem('div','planner-results');
     const top=elem('div','planner-calendar-head');const title=elem('h3');title.id='planner-current-month';
