@@ -39,6 +39,8 @@ jobs:
         run: |
           npm install --no-audit --no-fund
           npx playwright install --with-deps chromium
+      - name: Check dates and counters
+        run: npm test
       - name: Render and archive today's poster
         run: node scripts/render.mjs
       - name: Save generated images to the repository

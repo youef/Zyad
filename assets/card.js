@@ -19,6 +19,20 @@ export function daysBetween(a,b) {
 export function remaining(item, iso) {
   if (!item || item.enabled === false) return null;
   if (item.mode === 'manual') return Math.max(0,Math.floor(Number(item.value)||0));
+  if (item.mode === 'hijri') {
+    const month=Math.max(1,Math.min(12,Math.floor(Number(item.hijriMonth)||9)));
+    const day=Math.max(1,Math.min(30,Math.floor(Number(item.hijriDay)||1)));
+    try {
+      const fmt=new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura',{timeZone:'Asia/Riyadh',month:'numeric',day:'numeric'});
+      for(let d=0;d<=375;d++){
+        const candidate=new Date(isoAdd(iso,d)+'T12:00:00Z');
+        const parts=Object.fromEntries(fmt.formatToParts(candidate).map(p=>[p.type,p.value]));
+        if(Number(parts.month)===month && Number(parts.day)===day) return d;
+      }
+    }catch(e){console.warn('Hijri calendar calculation unavailable',e);}
+    return 0;
+  }
+
   if (item.mode === 'monthly') {
     const [y,m,d] = iso.split('-').map(Number);
     const day = Math.min(31,Math.max(1,Math.floor(Number(item.day)||1)));
@@ -45,7 +59,7 @@ export function remaining(item, iso) {
 }
 function isRealDate(value) {return !Number.isNaN(new Date(value+'T12:00:00Z').getTime()) && new Date(value+'T12:00:00Z').toISOString().slice(0,10)===value;}
 export function hijriDate(iso, cfg) {
-  if (cfg?.settings?.hijriOverride?.trim()) return cfg.settings.hijriOverride.trim();
+  if (iso===saToday() && cfg?.settings?.hijriOverride?.trim()) return cfg.settings.hijriOverride.trim();
   const offset=Math.max(-3,Math.min(3,Number(cfg?.settings?.hijriOffset)||0));
   const d=new Date(isoAdd(iso,offset)+'T12:00:00Z');
   try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{year:'numeric',month:'long',day:'numeric', timeZone:'Asia/Riyadh'}).format(d) + ' هـ'; }

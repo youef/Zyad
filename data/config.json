@@ -32,21 +32,121 @@
     "ink": "#103f38"
   },
   "counters": [
-    {"id":"ramadan","label":"رمضان (تقديري)","mode":"date","date":"2027-02-08","repeat":"yearly","enabled":true},
-    {"id":"salary","label":"الراتب","mode":"monthly","day":27,"enabled":true},
-    {"id":"uni","label":"مكافأة الجامعة","mode":"monthly","day":26,"enabled":true},
-    {"id":"retirement","label":"التقاعد","mode":"monthly","day":1,"enabled":true},
-    {"id":"social","label":"الضمان","mode":"monthly","day":1,"enabled":true},
-    {"id":"citizen","label":"حساب المواطن","mode":"monthly","day":10,"enabled":true},
-    {"id":"hafez","label":"حافز","mode":"monthly","day":5,"enabled":true},
-    {"id":"rehab","label":"التأهيل","mode":"monthly","day":25,"enabled":true},
-    {"id":"insurance","label":"التأمينات","mode":"monthly","day":1,"enabled":true},
-    {"id":"housing","label":"الدعم السكني","mode":"monthly","day":24,"enabled":true},
-    {"id":"farming","label":"الدعم الزراعي","mode":"monthly","day":1,"enabled":true},
-    {"id":"tamheer","label":"تمهير","mode":"monthly","day":11,"enabled":true},
-    {"id":"summer","label":"الصيف","mode":"date","date":"2027-06-21","repeat":"yearly","enabled":true},
-    {"id":"winter","label":"الشتاء","mode":"date","date":"2026-12-21","repeat":"yearly","enabled":true},
-    {"id":"autumn","label":"الخريف","mode":"manual","value":0,"enabled":true},
-    {"id":"spring","label":"الربيع","mode":"date","date":"2027-03-20","repeat":"yearly","enabled":true}
+    {
+      "id": "ramadan",
+      "label": "رمضان (تقديري)",
+      "mode": "hijri",
+      "hijriMonth": 9,
+      "hijriDay": 1,
+      "enabled": true
+    },
+    {
+      "id": "salary",
+      "label": "الراتب",
+      "mode": "monthly",
+      "day": 27,
+      "enabled": true
+    },
+    {
+      "id": "uni",
+      "label": "مكافأة الجامعة",
+      "mode": "monthly",
+      "day": 26,
+      "enabled": true
+    },
+    {
+      "id": "retirement",
+      "label": "التقاعد",
+      "mode": "monthly",
+      "day": 1,
+      "enabled": true
+    },
+    {
+      "id": "social",
+      "label": "الضمان",
+      "mode": "monthly",
+      "day": 1,
+      "enabled": true
+    },
+    {
+      "id": "citizen",
+      "label": "حساب المواطن",
+      "mode": "monthly",
+      "day": 10,
+      "enabled": true
+    },
+    {
+      "id": "hafez",
+      "label": "حافز",
+      "mode": "monthly",
+      "day": 5,
+      "enabled": true
+    },
+    {
+      "id": "rehab",
+      "label": "التأهيل",
+      "mode": "monthly",
+      "day": 25,
+      "enabled": true
+    },
+    {
+      "id": "insurance",
+      "label": "التأمينات",
+      "mode": "monthly",
+      "day": 1,
+      "enabled": true
+    },
+    {
+      "id": "housing",
+      "label": "الدعم السكني",
+      "mode": "monthly",
+      "day": 24,
+      "enabled": true
+    },
+    {
+      "id": "farming",
+      "label": "الدعم الزراعي",
+      "mode": "monthly",
+      "day": 1,
+      "enabled": true
+    },
+    {
+      "id": "tamheer",
+      "label": "تمهير",
+      "mode": "monthly",
+      "day": 11,
+      "enabled": true
+    },
+    {
+      "id": "summer",
+      "label": "الصيف",
+      "mode": "date",
+      "date": "2027-06-21",
+      "repeat": "yearly",
+      "enabled": true
+    },
+    {
+      "id": "winter",
+      "label": "الشتاء",
+      "mode": "date",
+      "date": "2026-12-21",
+      "repeat": "yearly",
+      "enabled": true
+    },
+    {
+      "id": "autumn",
+      "label": "الخريف",
+      "mode": "manual",
+      "value": 0,
+      "enabled": true
+    },
+    {
+      "id": "spring",
+      "label": "الربيع",
+      "mode": "date",
+      "date": "2027-03-20",
+      "repeat": "yearly",
+      "enabled": true
+    }
   ]
 }

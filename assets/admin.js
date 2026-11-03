@@ -22,11 +22,15 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
   bar.append(title,actions);article.append(bar);
   const fields=document.createElement('div');fields.className='counter-fields';
   fields.append(inputField('العنوان',item.label,'text',v=>{item.label=v.slice(0,35);title.textContent=`${i+1}. ${item.label}`;changed();}));
-  fields.append(selectField('طريقة الحساب',item.mode,[['monthly','شهري'],['date','تاريخ محدد'],['manual','رقم يدوي']],v=>{item.mode=v;buildCounters();changed();}));
+  fields.append(selectField('طريقة الحساب',item.mode,[['monthly','شهري'],['date','تاريخ محدد'],['hijri','هجري متكرر'],['manual','رقم يدوي']],v=>{item.mode=v;buildCounters();changed();}));
   if(item.mode==='monthly')fields.append(inputField('يوم الشهر (1–31)',item.day||1,'number',v=>{item.day=Math.max(1,Math.min(31,Math.floor(v)||1));changed();}));
   if(item.mode==='date'){
     fields.append(inputField('تاريخ الموعد',item.date||saToday(),'date',v=>{item.date=v;changed();}));
     fields.append(selectField('التكرار',item.repeat||'none',[['none','مرة واحدة'],['yearly','كل سنة ميلادية']],v=>{item.repeat=v;changed();}));
+  }
+  if(item.mode==='hijri'){
+    fields.append(inputField('الشهر الهجري (1–12)',item.hijriMonth||9,'number',v=>{item.hijriMonth=Math.max(1,Math.min(12,Math.floor(v)||9));changed();}));
+    fields.append(inputField('اليوم الهجري (1–30)',item.hijriDay||1,'number',v=>{item.hijriDay=Math.max(1,Math.min(30,Math.floor(v)||1));changed();}));
   }
   if(item.mode==='manual')fields.append(inputField('الرقم الظاهر',item.value||0,'number',v=>{item.value=Math.max(0,Math.floor(v)||0);changed();}));
   article.append(fields);const toggle=document.createElement('label');toggle.className='counter-toggle';const check=document.createElement('input');check.type='checkbox';check.checked=item.enabled!==false;check.addEventListener('change',()=>{item.enabled=check.checked;changed();});toggle.append(check,document.createTextNode('إظهار في البطاقة'));article.append(toggle);root.append(article);
