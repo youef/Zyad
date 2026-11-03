@@ -65,6 +65,17 @@ export function hijriDate(iso, cfg) {
   try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{year:'numeric',month:'long',day:'numeric', timeZone:'Asia/Riyadh'}).format(d) + ' هـ'; }
   catch { return 'التاريخ الهجري'; }
 }
+function hijriPanel(iso,cfg) {
+  const override=iso===saToday()?cfg?.settings?.hijriOverride?.trim():'';
+  if(override)return {number:override,label:'التاريخ الهجري'};
+  const offset=Math.max(-3,Math.min(3,Number(cfg?.settings?.hijriOffset)||0));
+  const date=new Date(isoAdd(iso,offset)+'T12:00:00Z');
+  try {
+    const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura',{year:'numeric',month:'numeric',day:'numeric',timeZone:'Asia/Riyadh'}).formatToParts(date).map(p=>[p.type,p.value]));
+    const month=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{month:'long',timeZone:'Asia/Riyadh'}).format(date);
+    return {number:`${parts.year}/${parts.month}/${parts.day} هـ`,label:month};
+  }catch {return {number:hijriDate(iso,cfg),label:'هجري'};}
+}
 function weekday(iso) {
   const d=new Date(iso+'T12:00:00Z');
   return new Intl.DateTimeFormat('ar-SA',{weekday:'long',timeZone:'Asia/Riyadh'}).format(d);
@@ -145,9 +156,9 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   roundedRect(ctx,742,147,312,109,22,soft,gold,4);
   centralText(ctx,iso.replaceAll('-','/'),182,187,46,'#fff','800',295);
   centralText(ctx,'ميلادي',182,236,27,'#f7e0a2');
-  const hijri=hijriDate(iso,config);
-  centralText(ctx,hijri,898,187,43,'#fff','800',295);
-  centralText(ctx,'هجري ـ أم القرى',898,236,27,'#f7e0a2');
+  const hijri=hijriPanel(iso,config);
+  centralText(ctx,hijri.number,898,187,46,'#fff','800',295);
+  centralText(ctx,hijri.label,898,236,29,'#f7e0a2','800',280);
   // Elegant brand bar.
   roundedRect(ctx,285,380,510,61,18,'rgba(204,157,67,.14)',gold,2);
   centralText(ctx,config.brand?.name||'البطاقة اليومية',540,409,36,ink,'800',485);
@@ -171,7 +182,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const counters=(config.counters||[]).filter(item=>item.enabled!==false).slice(0,24);
   const rows=Math.max(1,Math.ceil(counters.length/4));
   const available=810;const rowH=Math.min(197,available/rows);const firstY=885;
-  const medalR=Math.min(78,rowH*.36);
+  const medalR=Math.min(66,rowH*.32);
   roundedRect(ctx,42,844,996,Math.max(195,rows*rowH+31),23,'rgba(228,213,173,.26)',gold,1.5);
   counters.forEach((item,index)=>{
     const col=index%4,row=Math.floor(index/4);
