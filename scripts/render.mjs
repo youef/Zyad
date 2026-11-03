@@ -41,7 +41,8 @@ try{
   const planner=page.locator('#smart-planner');
   await planner.waitFor({state:'visible',timeout:15000});
   const months=await planner.locator('.planner-month').count();
-  if(months!==12)throw Error('Future planner month selector is incomplete: '+months);
+  const expected=[6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;
+  if(months!==expected)throw Error('Future planner month selector is incomplete: '+months+'/'+expected);
   await planner.screenshot({path:join(root,'images/planner-preview.png')});
   await page.screenshot({path:join(root,'images/site-preview.png'),fullPage:false});
   const eventCount=await planner.locator('.planner-event').count();
