@@ -12,7 +12,8 @@
     "showQuote": true,
     "showContact": true,
     "showQr": true,
-    "archiveDays": 0
+    "archiveDays": 0,
+    "plannerMonths": 12
   },
   "card": {
     "quote": "قال يحيى بن معاذ رحمه الله: كم من مستغفر ممقوت وساكت مرحوم، ثم قال: هذا استغفر الله وقلبه فاجر، وهذا سكت وقلبه ذاكر.",

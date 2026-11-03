@@ -53,7 +53,7 @@ export function futureEvents(cfg,fromIso,months=12){
 const elem=(tag,cls='',value='')=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value)n.textContent=value;return n;};
 const attach=(parent,...children)=>{parent.append(...children);return parent;};
 const validHref=value=>{try{const u=new URL(value);return u.protocol==='https:'||u.protocol==='http:'?u.href:null;}catch{return null;}};
-let data=null,fromDate='',rows=[],chosenMonth='',chosenDate='',search='',kind='الكل',dialog=null;
+let data=null,fromDate='',rows=[],chosenMonth='',chosenDate='',search='',kind='الكل',dialog=null,horizon=12;
 let container=null,viewDate=null;
 function detail(record){
   const item=record.item;
@@ -80,6 +80,19 @@ function detail(record){
   const view=elem('button','btn primary','عرض بطاقة يوم الحدث');view.type='button';
   view.onclick=()=>{dialog.close();const input=document.getElementById('chosen-date');if(input){input.value=record.date;input.dispatchEvent(new Event('change'));}document.getElementById('poster-section')?.scrollIntoView({behavior:'smooth'});};
   actions.append(view);
+  const ics=elem('button','btn secondary','إضافة إلى تقويم الجوال');ics.type='button';
+  ics.onclick=()=>{
+    const escape=s=>String(s||'').replaceAll('\\','\\\\').replaceAll('\n','\\n').replaceAll(',','\\,').replaceAll(';','\\;');
+    const start=record.date.replaceAll('-',''),end=isoAdd(record.date,1).replaceAll('-','');
+    const value=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Zyad//Saudi Calendar//AR','CALSCALE:GREGORIAN','BEGIN:VEVENT',
+      'UID:zyad-'+encodeURIComponent(String(item.id||record.title))+'-'+start+'@calendar.local',
+      'DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}/,''),
+      'DTSTART;VALUE=DATE:'+start,'DTEND;VALUE=DATE:'+end,'SUMMARY:'+escape(record.title),
+      'DESCRIPTION:'+escape(item.details||item.summary||''),'LOCATION:'+escape(item.location||''),
+      'END:VEVENT','END:VCALENDAR'].join('\r\n')+'\r\n';
+    const url=URL.createObjectURL(new Blob([value],{type:'text/calendar;charset=utf-8'}));
+    const a=document.createElement('a');a.href=url;a.download='zyad-event-'+record.date+'.ics';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
+  };actions.append(ics);
   const href=validHref(item.link);if(href){const link=elem('a','btn secondary','رابط الجهة');link.href=href;link.target='_blank';link.rel='noopener noreferrer';actions.append(link);}
   attach(dialog,close,hero,facts,body,future,actions);
   dialog.showModal();
@@ -104,7 +117,7 @@ function render(){
   const current=rows.filter(e=>e.month===chosenMonth);
   container.querySelector('#planner-month-count').textContent=String(current.length)+' أحداث';
   const rail=container.querySelector('#planner-months');rail.replaceChildren();
-  for(let k=0;k<12;k++){
+  for(let k=0;k<horizon;k++){
     const ym=monthPlus(monthKey(fromDate),k),count=rows.filter(r=>r.month===ym).length,btn=elem('button','planner-month');
     btn.type='button';if(ym===chosenMonth)btn.classList.add('active');
     attach(btn,elem('strong','',monthLabel(ym)),elem('small','',String(count)+' أحداث'));
@@ -127,7 +140,7 @@ function render(){
   renderCalendar();
 }
 export function mountPlanner(config,selected=saToday()){
-  data=config;fromDate=selected;rows=futureEvents(data,fromDate,12);
+  data=config;fromDate=selected;horizon=[6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;rows=futureEvents(data,fromDate,horizon);
   container=document.getElementById('smart-planner');
   if(!container)return;
   if(!container.dataset.initialized){
@@ -138,6 +151,12 @@ export function mountPlanner(config,selected=saToday()){
       const wrap=elem('div','planner-stat');attach(wrap,elem('small','',title),elem('strong','',title==='مجموع المواعيد'?'0':'—'));wrap.querySelector('strong').id=id;stats.append(wrap);
     }
     attach(heading,h,stats);
+    const range=elem('label','planner-range','مدى عرض المستقبل');
+    const select=elem('select');select.setAttribute('aria-label','عدد الأشهر القادمة');
+    for(const n of [6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);select.append(option);}
+    select.value=String(horizon);
+    select.onchange=()=>{horizon=Number(select.value);rows=futureEvents(data,fromDate,horizon);chosenMonth=monthKey(fromDate);chosenDate='';render();};
+    range.append(select);
     const months=elem('div','planner-months');months.id='planner-months';
     const content=elem('div','planner-content'),aside=elem('aside','planner-calendar'),right=elem('div','planner-results');
     const top=elem('div','planner-calendar-head');const title=elem('h3');title.id='planner-current-month';
@@ -155,10 +174,11 @@ export function mountPlanner(config,selected=saToday()){
     select.onchange=()=>{kind=select.value;render();};categoryBox.append(select);
     attach(filters,searchBox,categoryBox);right.append(filters);
     const list=elem('div','planner-list');list.id='planner-list';right.append(list);
-    attach(content,aside,right);attach(container,heading,months,content);
+    attach(content,aside,right);attach(container,heading,range,months,content);
     dialog=elem('dialog','planner-dialog');document.body.append(dialog);
     container.dataset.initialized='true';
   }
-  if(!chosenMonth||chosenMonth<monthKey(fromDate)||chosenMonth>=monthPlus(monthKey(fromDate),12))chosenMonth=monthKey(fromDate);
+  if(!chosenMonth||chosenMonth<monthKey(fromDate)||chosenMonth>=monthPlus(monthKey(fromDate),horizon))chosenMonth=monthKey(fromDate);
+  const rangeSelect=container.querySelector('.planner-range select');if(rangeSelect)rangeSelect.value=String(horizon);
   chosenDate='';render();
 }

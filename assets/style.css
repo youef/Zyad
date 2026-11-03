@@ -82,3 +82,5 @@ box-shadow:0 25px 90px #001b1645;direction:rtl;color:#1e3d2c}
 .planner-filters{grid-template-columns:1fr 112px}.planner-modal-facts{grid-template-columns:1fr}.counter-detail-fields{grid-template-columns:1fr}}
 
 .template-thumb.desert{background:linear-gradient(125deg,#925833,#553322)}.template-thumb.pearl{background:linear-gradient(125deg,#23876d,#68af9b)}
+
+.planner-range{display:flex;align-items:center;gap:12px;margin:8px 0 14px;color:#47735a;font-weight:800;font-size:12px}.planner-range select{background:#fff;border:1px solid #dbe8de;color:#164837;border-radius:10px;min-height:36px;padding:6px 12px;font:inherit}
