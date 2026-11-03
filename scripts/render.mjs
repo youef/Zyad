@@ -43,8 +43,9 @@ try{
   const months=await planner.locator('.planner-month').count();
   const expected=[6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;
   if(months!==expected)throw Error('Future planner month selector is incomplete: '+months+'/'+expected);
-  await planner.screenshot({path:join(root,'images/planner-preview.png')});
+  await page.evaluate(()=>window.scrollTo({top:0,behavior:'instant'}));
   await page.screenshot({path:join(root,'images/site-preview.png'),fullPage:false});
+  await planner.screenshot({path:join(root,'images/planner-preview.png')});
   const eventCount=await planner.locator('.planner-event').count();
   if(eventCount){
     await planner.locator('.planner-event').first().click();
