@@ -37,6 +37,21 @@ try{
   await page.goto('http://127.0.0.1:'+server.address().port+'/?date='+today,{waitUntil:'networkidle',timeout:90000});
   const done=await page.evaluate(()=>window.__posterReady);
   if(!done)throw Error('Card initialization failed');
+  // Verify the public planner is interactive and publish real UI previews.
+  const planner=page.locator('#smart-planner');
+  await planner.waitFor({state:'visible',timeout:15000});
+  const months=await planner.locator('.planner-month').count();
+  if(months!==12)throw Error('Future planner month selector is incomplete: '+months);
+  await planner.screenshot({path:join(root,'images/planner-preview.png')});
+  await page.screenshot({path:join(root,'images/site-preview.png'),fullPage:false});
+  const eventCount=await planner.locator('.planner-event').count();
+  if(eventCount){
+    await planner.locator('.planner-event').first().click();
+    const opened=await page.locator('dialog.planner-dialog').evaluate(el=>el.open);
+    if(!opened)throw Error('Event detail modal did not open');
+    await page.locator('.planner-modal-close').click();
+  }
+
   const dataUrl=await page.locator('#poster').evaluate(canvas=>canvas.toDataURL('image/png'));
   if(!dataUrl.startsWith('data:image/png;base64,'))throw Error('PNG encoding failed');
   const bytes=Buffer.from(dataUrl.slice('data:image/png;base64,'.length),'base64');
