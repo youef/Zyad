@@ -1,0 +1,9 @@
+{
+  "name": "zyad-daily-card",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Arabic Saudi daily calendar card for GitHub Pages",
+  "scripts": {"render": "node scripts/render.mjs"},
+  "dependencies": {"playwright": "^1.56.0", "qrcode": "^1.5.4"}
+}
