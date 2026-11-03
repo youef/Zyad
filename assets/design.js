@@ -32,18 +32,29 @@ function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
  label(c,item.label||'موعد',x+w/2,y+h*.86,compact?20:23,dark?'#e9efe5':ink,w-18);
 }
 export function renderPremium(ctx,cfg,iso,tools){
- const des=cfg.design||{},style=['royal','modern','night'].includes(des.preset)?des.preset:'royal';
- const dark=style==='night',modern=style==='modern',t=cfg.theme||{};
- const green=t.green||'#064b43',gold=t.gold||'#c99a42',soft=t.greenLight||'#37765e',ink=t.ink||'#103f38',paper=t.cream||'#f8f5ea';
+ const des=cfg.design||{},style=['royal','modern','night','desert','pearl'].includes(des.preset)?des.preset:'royal';
+ const dark=style==='night',modern=style==='modern'||style==='pearl',t=cfg.theme||{};
+ const palette=style==='desert'?{green:'#693f30',gold:'#bd9259',soft:'#9a6945',ink:'#5d3d2c',paper:'#fbf0df'}:style==='pearl'?{green:'#166d5b',gold:'#bc9555',soft:'#4d9e86',ink:'#155947',paper:'#fffdf8'}:t;
+ const green=palette.green||'#064b43',gold=palette.gold||'#c99a42',soft=palette.greenLight||palette.soft||'#37765e',ink=palette.ink||'#103f38',paper=palette.cream||palette.paper||'#f8f5ea';
  const color={green,gold,soft,ink,dark};
- ctx.fillStyle=dark?'#09251f':modern?'#f3f8f4':paper;ctx.fillRect(0,0,1080,1920);
+ ctx.fillStyle=dark?'#09251f':modern&&style!=='pearl'?'#f3f8f4':paper;ctx.fillRect(0,0,1080,1920);
+ if(style==='desert'){
+  const dune=ctx.createLinearGradient(0,1460,0,1920);dune.addColorStop(0,'rgba(189,146,89,0)');dune.addColorStop(1,'rgba(189,146,89,.22)');ctx.fillStyle=dune;ctx.fillRect(0,1460,1080,400);
+ }
  if(des.pattern!==false)mosaic(ctx,dark?gold:green,Math.max(0,Math.min(.22,Number(des.patternStrength??.07))));
- let grad=ctx.createLinearGradient(0,0,1080,476);grad.addColorStop(0,dark?'#1b4740':green);grad.addColorStop(1,dark?'#082c25':modern?soft:'#093b33');
+ let grad=ctx.createLinearGradient(0,0,1080,476);grad.addColorStop(0,dark?'#1b4740':green);grad.addColorStop(1,dark?'#082c25':style==='desert'?'#49271f':modern?soft:'#093b33');
  if(modern)round(ctx,39,36,1002,446,32,grad);else{ctx.fillStyle=grad;ctx.fillRect(0,0,1080,480);}
  ctx.lineWidth=2.5;ctx.strokeStyle=rgba(gold,.72);
  if(!modern){ctx.strokeRect(45,47,990,265);ctx.strokeRect(65,66,950,231);}
  else{ctx.beginPath();ctx.moveTo(95,450);ctx.lineTo(984,450);ctx.stroke();}
  for(const x of [137,942]){star(ctx,x,104,24,gold,.9);if(!modern)star(ctx,x,397,16,gold,.7);}
+ if(style==='pearl'||style==='desert'){
+  // Architectural crescent and dome motif designed as editable Canvas vectors.
+  ctx.save();ctx.globalAlpha=.38;ctx.strokeStyle=gold;ctx.lineWidth=3;
+  for(const center of [222,858]){ctx.beginPath();ctx.arc(center,299,20,Math.PI,0);ctx.lineTo(center+20,315);ctx.lineTo(center-20,315);ctx.closePath();ctx.stroke();
+   ctx.beginPath();ctx.moveTo(center,274);ctx.lineTo(center,262);ctx.stroke();}
+  ctx.restore();
+ }
  label(ctx,cfg.brand?.name||'بطاقتي اليومية',540,90,36,'#f6e8ca',640);
  if(tools.logo){ctx.save();ctx.beginPath();ctx.arc(922,107,35,0,2*Math.PI);ctx.clip();ctx.drawImage(tools.logo,887,72,70,70);ctx.restore();}
  const date=clockText(iso);

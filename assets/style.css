@@ -80,3 +80,5 @@ box-shadow:0 25px 90px #001b1645;direction:rtl;color:#1e3d2c}
 @media(max-width:600px){.smart-planner{padding:18px 12px}.planner-heading h2{font-size:25px}.planner-stat-row{grid-template-columns:repeat(3,minmax(0,1fr))}
 .planner-stat{min-width:0;padding:10px 8px}.planner-stat strong{font-size:11px}.planner-month{flex-basis:131px}
 .planner-filters{grid-template-columns:1fr 112px}.planner-modal-facts{grid-template-columns:1fr}.counter-detail-fields{grid-template-columns:1fr}}
+
+.template-thumb.desert{background:linear-gradient(125deg,#925833,#553322)}.template-thumb.pearl{background:linear-gradient(125deg,#23876d,#68af9b)}
