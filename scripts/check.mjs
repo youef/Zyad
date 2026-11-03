@@ -11,4 +11,6 @@ assert.equal(remaining({mode:'date',date:'2026-12-01',enabled:true},'2026-11-03'
 assert(remaining({mode:'hijri',hijriMonth:9,hijriDay:1,enabled:true},'2026-11-04')>0);
 assert(hijriDate('2026-11-04',config).length>8);
 assert.equal(config.counters.length,16);
+assert.equal(config.design.preset,'royal');
+assert.equal(config.design.highlightNext,true);
 console.log('All date, counter and config checks passed.');

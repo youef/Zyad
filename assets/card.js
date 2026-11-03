@@ -1,3 +1,4 @@
+import {renderPremium} from './design.js';
 /* Shared pure card renderer: no user text is inserted into HTML. */
 const W = 1080, H = 1920;
 const imageCache = new Map();
@@ -144,6 +145,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const [logo, qr]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,config.settings?.showQr?fetchImage(root+'qr.png'):null]);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W;canvas.height=H;
   const c=config.theme||{},green=c.green||'#064b43',soft=c.greenLight||'#37765e',gold=c.gold||'#c99a42',cream=c.cream||'#f8f5ea',ink=c.ink||'#103f38';
+  if((config.design?.preset||'royal')!=='heritage') { renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate}); return canvas; }
   ctx.fillStyle=cream;ctx.fillRect(0,0,W,H);pattern(ctx,gold,ink);
   // Header: ornamental calendar plaques and central heraldic medallion.
   polyOrnament(ctx,540,198,204,184,green,gold);
