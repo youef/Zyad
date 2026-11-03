@@ -9,3 +9,74 @@
 .design-intro{display:grid;gap:5px;margin-bottom:14px}.design-intro strong{font-size:15px;font-weight:900;color:var(--green)}.design-intro small{font-size:11px;color:#7f9686}
 .template-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-bottom:20px}.template-choice{display:grid;gap:5px;background:#fff;border:2px solid #e1e9e0;border-radius:14px;text-align:right;padding:9px;transition:.2s}.template-choice.selected{border-color:#bd9147;box-shadow:0 0 0 3px #bd91472a}.template-choice:hover{transform:translateY(-2px)}.template-choice strong{font-size:12px;font-weight:900;color:#244e3a}.template-choice small{font-size:10px;color:#819587}
 .template-thumb{display:flex;height:100px;justify-content:center;align-items:center;flex-direction:column;background:#0b4d41;color:#f3dfbb;border-radius:9px;font-size:16px}.template-thumb em{font-style:normal;font-size:25px;line-height:1.45}.template-thumb i{font-style:normal;font-size:11px;letter-spacing:5px;color:#e4c07d}.template-thumb.royal{background:linear-gradient(130deg,#095646,#02372e)}.template-thumb.modern{background:linear-gradient(130deg,#5b9c7c,#085a49)}.template-thumb.night{background:linear-gradient(130deg,#21463c,#071f1c)}.template-thumb.heritage{background:linear-gradient(130deg,#25865a,#c99a42)}.design-switches{margin:0 0 22px}.export-actions{display:flex;gap:8px}.export-actions .btn{flex:1}.export-caption{color:#8a9c91;display:block;font-size:11px;margin:6px 0 0}input[type=range]{accent-color:#b38c4b}
+
+/* Smart planner v3: architected for RTL and small screens */
+.smart-planner{position:relative;margin:25px auto 45px;padding:34px;border-radius:28px;
+background:linear-gradient(135deg,#fff 0%,#f8fbf8 70%,#f2f6f0 100%);
+border:1px solid #dde9dd;box-shadow:0 22px 60px #07453212;overflow:hidden}
+.smart-planner:before{content:"";position:absolute;left:-75px;top:-60px;width:270px;height:270px;opacity:.13;background:url('ornament.svg') center/contain no-repeat;pointer-events:none}
+.planner-heading{position:relative;display:flex;align-items:flex-start;justify-content:space-between;gap:25px;margin-bottom:20px}
+.planner-heading h2{font-weight:900;font-size:31px;margin:6px 0;color:var(--green)}
+.planner-heading p{color:#788b7f;line-height:1.9;font-size:13px;margin:0}
+.planner-stat-row{display:grid;grid-template-columns:repeat(3,minmax(105px,1fr));gap:9px}
+.planner-stat{background:#f0f6ef;border:1px solid #e0ebe0;border-radius:16px;min-width:106px;padding:13px 14px;display:grid;gap:3px}
+.planner-stat small{font-size:10px;color:#6d8774;font-weight:800}
+.planner-stat strong{font-size:14px;color:#115b49;font-weight:900}
+.planner-months{display:flex;gap:10px;overflow:auto;padding:2px 2px 13px;scrollbar-width:thin;scroll-snap-type:x mandatory;margin-bottom:10px}
+.planner-month{display:grid;gap:3px;flex:0 0 142px;scroll-snap-align:start;background:white;border:1px solid #e3ebe2;
+border-radius:15px;padding:13px 14px;text-align:right}
+.planner-month strong{color:#345846;font-size:13px}
+.planner-month small{color:#8b9e90;font-size:11px}
+.planner-month.active{border-color:#12604c;background:linear-gradient(135deg,#0a5c4c,#093e34);box-shadow:0 9px 25px #0b4d3821}
+.planner-month.active strong,.planner-month.active small{color:#fff}
+.planner-content{display:grid;grid-template-columns:minmax(270px,.85fr) minmax(0,1.3fr);gap:17px;align-items:start}
+.planner-calendar,.planner-results{background:#fff;border:1px solid #e4ece2;border-radius:20px;padding:18px;box-shadow:0 8px 30px #0b50310a}
+.planner-calendar-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px}
+.planner-calendar-head h3{color:var(--green);font-size:20px;font-weight:900;margin:0}
+.planner-calendar-head small{color:#8aa08f;font-size:11px}
+.planner-reset{background:#f4f8f2;color:#32644a;padding:8px 11px;border:1px solid #dfe9dd;border-radius:10px;font-weight:800;font-size:11px}
+.planner-days{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;text-align:center}
+.planner-weekday{font-size:12px;font-weight:800;color:#7c9585;padding:10px 0}
+.planner-day,.planner-spacer{display:flex;align-items:center;justify-content:center;min-height:41px;aspect-ratio:1}
+.planner-day{background:#f8fbf8;border:1px solid transparent;border-radius:12px;font-weight:800;font-size:13px;color:#345849;position:relative}
+.planner-day.eventful:after{content:"";width:5px;height:5px;background:#c49b48;border-radius:50%;position:absolute;bottom:4px}
+.planner-day:hover,.planner-day.chosen{background:#e9f3ec;border-color:#7fa18a}
+.planner-day.today{background:#075b4b;color:white}
+.planner-day.today:after{background:#ecc77f}
+.planner-hint{font-size:11px;color:#8ea197;margin:15px 0 2px;text-align:center}
+.planner-filters{display:grid;grid-template-columns:minmax(0,1fr) 150px;gap:12px;margin-bottom:16px}
+.planner-field{display:grid;gap:8px;font-size:11px;font-weight:900;color:#436451}
+.planner-field input,.planner-field select{min-height:43px;padding:9px 12px;border:1px solid #dce8df;border-radius:12px;background:#fbfcfb;color:#1b4938;outline-color:#0d6b54;width:100%;font-size:12px}
+.planner-list{display:grid;gap:10px;max-height:525px;overflow:auto;padding-left:2px}
+.planner-event{width:100%;border:1px solid #e6ece5;border-radius:15px;background:linear-gradient(#fff,#fafcf9);text-align:right;padding:14px 15px;display:grid;gap:6px}
+.planner-event:hover{border-color:#c79f59;box-shadow:0 8px 20px #134c3112}
+.planner-event-line{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.planner-event-line strong{font-size:15px;font-weight:900;color:var(--green)}
+.planner-event-line span{font-size:11px;background:#f6ead6;color:#996d23;border-radius:100px;padding:6px 10px;font-weight:900;white-space:nowrap}
+.planner-event small{font-size:11px;color:#597565}
+.planner-event p{margin:0;color:#718b7b;font-size:12px;line-height:1.8}
+.planner-empty{background:#f7faf7;border-radius:13px;padding:25px;text-align:center;color:#82958a;font-size:12px}
+.planner-dialog{width:min(660px,calc(100% - 24px));max-height:86dvh;overflow:auto;border:0;border-radius:23px;padding:23px;
+box-shadow:0 25px 90px #001b1645;direction:rtl;color:#1e3d2c}
+.planner-dialog::backdrop{background:#08261f99;backdrop-filter:blur(5px)}
+.planner-modal-close{position:absolute;left:15px;top:13px;font-size:28px;color:#547260;background:#eaf2e9;border:0;border-radius:50%;height:40px;width:40px}
+.planner-modal-hero{padding:16px 5px}.planner-modal-hero h3{color:var(--green);font-size:29px;font-weight:900;margin:8px 0}
+.planner-modal-hero p{color:#799080;line-height:1.8;margin:0;font-size:13px}
+.planner-chip{font-weight:800;font-size:11px;background:#f7eacb;color:#947020;border-radius:10px;padding:6px 12px;display:inline-flex}
+.planner-modal-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-bottom:16px}
+.planner-modal-facts>div{background:#f8fbf8;border:1px solid #e5ede5;border-radius:14px;padding:13px;display:grid;gap:5px}
+.planner-modal-facts small{color:#82968a;font-size:11px}.planner-modal-facts strong{color:#164e3e;font-size:14px}
+.planner-modal-body{display:grid;gap:10px}.planner-modal-body section,.planner-modal-future{background:#fbfdfb;border:1px solid #e6ede6;border-radius:14px;padding:14px}
+.planner-modal-body h4,.planner-modal-future h4{font-size:12px;color:#72927d;font-weight:900;margin:0 0 7px}
+.planner-modal-body p{margin:0;line-height:1.9;color:#355d47;font-size:13px}
+.planner-modal-future{margin:12px 0}.planner-date-chips{display:flex;flex-wrap:wrap;gap:7px}
+.planner-date-chips span{background:#ecf4ef;border-radius:20px;color:#295e41;padding:7px 10px;font-size:11px;font-weight:800}
+.planner-modal-actions{display:flex;gap:9px;flex-wrap:wrap}
+.counter-details{margin-top:12px;border-top:1px dashed #dce7da;padding:11px 0}
+.counter-details>summary{cursor:pointer;color:#19654e;font-size:12px;font-weight:900}
+.counter-detail-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px 12px;margin-top:15px}
+.counter-detail-fields .field{margin:0}
+@media(max-width:900px){.planner-heading{display:grid}.planner-content{grid-template-columns:1fr}.planner-list{max-height:none}}
+@media(max-width:600px){.smart-planner{padding:18px 12px}.planner-heading h2{font-size:25px}.planner-stat-row{grid-template-columns:repeat(3,minmax(0,1fr))}
+.planner-stat{min-width:0;padding:10px 8px}.planner-stat strong{font-size:11px}.planner-month{flex-basis:131px}
+.planner-filters{grid-template-columns:1fr 112px}.planner-modal-facts{grid-template-columns:1fr}.counter-detail-fields{grid-template-columns:1fr}}

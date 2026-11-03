@@ -36,10 +36,22 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
     fields.append(inputField('اليوم الهجري (1–30)',item.hijriDay||1,'number',v=>{item.hijriDay=Math.max(1,Math.min(30,Math.floor(v)||1));changed();}));
   }
   if(item.mode==='manual')fields.append(inputField('الرقم الظاهر',item.value||0,'number',v=>{item.value=Math.max(0,Math.floor(v)||0);changed();}));
-  article.append(fields);const toggle=document.createElement('label');toggle.className='counter-toggle';const check=document.createElement('input');check.type='checkbox';check.checked=item.enabled!==false;check.addEventListener('change',()=>{item.enabled=check.checked;changed();});toggle.append(check,document.createTextNode('إظهار في البطاقة'));article.append(toggle);root.append(article);
+  article.append(fields);
+  const more=document.createElement('div');more.className='counter-detail-fields';
+  for(const [key,title,limit] of [['category','الفئة',32],['summary','ملخص يظهر للزوار',120],['location','الجهة أو الموقع',120],['link','رابط الحدث',350]]){
+    more.append(inputField(title,item[key]||'','text',v=>{item[key]=v.slice(0,limit);changed();}));
+  }
+  for(const [key,title,limit] of [['details','التفاصيل الكاملة',800],['notes','ملاحظات إضافية',400]]){
+    const wrap=document.createElement('label');wrap.className='field';wrap.textContent=title;const area=document.createElement('textarea');
+    area.rows=3;area.value=item[key]||'';area.maxLength=limit;area.addEventListener('input',()=>{item[key]=area.value;changed();});
+    wrap.append(area);more.append(wrap);
+  }
+  const expander=document.createElement('details');expander.className='counter-details';const sum=document.createElement('summary');
+  sum.textContent='إدارة تفاصيل الحدث والمعلومات الإضافية';expander.append(sum,more);article.append(expander);
+const toggle=document.createElement('label');toggle.className='counter-toggle';const check=document.createElement('input');check.type='checkbox';check.checked=item.enabled!==false;check.addEventListener('change',()=>{item.enabled=check.checked;changed();});toggle.append(check,document.createTextNode('إظهار في البطاقة'));article.append(toggle);root.append(article);
 });}
 function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener(el.type==='checkbox'?'change':'input',()=>{let val=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;updateDeep(config,el.dataset.bind,val);changed();}));
-  $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,enabled:true});buildCounters();changed();});
+  $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,enabled:true,category:'حدث',summary:'',details:'',notes:'',location:'',link:''});buildCounters();changed();});
   $('#clear-logo').addEventListener('click',()=>{config.brand.logo='';$('#logo-file').value='';changed();});
   $('#logo-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>4_000_000){alert('يُرجى اختيار صورة PNG أو JPG أو WebP أقل من 4 ميغابايت.');return;}try{const img=await createImageBitmap(file);const c=document.createElement('canvas');const size=Math.min(400,Math.max(img.width,img.height));c.width=size;c.height=size;const s=Math.min(size/img.width,size/img.height);c.getContext('2d').drawImage(img,(size-img.width*s)/2,(size-img.height*s)/2,img.width*s,img.height*s);const url=c.toDataURL('image/webp',.74);if(url.length>250000){alert('الشعار كبير بعد الضغط. استخدم صورة أصغر.');return;}config.brand.logo=url;changed();}catch(err){alert('تعذر قراءة الصورة.');}});
   dateField.addEventListener('input',syncPreview);

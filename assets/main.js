@@ -1,3 +1,4 @@
+import {mountPlanner} from './planner.js';
 import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js';
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
@@ -6,7 +7,7 @@ const params=new URLSearchParams(location.search);
 const selected=params.get('date');dateInput.value=/^\d{4}-\d{2}-\d{2}$/.test(selected||'')?selected:saToday();
 $('#year').textContent=String(new Date().getFullYear());
 function say(msg){status.textContent=msg;}
-async function refresh(){if(!config)return;const id=++renderId;try{await renderPoster(canvas,config,dateInput.value);if(id===renderId)say('البطاقة جاهزة للتنزيل والمشاركة.');}catch(e){console.error(e);say('تعذر عرض البطاقة. جرّب تحديث الصفحة.');}}
+async function refresh(){if(!config)return;const id=++renderId;try{await renderPoster(canvas,config,dateInput.value);mountPlanner(config,dateInput.value);if(id===renderId)say('البطاقة جاهزة للتنزيل والمشاركة.');}catch(e){console.error(e);say('تعذر عرض البطاقة. جرّب تحديث الصفحة.');}}
 function setDate(v){dateInput.value=v;history.replaceState(null,'',location.pathname+(v===saToday()?'':`?date=${v}`)+location.hash);refresh();}
 $('#prev').addEventListener('click',()=>setDate(isoAdd(dateInput.value,-1)));
 $('#next').addEventListener('click',()=>setDate(isoAdd(dateInput.value,1)));

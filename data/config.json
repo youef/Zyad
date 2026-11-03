@@ -38,84 +38,144 @@
       "mode": "hijri",
       "hijriMonth": 9,
       "hijriDay": 1,
-      "enabled": true
+      "enabled": true,
+      "category": "مناسبة إسلامية",
+      "summary": "بداية شهر رمضان المبارك وفق التقويم الهجري التقديري.",
+      "details": "يُحسب الموعد من تقويم أم القرى. إعلان الجهات المختصة هو المرجع النهائي.",
+      "location": "المملكة العربية السعودية",
+      "notes": "قد يختلف الموعد مع إعلان ثبوت الهلال."
     },
     {
       "id": "salary",
       "label": "الراتب",
       "mode": "monthly",
       "day": 27,
-      "enabled": true
+      "enabled": true,
+      "category": "رواتب",
+      "summary": "الموعد الشهري المحدد لاستحقاق الراتب.",
+      "details": "موعد تقريبي حسب الإعدادات؛ يمكن تعديله من لوحة الإدارة.",
+      "location": "جهة العمل",
+      "notes": "قد يختلف موعد الإيداع بين الجهات."
     },
     {
       "id": "uni",
       "label": "مكافأة الجامعة",
       "mode": "monthly",
       "day": 26,
-      "enabled": true
+      "enabled": true,
+      "category": "تعليم",
+      "summary": "الموعد الشهري المقدر لمكافأة الجامعة.",
+      "details": "يعتمد على اليوم المحفوظ في المشروع، لا على إعلان الجامعة.",
+      "location": "الجامعات السعودية",
+      "notes": "راجع الجهة المعنية للتاريخ المؤكد."
     },
     {
       "id": "retirement",
       "label": "التقاعد",
       "mode": "monthly",
       "day": 1,
-      "enabled": true
+      "enabled": true,
+      "category": "رواتب",
+      "summary": "موعد التقاعد الدوري حسب الإعدادات.",
+      "details": "عداد شهري قابل للتغيير.",
+      "location": "جهة التقاعد",
+      "notes": "المواعيد تقديرية."
     },
     {
       "id": "social",
       "label": "الضمان",
       "mode": "monthly",
       "day": 1,
-      "enabled": true
+      "enabled": true,
+      "category": "دعم",
+      "summary": "موعد الضمان الاجتماعي حسب الإعدادات.",
+      "details": "عداد شهري قابل للتعديل.",
+      "location": "جهة البرنامج",
+      "notes": "راجع الإعلان الرسمي."
     },
     {
       "id": "citizen",
       "label": "حساب المواطن",
       "mode": "monthly",
       "day": 10,
-      "enabled": true
+      "enabled": true,
+      "category": "دعم",
+      "summary": "موعد حساب المواطن حسب الإعدادات.",
+      "details": "عداد يذكّر بتاريخ الاستحقاق الشهري.",
+      "location": "برنامج حساب المواطن",
+      "notes": "يخضع للإعلانات الرسمية."
     },
     {
       "id": "hafez",
       "label": "حافز",
       "mode": "monthly",
       "day": 5,
-      "enabled": true
+      "enabled": true,
+      "category": "دعم",
+      "summary": "موعد حافز التقريبي.",
+      "details": "عداد متكرر شهريًا حسب يوم البرنامج المحدد.",
+      "location": "برنامج حافز",
+      "notes": "راجع حساب المستفيد."
     },
     {
       "id": "rehab",
       "label": "التأهيل",
       "mode": "monthly",
       "day": 25,
-      "enabled": true
+      "enabled": true,
+      "category": "دعم",
+      "summary": "موعد التأهيل المقدر.",
+      "details": "يمكن تعديل موعد الصرف حسب المعلومات المؤكدة.",
+      "location": "جهة البرنامج",
+      "notes": "حسب الاستحقاق."
     },
     {
       "id": "insurance",
       "label": "التأمينات",
       "mode": "monthly",
       "day": 1,
-      "enabled": true
+      "enabled": true,
+      "category": "رواتب",
+      "summary": "موعد التأمينات حسب الإعدادات.",
+      "details": "عداد شهري لخدمات التأمينات.",
+      "location": "التأمينات الاجتماعية",
+      "notes": "راجع الجهة المعنية."
     },
     {
       "id": "housing",
       "label": "الدعم السكني",
       "mode": "monthly",
       "day": 24,
-      "enabled": true
+      "enabled": true,
+      "category": "دعم",
+      "summary": "موعد الدعم السكني.",
+      "details": "عداد شهري قابل للتغيير.",
+      "location": "برنامج الدعم السكني",
+      "notes": "قد يختلف تاريخ الإيداع."
     },
     {
       "id": "farming",
       "label": "الدعم الزراعي",
       "mode": "monthly",
       "day": 1,
-      "enabled": true
+      "enabled": true,
+      "category": "دعم",
+      "summary": "موعد الدعم الزراعي.",
+      "details": "موعد متكرر حسب الإعدادات.",
+      "location": "الجهات المختصة",
+      "notes": "قد يختلف حسب البرنامج."
     },
     {
       "id": "tamheer",
       "label": "تمهير",
       "mode": "monthly",
       "day": 11,
-      "enabled": true
+      "enabled": true,
+      "category": "تدريب",
+      "summary": "موعد تمهير حسب الإعدادات.",
+      "details": "عداد شهري لمتابعة الاستحقاق.",
+      "location": "برنامج تمهير",
+      "notes": "يرتبط بشروط البرنامج."
     },
     {
       "id": "summer",
@@ -123,7 +183,12 @@
       "mode": "date",
       "date": "2027-06-21",
       "repeat": "yearly",
-      "enabled": true
+      "enabled": true,
+      "category": "فصول",
+      "summary": "بداية فصل الصيف الفلكي.",
+      "details": "موعد فصلي يعتمد على التاريخ الميلادي المسجل.",
+      "location": "المملكة العربية السعودية",
+      "notes": "قد تختلف البداية المناخية."
     },
     {
       "id": "winter",
@@ -131,14 +196,24 @@
       "mode": "date",
       "date": "2026-12-21",
       "repeat": "yearly",
-      "enabled": true
+      "enabled": true,
+      "category": "فصول",
+      "summary": "بداية فصل الشتاء الفلكي.",
+      "details": "موعد سنوي قابل للتعديل.",
+      "location": "المملكة العربية السعودية",
+      "notes": "يُستخدم للتذكير فقط."
     },
     {
       "id": "autumn",
       "label": "الخريف",
       "mode": "manual",
       "value": 0,
-      "enabled": true
+      "enabled": true,
+      "category": "فصول",
+      "summary": "رقم يدوي خاص بالخريف.",
+      "details": "الرقم الثابت لا يظهر ضمن التخطيط الشهري.",
+      "location": "",
+      "notes": "عدّل نوع الموعد لتحويله إلى حدث تاريخي."
     },
     {
       "id": "spring",
@@ -146,7 +221,12 @@
       "mode": "date",
       "date": "2027-03-20",
       "repeat": "yearly",
-      "enabled": true
+      "enabled": true,
+      "category": "فصول",
+      "summary": "بداية فصل الربيع الفلكي.",
+      "details": "موعد سنوي قابل للتعديل.",
+      "location": "المملكة العربية السعودية",
+      "notes": "يُستخدم للتذكير فقط."
     }
   ],
   "design": {
