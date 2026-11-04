@@ -31,17 +31,29 @@ themes.forEach(([name],index) => option(el('template'),index,name));
 function paint() {
  const [w,h] = design.dimensions;
  if(canvas.width !== w || canvas.height !== h) {canvas.width=w;canvas.height=h;}
+ const accent=themes[design.index][2];
+ const gradient=ctx.createLinearGradient(0,0,w,h);
+ gradient.addColorStop(0,design.background);
+ gradient.addColorStop(1,accent+'40');
  ctx.fillStyle=design.background;
  ctx.fillRect(0,0,w,h);
- ctx.strokeStyle=themes[design.index][2];
- ctx.lineWidth=3;
- const inset=w*.06;
- ctx.strokeRect(inset,h*.13,w-2*inset,h*.74);
+ ctx.fillStyle=gradient;
+ ctx.fillRect(0,0,w,h);
+ ctx.lineWidth=Math.max(2,w*.002);
+ const inset=w*.065;
+ ctx.beginPath();ctx.roundRect(inset,h*.12,w-2*inset,h*.76,Math.min(w,h)*.065);
+ ctx.fillStyle=design.background+'bb';ctx.fill();
+ ctx.strokeStyle=accent+'70';ctx.stroke();
+ const radius=Math.min(w,h)*.065;
+ const sides=4+design.index%5;
  ctx.beginPath();
- const radius=Math.min(w,h)*(.08+design.index%5*.02);
- if(design.index%2) ctx.arc(w/2,h*.24,radius,0,2*Math.PI);
- else ctx.rect(w/2-radius,h*.24-radius,radius*2,radius*2);
- ctx.stroke();
+ for(let i=0;i<sides*2;i++){
+  const angle=i*Math.PI/sides-Math.PI/2;
+  const r=i%2?radius*.54:radius;
+  const x=w/2+Math.cos(angle)*r,y=h*.25+Math.sin(angle)*r;
+  if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);
+ }
+ ctx.closePath();ctx.strokeStyle=accent;ctx.stroke();
  ctx.textAlign='center';ctx.textBaseline='middle';ctx.direction='rtl';
  for(const layer of design.layers) {
   ctx.fillStyle=layer.color;

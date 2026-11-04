@@ -1,4 +1,4 @@
-const cacheName = 'zyad-public-v5-2';
+const cacheName = 'zyad-public-v5-3';
 const revision = '?v=20261104r4';
 const assets = [
   './', 'studio/', 'studio/studio.js', 'studio/studio.css', 'manifest.webmanifest', 'assets/favicon.svg', 'assets/app-180.png',
