@@ -191,3 +191,32 @@ body { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
  .ios-home .site-header,.ios-home .brand strong,.ios-home .brand small,
  .ios-home .section-head h2,.ios-home .section-head p { color:var(--app-text); }
 }
+
+.admin-page {
+ background:#edf3ef;
+ font-family:-apple-system,BlinkMacSystemFont,system-ui,'Cairo',sans-serif;
+}
+.admin-page .site-header { padding-top:env(safe-area-inset-top); }
+.admin-page .editor-panel,.admin-page .admin-preview {
+ border-radius:28px;
+ box-shadow:0 16px 48px #06382b15;
+}
+.admin-page .panel-heading h1 { font-size:clamp(1.85rem,4vw,3.25rem); letter-spacing:-.04em; }
+.admin-page .tab-list {
+ display:flex; gap:5px; padding:5px; background:#edf3ef;
+ border-radius:16px; overflow-x:auto;
+}
+.admin-page .tab { flex:1 0 auto; min-height:44px; border-radius:12px; }
+.admin-page .tab.active { background:#064b43; color:white; }
+.admin-page .template-choice { border-radius:18px; min-width:0; padding:10px; }
+.admin-page .template-choice.selected { border-color:#087457; background:#e6f5ed; }
+.admin-template-art {
+ display:block; width:100%; height:auto; max-height:300px;
+ object-fit:contain; aspect-ratio:9/16; border-radius:12px; background:#edf3ef;
+}
+.admin-page .btn { min-height:44px; border-radius:13px; }
+.admin-page :focus-visible { outline:3px solid #ae7623; outline-offset:2px; }
+@media (max-width:760px) {
+ .admin-page .admin-layout { display:flex; flex-direction:column; }
+ .admin-page .editor-panel,.admin-page .admin-preview { width:100%; }
+}

@@ -1,4 +1,4 @@
-import {CARD_PRESETS,presetInfo,applyPreset} from './templates.js?v=20261104r4';
+import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=20261104r4';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
@@ -29,18 +29,23 @@ function syncTemplate(){
  const header=$('#selected-template-label');if(header)header.textContent='القالب النشط: '+presetInfo(active).name;
 }
 function initTemplates(){
- document.querySelectorAll('[data-preset]').forEach(button=>{
-  const id=button.dataset.preset;
-  const img=document.createElement('img');img.className='template-preview-image';img.alt='معاينة '+presetInfo(id).name;
-  img.src='../images/templates/'+id+'.webp?v='+dateField.value;img.loading='lazy';
-  img.addEventListener('load',()=>{if(img.naturalWidth>1)button.classList.add('has-preview');});
-  img.addEventListener('error',()=>button.classList.remove('has-preview'));
-  button.prepend(img);
+ const grid=$('#admin-templates');
+ for(const {id,name,description} of CARD_PRESETS){
+  const button=document.createElement('button');
+  button.type='button';button.className='template-choice';button.dataset.preset=id;
+  const preview=document.createElement('canvas');
+  preview.width=180;preview.height=320;preview.className='admin-template-art';
+  preview.setAttribute('aria-hidden','true');
+  const title=document.createElement('strong');title.textContent=name;
+  const detail=document.createElement('small');detail.textContent=description;
+  button.append(preview,title,detail);
   button.addEventListener('click',()=>{
+   if(config.design?.preset===id)return;
    applyPreset(config,id);syncFields();syncTemplate();changed();
-   const status=$('#template-preview-state');if(status)status.textContent='تم اختيار '+presetInfo(id).name+' — يتم تحديث البطاقة';
   });
- });
+  grid.append(button);
+ }
+ syncTemplate();
  const restore=$('#reset-preset-palette');
  if(restore)restore.addEventListener('click',()=>{applyPreset(config,presetInfo(config.design?.preset).id);syncFields();syncTemplate();changed();});
  initNamedDesigns();
@@ -75,8 +80,34 @@ function initNamedDesigns(){
   redrawSavedDesigns();changed();
  });
 }
-async function export4K(){const copy=document.createElement('canvas');await renderPoster(copy,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../',scale:2});downloadFile('card-'+dateField.value+'-4k.png',await getPngBlob(copy));}
-function tab(name){document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.tab===name));document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('hidden',el.dataset.panel!==name));}
+let galleryRevision=0;
+async function renderGallery(){
+ const revision=++galleryRevision, date=dateField.value, snapshot=cloneConfig(config);
+ const work=document.createElement('canvas');
+ for(const button of document.querySelectorAll('#admin-templates button')){
+  try{
+   await renderPoster(work,duplicateForPreset(snapshot,button.dataset.preset),date,{rootPrefix:'../assets/',basePrefix:'../'});
+   if(revision!==galleryRevision)return;
+   const thumb=button.querySelector('canvas');
+   thumb.getContext('2d').drawImage(work,0,0,thumb.width,thumb.height);
+  }catch(error){console.warn('Template thumbnail failed',error);}
+ }
+}
+async function exportCard(scale){
+ const date=dateField.value;
+ const copy=document.createElement('canvas');
+ await renderPoster(copy,cloneConfig(config),date,{rootPrefix:'../assets/',basePrefix:'../',scale});
+ downloadFile('card-'+date+(scale===2?'-4k':'')+'.png',await getPngBlob(copy));
+}
+
+function tab(name){
+ document.querySelectorAll('.tab').forEach(el=>{
+  const active=el.dataset.tab===name;
+  el.classList.toggle('active',active);el.setAttribute('aria-pressed',String(active));
+ });
+ document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('hidden',el.dataset.panel!==name));
+ if(name==='theme'&&config)void renderGallery();
+}
 document.querySelectorAll('.tab').forEach(el=>el.addEventListener('click',()=>tab(el.dataset.tab)));
 function inputField(label,value,type='text',onChange){const box=document.createElement('label');box.className='field';box.append(document.createTextNode(label));const el=document.createElement('input');el.type=type;el.value=value??'';el.addEventListener('input',()=>onChange(type==='number'?Number(el.value):el.value));box.append(el);return box;}
 function selectField(label,value,choices,onChange){const box=document.createElement('label');box.className='field';box.append(document.createTextNode(label));const select=document.createElement('select');for(const [key,label] of choices){const op=document.createElement('option');op.value=key;op.textContent=label;select.append(op);}select.value=value||choices[0][0];select.addEventListener('change',()=>onChange(select.value));box.append(select);return box;}
@@ -118,10 +149,20 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
   $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,enabled:true,category:'حدث',summary:'',details:'',notes:'',location:'',link:''});buildCounters();changed();});
   $('#clear-logo').addEventListener('click',()=>{config.brand.logo='';$('#logo-file').value='';changed();});
   $('#logo-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>4_000_000){alert('يُرجى اختيار صورة PNG أو JPG أو WebP أقل من 4 ميغابايت.');return;}try{const img=await createImageBitmap(file);const c=document.createElement('canvas');const size=Math.min(400,Math.max(img.width,img.height));c.width=size;c.height=size;const s=Math.min(size/img.width,size/img.height);c.getContext('2d').drawImage(img,(size-img.width*s)/2,(size-img.height*s)/2,img.width*s,img.height*s);const url=c.toDataURL('image/webp',.74);if(url.length>250000){alert('الشعار كبير بعد الضغط. استخدم صورة أصغر.');return;}config.brand.logo=url;changed();}catch(err){alert('تعذر قراءة الصورة.');}});
-  dateField.addEventListener('input',syncPreview);
-  $('#admin-download').addEventListener('click',async()=>{const b=await getPngBlob(canvas);downloadFile(`preview-${dateField.value}.png`,b);});
-  $('#admin-download-4k').addEventListener('click',()=>export4K().catch(e=>alert('فشل التصدير: '+e.message)));
+  dateField.addEventListener('input',()=>{
+   if(!dateField.value)return;
+   syncPreview();
+   if(!document.querySelector('[data-panel="theme"]').classList.contains('hidden'))void renderGallery();
+  });
+  for(const [id,scale] of [['#admin-download',1],['#admin-download-4k',2]]){
+   $(id).addEventListener('click',async()=>{
+    $(id).disabled=true;
+    try{await exportCard(scale);}catch(error){draftStatus.textContent='تعذّر التصدير: '+error.message;}
+    finally{$(id).disabled=false;}
+   });
+  }
   initTemplates();
+  tab($(".tab.active").dataset.tab);
   $('#export-json').addEventListener('click',()=>downloadFile('zyad-config.json',new Blob([JSON.stringify(config,null,2)],{type:'application/json;charset=utf-8'})));
   $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();redrawSavedDesigns();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
   $('#connect-github').addEventListener('click',async()=>{const supplied=$('#github-token').value.trim();if(!supplied){setStatus('أدخل رمز الوصول أولًا.',false);return;}token=supplied;try{const f=await getFile();sha=f.sha;setStatus('تم التحقق من الوصول إلى الإعدادات. يمكنك تجربة الحفظ.');}catch(e){token='';setStatus('فشل الاتصال: '+e.message,false);}});

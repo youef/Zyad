@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="ar" dir="rtl"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#064b43">
-<title>لوحة الإدارة | بطاقتي اليومية</title><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css?v=20261104r4">
+<title>لوحة الإدارة | بطاقتي اليومية</title><link rel="icon" href="../assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="../assets/style.css?v=admin-v5">
 </head><body class="admin-page">
-<header class="site-header"><div class="wrap topbar"><a class="brand" href="../"><span class="brand-icon">✦</span><span><strong>لوحة الإدارة</strong><small>محرر البطاقة اليومية · الإصدار الرابع</small></span></a><nav><a href="../">← صفحة المشاهدين</a><a href="https://github.com/youef/Zyad" target="_blank" rel="noopener noreferrer">المستودع ↗</a></nav></div></header>
+<header class="site-header"><div class="wrap topbar"><a class="brand" href="../"><span class="brand-icon">✦</span><span><strong>لوحة الإدارة</strong><small>بطاقتي الذكية · إدارة البطاقة اليومية</small></span></a><nav><a href="../">← صفحة المشاهدين</a><a href="https://github.com/youef/Zyad" target="_blank" rel="noopener noreferrer">المستودع ↗</a></nav></div></header>
 <main class="wrap admin-layout">
   <section class="editor-panel">
-    <div class="panel-heading"><div><span class="eyebrow">إدارة المحتوى</span><h1>خصّص بطاقتك</h1><p>تظهر التعديلات في المعاينة فورًا، ويمكن نشرها لجميع المشاهدين بعد ربط حساب GitHub.</p></div></div>
-    <div class="tab-list" role="tablist" aria-label="أقسام الإدارة">
-      <button class="tab active" data-tab="identity" type="button">الهوية</button><button class="tab" data-tab="content" type="button">المحتوى</button><button class="tab" data-tab="counters" type="button">العدّادات</button><button class="tab" data-tab="theme" type="button">التصميم</button><button class="tab" data-tab="publish" type="button">الحفظ والنشر</button>
+    <div class="panel-heading"><div><span class="eyebrow">إدارة المحتوى</span><h1>استوديو البطاقة اليومية</h1><p>تظهر التعديلات في المعاينة فورًا، ويمكن نشرها لجميع المشاهدين بعد ربط حساب GitHub.</p></div></div>
+    <div class="tab-list" role="group" aria-label="أقسام الإدارة">
+      <button class="tab active" data-tab="identity" type="button">الهوية</button><button class="tab" data-tab="content" type="button">المحتوى</button><button class="tab" data-tab="counters" type="button">العدّادات</button><button class="tab" data-tab="theme" type="button">القوالب</button><button class="tab" data-tab="publish" type="button">الحفظ والنشر</button>
     </div>
     <form id="editor-form" autocomplete="off">
       <div class="tab-content" data-panel="identity"><div class="form-grid"><label class="field">اسم البطاقة<input data-bind="brand.name" maxlength="48"></label><label class="field">الوصف القصير<input data-bind="brand.subtitle" maxlength="70"></label></div><label class="field">شعار اختياري<input id="logo-file" type="file" accept="image/png,image/jpeg,image/webp"><small>يُصغّر الشعار ويحفظ مع إعدادات البطاقة. يُنشر للعامة عند الحفظ.</small></label><button id="clear-logo" type="button" class="text-btn">حذف الشعار</button><div class="tip">تظهر اسم البطاقة وشعارها في أعلى التصميم وواجهة الموقع.</div></div>
@@ -16,14 +16,8 @@
       <div class="tab-content hidden" data-panel="counters"><p class="panel-description">يمكنك إضافة أي موعد، أو تعديل ترتيبه، أو إخفاؤه. <strong>شهري</strong> يتكرر حسب يوم الشهر، و<strong>تاريخ</strong> يحسب الأيام حتى الموعد، و<strong>يدوي</strong> يعرض الرقم الذي تكتبه.</p><div id="counter-list" class="counter-list"></div><button type="button" class="btn secondary full" id="add-counter">+ إضافة عدّاد جديد</button></div>
       <div class="tab-content hidden" data-panel="theme"><div class="design-intro"><strong>استوديو القوالب الاحترافي</strong><small>اضغط أي قالب لتطبيقه فورًا على البطاقة الفعلية. الصور أدناه معاينات حقيقية مولدة تلقائيًا.</small></div>
 <div class="template-status"><strong id="selected-template-label">القالب النشط</strong><span id="template-preview-state" role="status">جاهز للمعاينة</span></div>
-<div class="template-grid" role="group" aria-label="قوالب البطاقة">
-<button type="button" class="template-choice" data-preset="royal"><span class="template-thumb royal">✦<em>الثلاثاء</em><i>◇ ◇ ◇ ◇</i></span><strong>الملكي السعودي</strong><small>فخامة أخضر وذهبي</small></button>
-<button type="button" class="template-choice" data-preset="modern"><span class="template-thumb modern">✧<em>الثلاثاء</em><i>▦ ▦ ▦ ▦</i></span><strong>العصري</strong><small>واضح وسهل القراءة</small></button>
-<button type="button" class="template-choice" data-preset="night"><span class="template-thumb night">✦<em>الثلاثاء</em><i>◇ ◇ ◇ ◇</i></span><strong>الليلي</strong><small>داكن وراقٍ</small></button>
-<button type="button" class="template-choice" data-preset="desert"><span class="template-thumb desert">✦<em>الأربعاء</em><i>☾ ✧ ☾</i></span><strong>الصحراء الملكية</strong><small>درجات الرمل والنحاس</small></button>
-<button type="button" class="template-choice" data-preset="pearl"><span class="template-thumb pearl">✧<em>الأربعاء</em><i>◇ ◇ ◇ ◇</i></span><strong>اللؤلؤة</strong><small>مساحات فاتحة وخطوط ذهبية</small></button>
-<button type="button" class="template-choice" data-preset="heritage"><span class="template-thumb heritage">✧<em>الثلاثاء</em><i>◆ ◆ ◆ ◆</i></span><strong>التراثي</strong><small>التصميم الأصلي</small></button>
-</div>
+<div id="admin-templates" class="template-grid" role="group" aria-label="قوالب البطاقة"></div>
+<a class="btn secondary full" href="../studio/">فتح استوديو الستوري والقوالب الإضافية ↗</a>
 <div class="form-grid"><label class="field">كثافة العدّادات<select data-bind="design.density"><option value="comfortable">مريحة</option><option value="compact">مضغوطة</option></select></label><label class="field">شفافية الزخارف<input type="range" data-bind="design.patternStrength" min="0" max=".20" step=".01"></label></div>
 <div class="switches design-switches"><label><input type="checkbox" data-bind="design.pattern"> زخارف هندسية</label><label><input type="checkbox" data-bind="design.highlightNext"> إبراز أقرب موعد</label><label><input type="checkbox" data-bind="design.showUnit"> إظهار كلمة يوم</label></div>
 <button type="button" id="reset-preset-palette" class="btn secondary full">استعادة ألوان القالب المختار</button>
@@ -43,5 +37,5 @@
   </section>
   <aside class="admin-preview"><div class="preview-heading"><div><strong>معاينة فورية</strong><small>كيف ستبدو للمشاهدين</small></div><label class="small-date">التاريخ<input type="date" id="admin-date"></label></div><canvas id="poster" width="1080" height="1920" aria-label="معاينة تصميم البطاقة"></canvas><div class="export-actions"><button type="button" class="btn secondary" id="admin-download">تنزيل PNG</button><button type="button" class="btn secondary" id="admin-download-4k">تنزيل 4K</button></div><small class="export-caption">دقة PNG القياسية 1080×1920، و4K بدقة 2160×3840.</small></aside>
 </main>
-<script type="module" src="../assets/admin.js?v=20261104r4"></script>
+<script type="module" src="../assets/admin.js?v=admin-v5"></script>
 </body></html>
