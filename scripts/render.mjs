@@ -85,7 +85,13 @@ try{
   await admin.goto('http://127.0.0.1:'+server.address().port+'/admin/',{waitUntil:'networkidle',timeout:90000});
   await admin.locator('[data-tab="theme"]').click();
   const first=admin.locator('#poster');
-  const colorAt=()=>first.evaluate(c=>[...c.getContext('2d').getImageData(500,175,1,1).data].join(','));
+  const colorAt=()=>first.evaluate(c=>{
+    const sample=document.createElement('canvas');sample.width=36;sample.height=64;
+    sample.getContext('2d').drawImage(c,0,0,36,64);
+    const bytes=sample.getContext('2d').getImageData(0,0,36,64).data;
+    let hash=2166136261;for(let i=0;i<bytes.length;i+=4){hash=Math.imul(hash^bytes[i],16777619);hash=Math.imul(hash^bytes[i+1],16777619);hash=Math.imul(hash^bytes[i+2],16777619);}
+    return (hash>>>0).toString(16);
+  });
   const checks=[];
   for(const id of templateIds){
     await admin.locator('[data-preset="'+id+'"]').click();
@@ -96,6 +102,7 @@ try{
     if(pressed!=='true')throw Error('Admin preset was not activated: '+id);
     checks.push({id,pixel:await colorAt()});
   }
+  console.log('Template sample signatures:',JSON.stringify(checks));
   if(new Set(checks.map(c=>c.pixel)).size<4)throw Error('Admin template selection did not change the actual Canvas');
   await admin.locator('[data-preset="desert"]').click();
   await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
