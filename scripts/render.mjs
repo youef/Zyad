@@ -118,6 +118,7 @@ try{
   await admin.locator('#saved-layouts').selectOption({label:'اختبار حفظ قالب'});
   await admin.locator('#load-layout').click();
   if(await admin.locator('[data-preset="desert"]').getAttribute('aria-pressed')!=='true')throw Error('Restoring saved layout failed');
+  await admin.screenshot({path:join(root,'images/studio-preview.png'),fullPage:false});
   await admin.close();
   if(runtimeErrors.length)throw Error('Admin page JS errors: '+runtimeErrors.join(' | '));
   // Public template buttons must switch the actual image and preserve URL state.
@@ -126,6 +127,14 @@ try{
   if(await page.locator('.public-template-card.active').count()!==1)throw Error('Public template selection failed');
   const publicSelection=await page.locator('.public-template-card.active').getAttribute('data-preset');
   if(publicSelection!=='pearl')throw Error('Public selected template does not match Canvas');
+  const shortcut=page.locator('[data-quick-day="7"]');
+  await shortcut.click();
+  await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
+  const picked=await page.locator('#chosen-date').inputValue();
+  const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+7);
+  if(picked!==d.toISOString().slice(0,10))throw Error('Quick future-day card picker failed');
+  await page.locator('[data-quick-day="0"]').click();
+  await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
   // Return site to the published default for its daily generated image.
   await page.locator('#public-template-grid .public-template-select').first().click();
   await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
