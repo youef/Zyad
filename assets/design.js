@@ -23,7 +23,9 @@ function clockText(iso){
 function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
  const {green,gold,ink,soft,dark}=colors;const best=highlight&&nearest!==null&&item.mode!=='manual'&&n===nearest;
  c.save();c.shadowColor='rgba(5,44,33,.10)';c.shadowBlur=15;c.shadowOffsetY=5;
- round(c,x,y,w,h,18,dark?(best?'#285047':'#16352f'):(best?'#fff5df':'#ffffff'),best?gold:(dark?'#31564b':'#e4eadf'),best?2.5:1);c.restore();
+ const edge=colors.style==='modern'?10:colors.style==='pearl'?30:colors.style==='desert'?25:18;
+ const fill=dark?(best?'#285047':'#16352f'):best?'#fff5df':colors.style==='desert'?'#fffbf3':'#ffffff';
+ round(c,x,y,w,h,edge,fill,best?gold:(dark?'#31564b':'#e4eadf'),best?2.5:1);c.restore();
  round(c,x+w-7,y+14,3,h-28,2,best?gold:soft);
  if(best)label(c,'✦',x+21,y+22,19,gold);
  label(c,String(n??0).padStart(2,'0'),x+w/2,y+h*(compact?.39:.40),compact?44:56,dark?'#fff7de':green,w-24,'center','900');
@@ -34,9 +36,9 @@ function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
 export function renderPremium(ctx,cfg,iso,tools){
  const des=cfg.design||{},style=['royal','modern','night','desert','pearl'].includes(des.preset)?des.preset:'royal';
  const dark=style==='night',modern=style==='modern'||style==='pearl',t=cfg.theme||{};
- const palette=style==='desert'?{green:'#693f30',gold:'#bd9259',soft:'#9a6945',ink:'#5d3d2c',paper:'#fbf0df'}:style==='pearl'?{green:'#166d5b',gold:'#bc9555',soft:'#4d9e86',ink:'#155947',paper:'#fffdf8'}:t;
+ const palette=t; // Values now come from the selected palette and remain editable in the studio.
  const green=palette.green||'#064b43',gold=palette.gold||'#c99a42',soft=palette.greenLight||palette.soft||'#37765e',ink=palette.ink||'#103f38',paper=palette.cream||palette.paper||'#f8f5ea';
- const color={green,gold,soft,ink,dark};
+ const color={green,gold,soft,ink,dark,style};
  ctx.fillStyle=dark?'#09251f':modern&&style!=='pearl'?'#f3f8f4':paper;ctx.fillRect(0,0,1080,1920);
  if(style==='desert'){
   const dune=ctx.createLinearGradient(0,1460,0,1920);dune.addColorStop(0,'rgba(189,146,89,0)');dune.addColorStop(1,'rgba(189,146,89,.22)');ctx.fillStyle=dune;ctx.fillRect(0,1460,1080,400);

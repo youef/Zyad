@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "brand": {
     "name": "بطاقتي اليومية",
     "subtitle": "تقويم ومواعيد تهمّك",
@@ -237,5 +237,6 @@
     "highlightNext": true,
     "showUnit": true,
     "density": "comfortable"
-  }
+  },
+  "savedDesigns": []
 }

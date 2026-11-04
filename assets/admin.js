@@ -1,16 +1,80 @@
+import {CARD_PRESETS,presetInfo,applyPreset} from './templates.js';
 import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
-const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v1';
+const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v4';
 let config=null,published=null,token='',sha='',timer=0;
 dateField.value=saToday();
 const syncFields=()=>document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});
 const setStatus=(msg,good=true)=>{pubStatus.textContent=msg;pubStatus.style.color=good?'#126847':'#b05245';};
 const setDirty=()=>{try{localStorage.setItem(DRAFT_KEY,JSON.stringify(config));draftStatus.textContent='مسودة محفوظة في هذا المتصفح • غير منشورة';}catch{draftStatus.textContent='تعديلات غير منشورة';}};
-const syncPreview=()=>{clearTimeout(timer);timer=setTimeout(()=>renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'}).catch(e=>console.error('Preview',e)),130);};
+let previewSeq=0;
+const syncPreview=()=>{
+ clearTimeout(timer);const seq=++previewSeq;
+ const label=$('#template-preview-state');if(label)label.textContent='جارٍ توليد المعاينة...';
+ timer=setTimeout(async()=>{
+  try{
+    const temp=document.createElement('canvas'),snapshot=cloneConfig(config);
+    await renderPoster(temp,snapshot,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});
+    if(seq!==previewSeq)return;
+    canvas.width=temp.width;canvas.height=temp.height;canvas.getContext('2d').drawImage(temp,0,0);
+    if(label)label.textContent='المعاينة جاهزة: '+presetInfo(snapshot.design?.preset).name;
+  }catch(err){console.error('Preview failed',err);if(label)label.textContent='تعذر تحديث المعاينة: '+err.message;}
+ },80);
+};
 const changed=()=>{setDirty();syncPreview();};
-function syncTemplate(){document.querySelectorAll('[data-preset]').forEach(el=>{const yes=el.dataset.preset===(config.design?.preset||'royal');el.classList.toggle('selected',yes);el.setAttribute('aria-pressed',String(yes));});}
-function initTemplates(){document.querySelectorAll('[data-preset]').forEach(el=>el.addEventListener('click',()=>{config.design={preset:el.dataset.preset,pattern:true,patternStrength:.07,highlightNext:true,showUnit:true,density:'comfortable',...(config.design||{})};config.design.preset=el.dataset.preset;syncTemplate();changed();}));}
+function syncTemplate(){
+ const active=presetInfo(config.design?.preset).id;
+ document.querySelectorAll('[data-preset]').forEach(el=>{const yes=el.dataset.preset===active;el.classList.toggle('selected',yes);el.setAttribute('aria-pressed',String(yes));});
+ const header=$('#selected-template-label');if(header)header.textContent='القالب النشط: '+presetInfo(active).name;
+}
+function initTemplates(){
+ document.querySelectorAll('[data-preset]').forEach(button=>{
+  const id=button.dataset.preset;
+  const img=document.createElement('img');img.className='template-preview-image';img.alt='معاينة '+presetInfo(id).name;
+  img.src='../images/templates/'+id+'.webp';img.loading='lazy';
+  img.addEventListener('load',()=>{if(img.naturalWidth>1)button.classList.add('has-preview');});
+  img.addEventListener('error',()=>button.classList.remove('has-preview'));
+  button.prepend(img);
+  button.addEventListener('click',()=>{
+   applyPreset(config,id);syncFields();syncTemplate();changed();
+   const status=$('#template-preview-state');if(status)status.textContent='تم اختيار '+presetInfo(id).name+' — يتم تحديث البطاقة';
+  });
+ });
+ const restore=$('#reset-preset-palette');
+ if(restore)restore.addEventListener('click',()=>{applyPreset(config,presetInfo(config.design?.preset).id);syncFields();syncTemplate();changed();});
+ initNamedDesigns();
+}
+function redrawSavedDesigns(){
+ const select=$('#saved-layouts');if(!select)return;
+ const chosen=select.value;select.replaceChildren();
+ const empty=document.createElement('option');empty.value='';empty.textContent='اختر تصميمًا محفوظًا...';select.append(empty);
+ for(const item of config.savedDesigns||[]){
+  const opt=document.createElement('option');opt.value=item.id;opt.textContent=item.name;select.append(opt);
+ }
+ if((config.savedDesigns||[]).some(item=>item.id===chosen))select.value=chosen;
+}
+function initNamedDesigns(){
+ redrawSavedDesigns();
+ $('#save-layout').addEventListener('click',()=>{
+  const input=$('#layout-name'),name=input.value.trim().slice(0,60);
+  if(!name){input.focus();return;}
+  config.savedDesigns ||= [];
+  if(config.savedDesigns.length>=12){alert('الحد الأقصى 12 تصميمًا محفوظًا. احذف واحدًا قبل الإضافة.');return;}
+  const item={id:'layout-'+Date.now(),name,design:cloneConfig(config.design),theme:cloneConfig(config.theme)};
+  config.savedDesigns.push(item);redrawSavedDesigns();$('#saved-layouts').value=item.id;input.value='';changed();
+ });
+ $('#load-layout').addEventListener('click',()=>{
+  const item=(config.savedDesigns||[]).find(d=>d.id===$('#saved-layouts').value);if(!item)return;
+  config.design=cloneConfig(item.design);config.theme=cloneConfig(item.theme);
+  syncFields();syncTemplate();changed();
+ });
+ $('#delete-layout').addEventListener('click',()=>{
+  const id=$('#saved-layouts').value;if(!id)return;
+  config.savedDesigns=(config.savedDesigns||[]).filter(d=>d.id!==id);
+  redrawSavedDesigns();changed();
+ });
+}
 async function export4K(){const copy=document.createElement('canvas');await renderPoster(copy,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../',scale:2});downloadFile('card-'+dateField.value+'-4k.png',await getPngBlob(copy));}
 function tab(name){document.querySelectorAll('.tab').forEach(el=>el.classList.toggle('active',el.dataset.tab===name));document.querySelectorAll('.tab-content').forEach(el=>el.classList.toggle('hidden',el.dataset.panel!==name));}
 document.querySelectorAll('.tab').forEach(el=>el.addEventListener('click',()=>tab(el.dataset.tab)));
@@ -59,7 +123,7 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
   $('#admin-download-4k').addEventListener('click',()=>export4K().catch(e=>alert('فشل التصدير: '+e.message)));
   initTemplates();
   $('#export-json').addEventListener('click',()=>downloadFile('zyad-config.json',new Blob([JSON.stringify(config,null,2)],{type:'application/json;charset=utf-8'})));
-  $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();syncTemplate();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
+  $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();redrawSavedDesigns();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
   $('#connect-github').addEventListener('click',async()=>{const supplied=$('#github-token').value.trim();if(!supplied){setStatus('أدخل رمز الوصول أولًا.',false);return;}token=supplied;try{const f=await getFile();sha=f.sha;setStatus('تم التحقق من الوصول إلى الإعدادات. يمكنك تجربة الحفظ.');}catch(e){token='';setStatus('فشل الاتصال: '+e.message,false);}});
   $('#publish-config').addEventListener('click',publish);
   $('#quick-save').addEventListener('click',()=>{tab('publish');if($('#github-token').value.trim())publish();else {setStatus('أدخل رمز GitHub بصلاحية الكتابة لحفظ التعديلات للجميع.',false);$('#github-token').focus();}});
@@ -73,4 +137,4 @@ async function publish(){if(!config)return;token=$('#github-token').value.trim()
   await api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH,'PUT',body);
   published=cloneConfig(config);localStorage.removeItem(DRAFT_KEY);draftStatus.textContent='تم حفظ نسخة الإدارة على GitHub';setStatus('نجح حفظ التغييرات في main. سيُعاد إنشاء البطاقة ونشر الموقع بواسطة GitHub Actions. راقب سجل Actions للتأكد من اكتمال النشر.');
 }catch(e){setStatus('تعذر النشر: '+e.message,false);}finally{button.disabled=false;button.textContent='حفظ ونشر للزوار';}}
-(async function init(){try{const r=await fetch('../data/config.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('تعذر قراءة الإعدادات');published=await r.json();const draft=localStorage.getItem(DRAFT_KEY);const source=draft?JSON.parse(draft):cloneConfig(published);config={...cloneConfig(published),...source,design:{...published.design,...(source.design||{})}};syncFields();buildCounters();syncTemplate();setupForm();await renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});draftStatus.textContent=draft?'مسودة محلية مستعادة • غير منشورة':'جاهز للتعديل';}catch(e){console.error(e);draftStatus.textContent='فشل تحميل لوحة الإدارة: '+e.message;}})();
+(async function init(){try{const r=await fetch('../data/config.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('تعذر قراءة الإعدادات');published=await r.json();const draft=localStorage.getItem(DRAFT_KEY);const source=draft?JSON.parse(draft):cloneConfig(published);config={...cloneConfig(published),...source,design:{...published.design,...(source.design||{})},theme:{...published.theme,...(source.theme||{})},savedDesigns:Array.isArray(source.savedDesigns)?source.savedDesigns:published.savedDesigns||[]};syncFields();buildCounters();syncTemplate();setupForm();await renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});syncPreview();draftStatus.textContent=draft?'مسودة محلية مستعادة • غير منشورة':'جاهز للتعديل';}catch(e){console.error(e);draftStatus.textContent='فشل تحميل لوحة الإدارة: '+e.message;}})();
