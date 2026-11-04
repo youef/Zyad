@@ -100,7 +100,7 @@ try{
   await admin.locator('[data-preset="desert"]').click();
   await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
   const beforeColor=await colorAt();
-  await admin.locator('[data-bind="theme.green"]').fill('#f63344');
+  await admin.locator('[data-bind="theme.green"]').evaluate(el=>{el.value='#f63344';el.dispatchEvent(new Event('input',{bubbles:true}));});
   await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
   const afterColor=await colorAt();
   if(afterColor===beforeColor)throw Error('Color picker did not update desert Canvas');
