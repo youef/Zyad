@@ -54,6 +54,75 @@ try{
     await page.locator('.planner-modal-close').click();
   }
 
+
+  // Each thumbnail is rendered from the same source renderer as the real PNG.
+  const templateIds=['royal','modern','night','desert','pearl','heritage'];
+  const cards=await page.evaluate(async({ids,date})=>{
+    const {renderPoster}=await import('/assets/card.js');
+    const {duplicateForPreset}=await import('/assets/templates.js');
+    const original=await (await fetch('/data/config.json')).json();
+    const output=[];
+    for(const id of ids){
+      const canvas=document.createElement('canvas');
+      await renderPoster(canvas,duplicateForPreset(original,id),date);
+      const thumb=document.createElement('canvas');thumb.width=270;thumb.height=480;
+      thumb.getContext('2d',{alpha:false}).drawImage(canvas,0,0,270,480);
+      const base64=thumb.toDataURL('image/webp',.86).split(',')[1];
+      output.push({id,base64});
+    }
+    return output;
+  },{ids:templateIds,date:today});
+  if(new Set(cards.map(r=>r.base64.slice(0,10000))).size<5)throw Error('Template previews are visually identical');
+  await mkdir(join(root,'images/templates'),{recursive:true});
+  for(const card of cards){
+    if(!templateIds.includes(card.id)||card.base64.length<2000)throw Error('Invalid template preview');
+    await writeFile(join(root,'images/templates',card.id+'.webp'),Buffer.from(card.base64,'base64'));
+  }
+  // Real admin browser checks ensure buttons, palette controls, custom saves and preview work.
+  const admin=await browser.newPage({viewport:{width:1365,height:950}});
+  const runtimeErrors=[];
+  admin.on('pageerror',e=>runtimeErrors.push(e.message));
+  await admin.goto('http://127.0.0.1:'+server.address().port+'/admin/',{waitUntil:'networkidle',timeout:90000});
+  await admin.locator('[data-tab="theme"]').click();
+  const first=admin.locator('#poster');
+  const colorAt=()=>first.evaluate(c=>[...c.getContext('2d').getImageData(500,175,1,1).data].join(','));
+  const checks=[];
+  for(const id of templateIds){
+    await admin.locator('[data-preset="'+id+'"]').click();
+    await admin.waitForFunction(name=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: '+name),
+      id==='desert'?'الصحراء الملكية':id==='heritage'?'التراثي':id==='royal'?'الملكي السعودي':id==='modern'?'العصري':id==='night'?'الليلي':'اللؤلؤة',
+      {timeout:15000});
+    const pressed=await admin.locator('[data-preset="'+id+'"]').getAttribute('aria-pressed');
+    if(pressed!=='true')throw Error('Admin preset was not activated: '+id);
+    checks.push({id,pixel:await colorAt()});
+  }
+  if(new Set(checks.map(c=>c.pixel)).size<4)throw Error('Admin template selection did not change the actual Canvas');
+  await admin.locator('[data-preset="desert"]').click();
+  await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
+  const beforeColor=await colorAt();
+  await admin.locator('[data-bind="theme.green"]').fill('#f63344');
+  await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
+  const afterColor=await colorAt();
+  if(afterColor===beforeColor)throw Error('Color picker did not update desert Canvas');
+  await admin.locator('#layout-name').fill('اختبار حفظ قالب');
+  await admin.locator('#save-layout').click();
+  if(await admin.locator('#saved-layouts option').count()<2)throw Error('Saving custom layout failed');
+  await admin.locator('[data-preset="royal"]').click();
+  await admin.locator('#saved-layouts').selectOption({label:'اختبار حفظ قالب'});
+  await admin.locator('#load-layout').click();
+  if(await admin.locator('[data-preset="desert"]').getAttribute('aria-pressed')!=='true')throw Error('Restoring saved layout failed');
+  await admin.close();
+  if(runtimeErrors.length)throw Error('Admin page JS errors: '+runtimeErrors.join(' | '));
+  // Public template buttons must switch the actual image and preserve URL state.
+  await page.locator('#public-template-grid .public-template-select').nth(4).click();
+  await page.waitForFunction(()=>new URLSearchParams(location.search).get('template')==='pearl');
+  if(await page.locator('.public-template-card.active').count()!==1)throw Error('Public template selection failed');
+  const publicSelection=await page.locator('.public-template-card.active').getAttribute('data-preset');
+  if(publicSelection!=='pearl')throw Error('Public selected template does not match Canvas');
+  // Return site to the published default for its daily generated image.
+  await page.locator('#public-template-grid .public-template-select').first().click();
+  await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
+
   const dataUrl=await page.locator('#poster').evaluate(canvas=>canvas.toDataURL('image/png'));
   if(!dataUrl.startsWith('data:image/png;base64,'))throw Error('PNG encoding failed');
   const bytes=Buffer.from(dataUrl.slice('data:image/png;base64,'.length),'base64');
