@@ -125,3 +125,36 @@ box-shadow:0 25px 90px #001b1645;direction:rtl;color:#1e3d2c}
 .quick-card-actions button:hover{background:#edf5ed}
 .quick-card-actions button.active{border-color:#b9944b;background:#fbefd6;color:#705321}
 @media(max-width:450px){.quick-card-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.app-tabs {
+ position: fixed;
+ z-index: 10;
+ inset: auto 0 0;
+ display: flex;
+ justify-content: center;
+ background: #064b43;
+ padding: 6px 4px calc(6px + env(safe-area-inset-bottom));
+ box-shadow: 0 -4px 24px #001a2133;
+}
+.app-tabs a {
+ color: #fffaf0;
+ text-align: center;
+ text-decoration: none;
+ display: grid;
+ place-items: center;
+ min-height: 44px;
+ width: min(20%, 128px);
+ font-size: clamp(.72rem, 2.8vw, .95rem);
+}
+.app-tabs a:focus-visible { outline: 2px solid #f7d693; outline-offset: -3px; }
+body { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
+.connection-note {
+ position: fixed;
+ inset: auto 12px calc(66px + env(safe-area-inset-bottom));
+ z-index: 9;
+ margin: 0;
+ padding: 8px 12px;
+ background: #fff1c8;
+ color: #33240b;
+ border-radius: 8px;
+}

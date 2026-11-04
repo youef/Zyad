@@ -75,3 +75,16 @@ async function loadArchive(){try{const r=await fetch('data/history.json?nocache=
   const a=document.createElement('a');a.className='archive-item';a.href=rec.path;a.download=`calendar-${rec.date}.png`;const img=document.createElement('img');img.src=rec.path;img.alt='بطاقة يوم '+rec.date;img.loading='lazy';const caption=document.createElement('span');caption.textContent=rec.date+'  ↓';a.append(img,caption);grid.append(a);
 }}catch(e){console.warn('No archived card yet',e);}}
 window.__posterReady=(async()=>{try{const r=await fetch('data/config.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('فشل تحميل إعدادات البطاقة');publishedConfig=await r.json();const requested=new URLSearchParams(location.search).get('template');let saved='';try{saved=localStorage.getItem('zyad-public-template')||'';}catch{}activePreset=validPreset(requested)?requested:validPreset(saved)?saved:(publishedConfig.design?.preset||'royal');config=activeConfig(activePreset);renderGallery();$('#brand-title').textContent=config.brand?.name||'بطاقتي اليومية';$('#footer-brand').textContent=config.brand?.name||'بطاقتي اليومية';document.title=(config.brand?.name||'بطاقتي اليومية')+' | التقويم والمواعيد';await refresh();await loadArchive();return true;}catch(e){console.error(e);say(e.message);return false;}})();
+
+const connectionNote = $('#connection-note');
+function showConnection() {
+ connectionNote.hidden = navigator.onLine;
+}
+window.addEventListener('online', showConnection);
+window.addEventListener('offline', showConnection);
+showConnection();
+if ('serviceWorker' in navigator) {
+ window.addEventListener('load', () => {
+  navigator.serviceWorker.register('./sw.js').catch(error => console.warn('Offline setup failed', error));
+ });
+}

@@ -1,0 +1,17 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#064b43"><title>استوديو بطاقتي الذكية</title><link rel="stylesheet" href="studio.css"></head>
+<body><header><a href="../">بطاقتي الذكية</a><span>استوديو التصميم</span></header>
+<main><section class="preview"><canvas id="card" aria-label="معاينة التصميم"></canvas></section>
+<section class="controls"><h1>صمّم بطاقتك</h1>
+<label>القالب <select id="template"></select></label>
+<label>المقاس <select id="size"><option value="1080,1920">ستوري · 1080 × 1920</option><option value="1080,1080">مربع</option><option value="1080,1350">منشور عمودي</option><option value="1920,1080">عريض</option></select></label>
+<label>لون الخلفية <input id="background" type="color"></label>
+<h2>الطبقات</h2><label>الطبقة المحددة <select id="layers"></select></label>
+<label>النص <input id="label" maxlength="160"></label>
+<label>لون النص <input id="color" type="color"></label>
+<label>حجم الخط <input id="font" type="range" min="24" max="140"></label>
+<div class="actions"><button id="add">إضافة نص</button><button id="remove">حذف الطبقة</button><button id="undo">تراجع</button><button id="redo">إعادة</button></div>
+<h2>الحفظ والتصدير</h2><label>مسودات هذا الجهاز <select id="drafts"></select></label>
+<div class="actions"><button id="save">حفظ مسودة جديدة</button><button id="open">فتح المسودة</button></div>
+<label>الصيغة <select id="format"><option>png</option><option>jpeg</option><option>webp</option></select></label>
+<div class="actions"><button id="download">تنزيل الصورة</button><button id="share">مشاركة الصورة</button></div>
+<p id="status" role="status"></p></section></main><script type="module" src="studio.js"></script></body></html>

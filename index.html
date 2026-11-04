@@ -6,6 +6,9 @@
   <meta name="theme-color" content="#064b43">
   <meta name="description" content="بطاقة تقويم يومية سعودية تتحدث تلقائيًا، قابلة للتنزيل والمشاركة مع أرشيف محفوظ.">
   <title>بطاقتي اليومية | التقويم والمواعيد</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="assets/app-180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/style.css?v=20261104r4">
 </head>
@@ -43,6 +46,11 @@
     <section id="archive" class="archive-section"><div class="section-head"><div><span class="eyebrow">أرشيف الأيام</span><h2>البطاقات المحفوظة</h2></div><p>تُضاف صورة كل يوم تلقائيًا بعد النشر.</p></div><div id="archive-grid" class="archive-grid"><div class="empty-state">تُعرض البطاقات المنشورة هنا تلقائيًا.</div></div></section>
   </main>
   <footer class="site-footer"><div class="wrap footer-content"><span>© <span id="year"></span> <span id="footer-brand">بطاقتي اليومية</span></span><span>صُممت خصيصًا للبطاقات والتقاويم العربية</span></div></footer>
+  <nav class="app-tabs" aria-label="أقسام بطاقتي الذكية">
+    <a href="#poster-section">الرئيسية</a><a href="#smart-planner">التقويم</a>
+    <a href="studio/">إنشاء بطاقة</a><a href="#template-gallery">القوالب</a><a href="#archive">الأرشيف</a>
+  </nav>
+  <p class="connection-note" id="connection-note" role="status" hidden>أنت دون اتصال. تُعرض البيانات المحفوظة على الجهاز.</p>
   <script type="module" src="assets/main.js?v=20261104r4"></script>
 </body>
 </html>
