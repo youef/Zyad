@@ -1,4 +1,4 @@
-import {renderPremium} from './design.js';
+import {renderPremium} from './design.js?v=20261104r4';
 /* Shared pure card renderer: no user text is inserted into HTML. */
 const W = 1080, H = 1920;
 const imageCache = new Map();

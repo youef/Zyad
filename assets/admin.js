@@ -1,5 +1,5 @@
-import {CARD_PRESETS,presetInfo,applyPreset} from './templates.js';
-import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js';
+import {CARD_PRESETS,presetInfo,applyPreset} from './templates.js?v=20261104r4';
+import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=20261104r4';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
 const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v4';
@@ -32,7 +32,7 @@ function initTemplates(){
  document.querySelectorAll('[data-preset]').forEach(button=>{
   const id=button.dataset.preset;
   const img=document.createElement('img');img.className='template-preview-image';img.alt='معاينة '+presetInfo(id).name;
-  img.src='../images/templates/'+id+'.webp';img.loading='lazy';
+  img.src='../images/templates/'+id+'.webp?v='+dateField.value;img.loading='lazy';
   img.addEventListener('load',()=>{if(img.naturalWidth>1)button.classList.add('has-preview');});
   img.addEventListener('error',()=>button.classList.remove('has-preview'));
   button.prepend(img);

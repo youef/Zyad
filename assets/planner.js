@@ -1,5 +1,5 @@
 
-import {isoAdd,daysBetween,hijriDate,saToday} from './card.js';
+import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=20261104r4';
 
 const re=/^\d{4}-\d{2}-\d{2}$/;
 const pad=n=>String(n).padStart(2,'0');

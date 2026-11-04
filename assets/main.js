@@ -1,6 +1,6 @@
-import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js';
-import {mountPlanner} from './planner.js';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js';
+import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
+import {mountPlanner} from './planner.js?v=20261104r4';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=20261104r4';
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
 let config=null,publishedConfig=null,activePreset='',renderId=0;
@@ -39,7 +39,7 @@ function renderGallery(){
   if(preset.id===activePreset)item.classList.add('active');
   const select=document.createElement('button');select.type='button';select.className='public-template-select';
   select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
-  const img=document.createElement('img');img.src='images/templates/'+preset.id+'.webp';img.loading='lazy';img.alt='بطاقة قالب '+preset.name;
+  const img=document.createElement('img');img.src='images/templates/'+preset.id+'.webp?v='+dateInput.value;img.loading='lazy';img.alt='بطاقة قالب '+preset.name;
   img.addEventListener('error',()=>{img.hidden=true;});
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.textContent=preset.symbol;
   const heading=document.createElement('strong');heading.textContent=preset.name;
