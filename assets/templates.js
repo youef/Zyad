@@ -1,0 +1,23 @@
+/* A single source of truth for the template gallery and its palette controls. */
+export const CARD_PRESETS=Object.freeze([
+ {id:'royal',name:'الملكي السعودي',description:'أخضر زمردي مع زخارف ذهبية',symbol:'✦',theme:{green:'#064b43',greenLight:'#37765e',gold:'#c99a42',cream:'#f8f5ea',ink:'#103f38'}},
+ {id:'modern',name:'العصري',description:'مساحات نقية وتباين واضح',symbol:'▦',theme:{green:'#116b60',greenLight:'#539c89',gold:'#c0a15b',cream:'#f2f8f5',ink:'#123d35'}},
+ {id:'night',name:'الليلي',description:'درجات عميقة وإضاءة ذهبية',symbol:'☾',theme:{green:'#123d36',greenLight:'#356e62',gold:'#e0b55b',cream:'#102a26',ink:'#edf3e7'}},
+ {id:'desert',name:'الصحراء الملكية',description:'هوية رملية ولمسات نحاسية',symbol:'◆',theme:{green:'#693f30',greenLight:'#9a6945',gold:'#bd9259',cream:'#fbf0df',ink:'#5d3d2c'}},
+ {id:'pearl',name:'اللؤلؤة',description:'عاجي ونفحات نعناع',symbol:'◇',theme:{green:'#166d5b',greenLight:'#4d9e86',gold:'#bc9555',cream:'#fffdf8',ink:'#155947'}},
+ {id:'heritage',name:'التراثي',description:'المدالية الكلاسيكية والزخرفة الأصيلة',symbol:'❖',theme:{green:'#064b43',greenLight:'#37765e',gold:'#c99a42',cream:'#f8f5ea',ink:'#103f38'}}
+]);
+const byId=new Map(CARD_PRESETS.map(item=>[item.id,item]));
+export const validPreset=id=>byId.has(id);
+export const presetInfo=id=>byId.get(id)||CARD_PRESETS[0];
+export const presetTheme=id=>({...presetInfo(id).theme});
+export function applyPreset(config,id,{updateColors=true}={}){
+ if(!validPreset(id))throw Error('قالب غير معروف');
+ config.design={pattern:true,patternStrength:.07,highlightNext:true,showUnit:true,density:'comfortable',...(config.design||{}),preset:id};
+ if(updateColors)config.theme={...config.theme,...presetTheme(id)};
+ return config;
+}
+export function duplicateForPreset(config,id){
+ const copy=JSON.parse(JSON.stringify(config));
+ return applyPreset(copy,id,{updateColors:true});
+}
