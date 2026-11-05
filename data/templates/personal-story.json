@@ -1,0 +1,118 @@
+{
+  "id": "personal-story",
+  "name": "يوميات",
+  "category": "شخصي",
+  "description": "يوميات · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#d4dfd2",
+    "asset": "assets/backgrounds/personal-story.webp"
+  },
+  "layout": "portrait",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "هذه لحظتي",
+    "subtitle": "تفاصيل اليوم التي أحب أن أتذكرها"
+  },
+  "assets": [
+    "assets/backgrounds/personal-story.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#355143",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "هذه لحظتي",
+      "x": 0.5,
+      "y": 0.32,
+      "size": 94,
+      "color": "#355143",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "تفاصيل اليوم التي أحب أن أتذكرها",
+      "x": 0.5,
+      "y": 0.43,
+      "size": 35,
+      "color": "#355143",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "photo",
+      "type": "shape",
+      "shape": "circle",
+      "x": 0.5,
+      "y": 0.61,
+      "width": 0.29,
+      "height": 0.17,
+      "color": "#355143",
+      "opacity": 0.12
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#355143",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#355143",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#355143",
+      "width": 0.7
+    }
+  ]
+}

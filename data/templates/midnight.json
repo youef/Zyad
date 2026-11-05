@@ -1,0 +1,107 @@
+{
+  "id": "midnight",
+  "name": "بعد المساء",
+  "category": "ليلي",
+  "description": "بعد المساء · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#131d34",
+    "asset": "assets/backgrounds/midnight.webp"
+  },
+  "layout": "center",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "هدوء المساء",
+    "subtitle": "لحظة لك، بعيدًا عن ضجيج اليوم"
+  },
+  "assets": [
+    "assets/backgrounds/midnight.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#efe2c6",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "هدوء المساء",
+      "x": 0.5,
+      "y": 0.41,
+      "size": 94,
+      "color": "#efe2c6",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "لحظة لك، بعيدًا عن ضجيج اليوم",
+      "x": 0.5,
+      "y": 0.55,
+      "size": 35,
+      "color": "#efe2c6",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#efe2c6",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#efe2c6",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#efe2c6",
+      "width": 0.7
+    }
+  ]
+}

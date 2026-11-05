@@ -8,10 +8,16 @@ on:
       - 'manifest.webmanifest'
       - 'sw.js'
       - 'studio/**'
+      - 'templates/**'
+      - 'library/**'
+      - 'settings/**'
       - 'admin/**'
       - 'assets/**'
       - 'data/config.json'
       - 'package.json'
+      - 'package-lock.json'
+      - 'data/templates/**'
+      - 'data/assets.json'
       - 'scripts/**'
       - '.github/workflows/daily.yml'
   schedule:
@@ -40,19 +46,23 @@ jobs:
           node-version: '22'
       - name: Install packages and browser
         run: |
-          npm install --no-audit --no-fund
+          npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
       - name: Check dates and counters
         run: npm test
       - name: Check studio in Chromium
-        run: node scripts/check-studio.mjs
+        run: |
+          node scripts/check-platform.mjs
+          node scripts/check-extra.mjs
       - name: Render and archive today's poster
-        run: node scripts/render.mjs
+        run: |
+          node scripts/render.mjs || node scripts/render.mjs
+          node scripts/render-smart.mjs || node scripts/render-smart.mjs
       - name: Save generated images to the repository
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add images data/history.json assets/qr.png
+          git add images data/history.json data/generation-log.json assets/qr.png
           if ! git diff --cached --quiet; then
             git commit -m "Generate daily calendar card"
             git push origin HEAD:main
@@ -63,7 +73,7 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html manifest.webmanifest sw.js dist/
-          cp -R admin assets data images studio dist/
+          cp -R admin assets data images studio templates library settings dist/
           touch dist/.nojekyll
       - uses: actions/upload-pages-artifact@v4
         with:

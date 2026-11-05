@@ -1,0 +1,118 @@
+{
+  "id": "salary",
+  "name": "موعدك القادم",
+  "category": "مواعيد",
+  "description": "موعدك القادم · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#234b48",
+    "asset": "assets/backgrounds/salary.webp"
+  },
+  "layout": "countdown",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "موعد ننتظره",
+    "subtitle": "أضف موعدك وتابع الأيام المتبقية"
+  },
+  "assets": [
+    "assets/backgrounds/salary.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#fff1cc",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "موعد ننتظره",
+      "x": 0.5,
+      "y": 0.33,
+      "size": 94,
+      "color": "#fff1cc",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "أضف موعدك وتابع الأيام المتبقية",
+      "x": 0.5,
+      "y": 0.45,
+      "size": 35,
+      "color": "#fff1cc",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "count",
+      "type": "countdown",
+      "text": "",
+      "target": "",
+      "x": 0.5,
+      "y": 0.61,
+      "size": 132,
+      "color": "#fff1cc",
+      "width": 0.8
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#fff1cc",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#fff1cc",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#fff1cc",
+      "width": 0.7
+    }
+  ]
+}

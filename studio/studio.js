@@ -1,186 +1,47 @@
-const el = id => document.getElementById(id);
-const canvas = el('card');
-const ctx = canvas.getContext('2d');
-const themes = [
- ['تقويم سعودي','#064b43','#f7d693'],['ملكي','#142e25','#ffce76'],
- ['إسلامي','#2f2054','#ffe6a7'],['عصري','#f4eadb','#173b36'],
- ['ليلي','#10152b','#cfdafa'],['صحراء','#793f28','#fff1c9'],
- ['اليوم الوطني','#096342','#ffffff'],['رمضان','#22294b','#ffdb83'],
- ['العيد','#f7e0a4','#40272b'],['الجمعة','#1f4d60','#fff2ce'],
- ['حكمة','#e7d3c1','#352833'],['مواعيد الصرف','#263e54','#f4e8c5'],
- ['مدرستي','#183e76','#ffffff'],['مناسبة اجتماعية','#633450','#ffe4df'],
- ['إعلان','#272727','#f6e179'],['تهنئة','#633822','#f9deaa'],
- ['شتاء','#173344','#d7f1ff'],['صيف','#fff0b0','#603619'],
- ['عد تنازلي','#391e31','#ffccd6'],['ستوري','#23343a','#a8f2d4']
-];
-const day = new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{dateStyle:'full',timeZone:'Asia/Riyadh'});
-const hijri = new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{dateStyle:'long',timeZone:'Asia/Riyadh'});
-const makeLayer = (text,y,size,color) => ({text,x:.5,y,size,color});
-function makeDesign(index, dimensions = [1080,1920]) {
- const [name,background,color] = themes[index];
- return {version:1,index,dimensions,background,layers:[
-  makeLayer(name,.38,94,color),makeLayer(day.format(),.53,55,color),
-  makeLayer(hijri.format(),.63,48,color)
- ]};
+import {templates,createDesign} from '../assets/catalog.js';
+import {get,getAll,put,saveDesign,validateDesign} from '../assets/storage.js';
+import {renderDesign,exportImage,download,importImage,layerText} from '../assets/engine.js';
+import {saToday} from '../assets/card.js';
+import {copyLegacyDrafts} from '../assets/migration.js';
+import {selectTemplate} from '../assets/rules.js';
+const el=id=>document.getElementById(id),canvas=el('card'),say=s=>el('status').textContent=s;
+let d=createDesign(new URLSearchParams(location.search).get('template')||undefined,saToday()),selected=d.layers[1].id,past=[],future=[],bounds=[],seq=0,saveTimer,drag=null;
+const option=(s,v,t)=>s.add(new Option(t,v));templates.forEach((t,i)=>option(el('template'),String(i),t.name+' · '+t.category));
+const current=()=>d.layers.find(l=>l.id===selected);
+const snapshot=()=>JSON.stringify({design:d,selected});
+function remember(){past.push(snapshot());if(past.length>60)past.shift();future=[];}
+function autoSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>put({id:'autosave',design:d},'settings').catch(()=>say('تعذر الحفظ التلقائي. صدّر المشروع للحفاظ عليه.')),450);}
+async function paint(){const n=++seq;try{const off=document.createElement('canvas');const b=await renderDesign(off,structuredClone(d),{guides:el('guides').checked,selection:selected});if(n!==seq)return;canvas.width=off.width;canvas.height=off.height;canvas.getContext('2d').drawImage(off,0,0);bounds=b;}catch(e){say(e.message);}}
+function sync(){
+ el('design-name').value=d.name;el('template').value=String(templates.findIndex(t=>t.id===d.templateId));el('size').value=d.dimensions.join();el('background').value=d.background.color;el('card-date').value=d.date;el('dimensions').textContent=d.dimensions.join(' × ');
+ el('layers').replaceChildren();d.layers.forEach(l=>option(el('layers'),l.id,(l.locked?'🔒 ':'')+(l.hidden?'◌ ':'')+(l.text||({hijri:'التاريخ الهجري',gregorian:'التاريخ الميلادي',countdown:'عد تنازلي',image:'صورة',shape:'شكل',decoration:'زخرفة'}[l.type]||l.type)).slice(0,35)));el('layers').value=selected;
+ const l=current();for(const [id,key,def] of [['label','text',''],['color','color','#123f35'],['font','size',60],['weight','weight',800],['align','align','center'],['opacity','opacity',1],['layer-width','width',.8],['layer-height','height',.15],['line-height','lineHeight',1.6],['border','border',0],['font-family','font','cairo'],['target','target','']]){el(id).disabled=!l||l.locked;el(id).value=l?.[key]??def;}el('shadow').checked=Boolean(l?.shadow);el('shadow').disabled=!l||l.locked;el('remove').disabled=!l||l.locked;el('undo').disabled=!past.length;el('redo').disabled=!future.length;paint();autoSave();
 }
-let design = makeDesign(0);
-let selected = 0;
-let past = [], future = [];
-function option(select,value,label) { select.add(new Option(label,value)); }
-themes.forEach(([name],index) => option(el('template'),index,name));
-function paint() {
- const [w,h] = design.dimensions;
- if(canvas.width !== w || canvas.height !== h) {canvas.width=w;canvas.height=h;}
- const accent=themes[design.index][2];
- const gradient=ctx.createLinearGradient(0,0,w,h);
- gradient.addColorStop(0,design.background);
- gradient.addColorStop(1,accent+'40');
- ctx.fillStyle=design.background;
- ctx.fillRect(0,0,w,h);
- ctx.fillStyle=gradient;
- ctx.fillRect(0,0,w,h);
- ctx.lineWidth=Math.max(2,w*.002);
- const inset=w*.065;
- ctx.beginPath();ctx.roundRect(inset,h*.12,w-2*inset,h*.76,Math.min(w,h)*.065);
- ctx.fillStyle=design.background+'bb';ctx.fill();
- ctx.strokeStyle=accent+'70';ctx.stroke();
- const radius=Math.min(w,h)*.065;
- const sides=4+design.index%5;
- ctx.beginPath();
- for(let i=0;i<sides*2;i++){
-  const angle=i*Math.PI/sides-Math.PI/2;
-  const r=i%2?radius*.54:radius;
-  const x=w/2+Math.cos(angle)*r,y=h*.25+Math.sin(angle)*r;
-  if(i)ctx.lineTo(x,y);else ctx.moveTo(x,y);
- }
- ctx.closePath();ctx.strokeStyle=accent;ctx.stroke();
- ctx.textAlign='center';ctx.textBaseline='middle';ctx.direction='rtl';
- for(const layer of design.layers) {
-  ctx.fillStyle=layer.color;
-  ctx.font='700 '+layer.size+'px system-ui';
-  ctx.fillText(layer.text,w*layer.x,h*layer.y,w*.82);
- }
-}
-function sync() {
- el('template').value=design.index;
- el('size').value=design.dimensions.join(',');
- el('background').value=design.background;
- selected=Math.min(selected,design.layers.length-1);
- const layer=design.layers[selected];
- el('layers').replaceChildren();
- design.layers.forEach((item,i)=>option(el('layers'),i,item.text||'نص فارغ'));
- el('layers').value=selected;
- for(const [id,key] of [['label','text'],['color','color'],['font','size']]) {
-  el(id).disabled=!layer;
-  if(layer) el(id).value=layer[key];
- }
- el('remove').disabled=!layer;
- el('undo').disabled=!past.length;el('redo').disabled=!future.length;
- paint();
-}
-const snapshot=()=>JSON.stringify(design);
-function remember() {past.push(snapshot());if(past.length>50)past.shift();future=[];}
-function edit(action) {remember();action();sync();}
-function restore(from,to) {if(!from.length)return;to.push(snapshot());design=JSON.parse(from.pop());sync();}
-el('undo').onclick=()=>restore(past,future);
-el('redo').onclick=()=>restore(future,past);
-el('template').onchange=e=>edit(()=>{design=makeDesign(Number(e.target.value),design.dimensions);selected=0;});
-el('size').onchange=e=>edit(()=>{design.dimensions=e.target.value.split(',').map(Number);});
-el('background').onchange=e=>edit(()=>{design.background=e.target.value;});
-el('layers').onchange=e=>{selected=Number(e.target.value);sync();};
-for(const [id,key] of [['label','text'],['color','color'],['font','size']]) {
- el(id).onchange=e=>edit(()=>{design.layers[selected][key]=id==='font'?Number(e.target.value):e.target.value;});
-}
-el('add').onclick=()=>edit(()=>{design.layers.push(makeLayer('نص جديد',.73,56,themes[design.index][2]));selected=design.layers.length-1;});
-el('remove').onclick=()=>edit(()=>{design.layers.splice(selected,1);selected=Math.max(0,selected-1);});
-let drag=null;
-function pointer(event) {
- const bounds=canvas.getBoundingClientRect();
- return {x:(event.clientX-bounds.left)/bounds.width,y:(event.clientY-bounds.top)/bounds.height};
-}
-canvas.onpointerdown=event=>{
- const p=pointer(event);
- const hit=design.layers.map((layer,index)=>({layer,index})).reverse().find(({layer})=>{
-  ctx.font='700 '+layer.size+'px system-ui';
-  const width=Math.min(ctx.measureText(layer.text).width,canvas.width*.82);
-  return Math.abs(p.x-layer.x)<=width/(2*canvas.width)+.02 &&
-   Math.abs(p.y-layer.y)<=layer.size/canvas.height;
- })?.index;
- if(hit===undefined)return;
- selected=hit;
- const layer=design.layers[hit];
- drag={id:event.pointerId,dx:layer.x-p.x,dy:layer.y-p.y,moved:false};
- canvas.setPointerCapture(event.pointerId);sync();
-};
-canvas.onpointermove=event=>{
- if(drag?.id!==event.pointerId)return;
- if(!drag.moved){remember();drag.moved=true;}
- const p=pointer(event);
- const layer=design.layers[selected];
- layer.x=Math.max(.12,Math.min(.88,p.x+drag.dx));
- layer.y=Math.max(.14,Math.min(.86,p.y+drag.dy));
- paint();
-};
-canvas.onlostpointercapture=()=>{drag=null;sync();};
-const say=message=>{el('status').textContent=message;};
-const db = new Promise((resolve,reject)=>{
- try{
-  const request=indexedDB.open('zyad-studio',1);
-  request.onupgradeneeded=()=>request.result.createObjectStore('drafts',{keyPath:'id',autoIncrement:true});
-  request.onsuccess=()=>resolve(request.result);
-  request.onerror=()=>reject(request.error);
- }catch(error){reject(error);}
-});
-async function access(mode,action) {
- const database=await db;
- return new Promise((resolve,reject)=>{
-  const transaction=database.transaction('drafts',mode);
-  const request=action(transaction.objectStore('drafts'));
-  transaction.oncomplete=()=>resolve(request.result);
-  transaction.onabort=()=>reject(transaction.error);
- });
-}
-async function refreshDrafts() {
- const rows=await access('readonly',store=>store.getAll());
- el('drafts').replaceChildren();
- rows.reverse().forEach(row=>option(el('drafts'),row.id,row.name+' · '+new Date(row.saved).toLocaleString('ar-SA')));
- el('open').disabled=!rows.length;
-}
-function run(id,action) {
- el(id).onclick=async()=>{
-  el(id).disabled=true;
-  try{await action();}catch(error){if(error.name!=='AbortError')say(error.message||'تعذّر إكمال العملية.');}
-  finally{el(id).disabled=id==='open'&&!el('drafts').value;}
- };
-}
-run('save',async()=>{
- await access('readwrite',store=>store.add({name:design.layers[0]?.text||'بطاقة',saved:Date.now(),design}));
- await refreshDrafts();say('حُفظت نسخة على هذا الجهاز.');
-});
-run('open',async()=>{
- const row=await access('readonly',store=>store.get(Number(el('drafts').value)));
- if(!row)throw Error('المسودة غير متوفرة.');
- edit(()=>{design=row.design;selected=0;});say('فُتحت المسودة.');
-});
-async function imageFile() {
- const format=el('format').value;
- const mime='image/'+format;
- const blob=await new Promise(resolve=>canvas.toBlob(resolve,mime,.94));
- if(!blob||blob.type!==mime)throw Error('هذه الصيغة غير متاحة. جرّب PNG.');
- return new File([blob],'zyad-card.'+format,{type:mime});
-}
-function download(file) {
- const url=URL.createObjectURL(file);
- const link=document.createElement('a');link.href=url;link.download=file.name;
- document.body.append(link);link.click();link.remove();
- setTimeout(()=>URL.revokeObjectURL(url),30000);
- say('تم تجهيز الصورة للتنزيل.');
-}
-run('download',async()=>download(await imageFile()));
-run('share',async()=>{
- const file=await imageFile();
- if(navigator.canShare?.({files:[file]}))await navigator.share({files:[file]});
- else download(file);
-});
-sync();
-refreshDrafts().catch(()=>{el('open').disabled=true;say('تعذّر الوصول إلى المسودات المحلية.');});
+function edit(fn){remember();fn();sync();}
+function bind(id,action){el(id).onclick=()=>{try{action();}catch(e){say(e.message);}};}
+function run(id,fn){el(id).onclick=async()=>{const b=el(id);if(b.disabled)return;b.disabled=true;say('جارٍ تنفيذ العملية…');try{await fn();}catch(e){if(e.name!=='AbortError')say(e.message||'تعذر إكمال العملية');}finally{b.disabled=false;}};}
+el('template').onchange=e=>edit(()=>{d=createDesign(templates[Number(e.target.value)].id,d.date);selected=d.layers[1].id;});
+for(const [id,fn]of [['size',e=>d.dimensions=e.target.value.split(',').map(Number)],['card-date',e=>d.date=e.target.value],['design-name',e=>d.name=e.target.value],['background',e=>d.background.color=e.target.value],['gradient',e=>d.background.gradient=e.target.value]])el(id).onchange=e=>edit(()=>fn(e));
+el('layers').onchange=e=>{selected=e.target.value;sync();};
+for(const [id,key,numeric]of [['label','text'],['color','color'],['font','size',true],['weight','weight',true],['align','align'],['opacity','opacity',true],['layer-width','width',true],['layer-height','height',true],['line-height','lineHeight',true],['border','border',true],['font-family','font'],['target','target']])el(id).onchange=e=>{if(current()&&!current().locked){if(current().type==='qr'&&key==='text'){try{const u=new URL(e.target.value);if(!['https:','http:'].includes(u.protocol))throw Error();}catch{say('أدخل رابط HTTPS أو HTTP صالحًا');sync();return;}}edit(()=>current()[key]=numeric?Number(e.target.value):e.target.value);}};
+el('shadow').onchange=e=>edit(()=>{if(current()&&!current().locked)current().shadow=e.target.checked;});
+function add(type,props={}){edit(()=>{const l={id:crypto.randomUUID(),type,x:.5,y:.58,size:50,color:templates.find(t=>t.id===d.templateId)?.layers[0].color||'#123f35',width:.7,...props};d.layers.push(l);selected=l.id;});}
+bind('add',()=>add('text',{text:'اكتب شيئًا جميلًا'}));bind('add-shape',()=>add('shape',{width:.35,height:.15,opacity:.25}));bind('add-date',()=>{add('gregorian',{y:.7,size:28});add('hijri',{y:.75,size:25});});bind('add-countdown',()=>add('countdown',{target:saToday(),size:90}));bind('add-qr',()=>add('qr',{text:'https://youef.github.io/Zyad/',width:.18,height:.12,y:.7}));bind('add-watermark',()=>add('watermark',{text:'توقيعك هنا',y:.85,size:22}));
+let ornament=0;bind('add-decoration',()=>add('decoration',{src:'assets/decorations/'+['gold-frame','najdi-corner','arch','geometric-star','crescent','olive','palm','floral'][ornament++%8]+'.png',width:.5,height:.32,y:.65}));
+for(const [id,background]of [['upload',false],['background-upload',true]])el(id).onchange=async e=>{try{const src=await importImage(e.target.files[0]);if(background)edit(()=>d.background.asset=src);else add('image',{src,width:.35,height:.24});await put({id:crypto.randomUUID(),src,name:e.target.files[0].name},'assets');say('تمت إضافة الصورة محليًا');}catch(e){say(e.message);}finally{e.target.value='';}};
+bind('plain-background',()=>edit(()=>delete d.background.asset));bind('remove',()=>{if(current()?.locked)return;edit(()=>{d.layers=d.layers.filter(l=>l.id!==selected);selected=d.layers[0]?.id;});});bind('duplicate',()=>{if(current())add(current().type,{...structuredClone(current()),id:crypto.randomUUID(),y:Math.min(.88,current().y+.035)});});bind('center',()=>{if(current()&&!current().locked)edit(()=>current().x=.5);});
+for(const [id,key]of [['toggle-lock','locked'],['toggle-visible','hidden']])bind(id,()=>{if(current())edit(()=>current()[key]=!current()[key]);});
+for(const [id,delta]of [['layer-up',1],['layer-down',-1]])bind(id,()=>{const i=d.layers.findIndex(l=>l.id===selected),j=i+delta;if(i>=0&&j>=0&&j<d.layers.length&&!current().locked)edit(()=>[d.layers[i],d.layers[j]]=[d.layers[j],d.layers[i]]);});
+bind('undo',()=>{if(!past.length)return;future.push(snapshot());const previous=JSON.parse(past.pop());d=previous.design;selected=previous.selected;sync();});bind('redo',()=>{if(!future.length)return;past.push(snapshot());const next=JSON.parse(future.pop());d=next.design;selected=next.selected;sync();});
+bind('mode',()=>{el('advanced').hidden=!el('advanced').hidden;el('mode').textContent=el('advanced').hidden?'إظهار الخيارات المتقدمة':'إخفاء الخيارات المتقدمة';});el('guides').onchange=paint;el('zoom').onchange=e=>canvas.style.width=`${Math.round(340*Number(e.target.value))}px`;
+const pointer=e=>{const r=canvas.getBoundingClientRect();return {x:(e.clientX-r.left)/r.width,y:(e.clientY-r.top)/r.height};};
+canvas.onpointerdown=e=>{const p=pointer(e),[w,h]=d.dimensions;const hit=[...bounds].reverse().find(b=>p.x*w>=b.x&&p.x*w<=b.x+b.w&&p.y*h>=b.y&&p.y*h<=b.y+b.h);if(!hit)return;selected=hit.id;const l=current();if(l.locked)return;const resize=Math.abs(p.x*w-hit.x-hit.w)<35&&Math.abs(p.y*h-hit.y-hit.h)<35;drag={id:e.pointerId,x:p.x,y:p.y,ox:l.x,oy:l.y,size:l.size,width:l.width||.4,height:l.height||.2,resize,moved:false};canvas.setPointerCapture(e.pointerId);paint();};
+canvas.onpointermove=e=>{if(drag?.id!==e.pointerId)return;if(!drag.moved){remember();drag.moved=true;}const p=pointer(e),l=current();if(drag.resize){const ratio=Math.max(.3,Math.min(3,1+(p.x-drag.x)*3));if(['image','shape','decoration','logo','qr'].includes(l.type)){l.width=Math.min(.9,Math.max(.1,drag.width*ratio));l.height=Math.min(.8,Math.max(.05,drag.height*ratio));}else l.size=Math.min(220,Math.max(14,drag.size*ratio));}else{l.x=Math.max(.08,Math.min(.92,drag.ox+p.x-drag.x));l.y=Math.max(.12,Math.min(.88,drag.oy+p.y-drag.y));}paint();};
+canvas.onpointerup=e=>{if(canvas.hasPointerCapture(e.pointerId))canvas.releasePointerCapture(e.pointerId);drag=null;sync();};canvas.onlostpointercapture=()=>{drag=null;sync();};canvas.onkeydown=e=>{if(current()&&!current().locked&&['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){e.preventDefault();edit(()=>{const l=current();l.x=Math.max(.08,Math.min(.92,l.x+(e.key==='ArrowRight'?.01:e.key==='ArrowLeft'?-.01:0)));l.y=Math.max(.12,Math.min(.88,l.y+(e.key==='ArrowDown'?.01:e.key==='ArrowUp'?-.01:0)));});}};
+async function refreshDrafts(){const rows=(await getAll()).filter(x=>!['trash','archived'].includes(x.status));el('drafts').replaceChildren();rows.reverse().forEach(r=>option(el('drafts'),r.id,r.name));el('open').disabled=!rows.length;}
+run('save',async()=>{await saveDesign(d);await refreshDrafts();say('حُفظ التصميم على هذا الجهاز ✓');});run('open',async()=>{const row=await get(el('drafts').value);if(row)edit(()=>{d=row;selected=d.layers[1]?.id;});say('فُتح التصميم المحفوظ');});
+run('download',async()=>{download(await exportImage(d,el('format').value,Number(el('scale').value)));say('اكتمل تجهيز الصورة للتنزيل ✓');});run('share',async()=>{const file=await exportImage(d,el('format').value);if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file]});say('تمت المشاركة');}else{download(file);say('المشاركة المباشرة غير مدعومة؛ تم تنزيل الصورة');}});
+run('copy-text',async()=>{await navigator.clipboard.writeText(d.layers.filter(l=>!l.hidden).map(l=>layerText(l,d)).filter(Boolean).join('\n'));say('نُسخ نص البطاقة');});run('copy-link',async()=>{const u=new URL(location.href);u.search='';u.searchParams.set('template',d.templateId);u.searchParams.set('date',d.date);await navigator.clipboard.writeText(u.href);say('نُسخ رابط القالب والتاريخ؛ التعديلات الخاصة تبقى داخل مشروعك');});
+run('export-project',async()=>{download(new File([JSON.stringify(d,null,2)],'zyad-project.json',{type:'application/json'}));say('تم تصدير المشروع بطبقاته وصوره المرفوعة');});
+el('import-project').onchange=async e=>{try{const file=e.target.files[0];if(file.size>30*1024*1024)throw Error('الحد الأقصى للمشروع 30 ميغابايت');const copy=validateDesign(JSON.parse(await file.text()));copy.id=crypto.randomUUID();edit(()=>{d=copy;selected=d.layers[1]?.id;});say('استُورد المشروع بنجاح');}catch(e){say(e.message);}finally{e.target.value='';}};
+window.__studioReady=(async()=>{try{await copyLegacyDrafts();const params=new URLSearchParams(location.search);if(params.get('design')){const saved=await get(params.get('design'));if(saved)d=saved;}else if(!params.get('template')){const saved=await get('autosave','settings');if(saved?.design)d=validateDesign(saved.design);else{try{const cfg=await(await fetch('../data/config.json')).json();d=createDesign(selectTemplate(cfg.smartRules,saToday()),saToday());}catch{}}}if(/^\d{4}-\d{2}-\d{2}$/.test(params.get('date')||''))d.date=params.get('date');if(params.get('asset')){const a=await get(params.get('asset'),'assets');if(a)d.background.asset=a.src;}if(/^\d{4}-\d{2}-\d{2}$/.test(params.get('target')||'')){const count=d.layers.find(l=>l.type==='countdown');if(count)count.target=params.get('target');}if(params.get('title')){const title=d.layers.find(l=>l.id==='title');if(title)title.text=params.get('title').slice(0,160);}selected=d.layers[1]?.id;await refreshDrafts();sync();await paint();say('التصميم جاهز · التعديلات تُحفظ تلقائيًا على هذا الجهاز');return true;}catch(e){say(e.message);return false;}})();

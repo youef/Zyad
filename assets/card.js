@@ -48,11 +48,8 @@ export function remaining(item, iso) {
   if (item.mode === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(item.date||'')) {
     let target=item.date;
     if (item.repeat === 'yearly') {
-      let year=Number(iso.slice(0,4));
-      const monthDay=target.slice(5);
-      target=`${year}-${monthDay}`;
-      if (target < iso || !isRealDate(target)) target=`${year+1}-${monthDay}`;
-      if (!isRealDate(target)) target=`${year+2}-${monthDay}`;
+      const year=Number(iso.slice(0,4)),monthDay=target.slice(5);
+      for(let n=0;n<=8;n++){const candidate=`${year+n}-${monthDay}`;if(candidate>=iso&&isRealDate(candidate)){target=candidate;break;}}
     }
     return Math.max(0,daysBetween(iso,target));
   }

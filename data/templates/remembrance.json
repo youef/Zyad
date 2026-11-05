@@ -1,0 +1,107 @@
+{
+  "id": "remembrance",
+  "name": "لحظة تأمل",
+  "category": "عبارات",
+  "description": "لحظة تأمل · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#eee5d8",
+    "asset": "assets/backgrounds/remembrance.webp"
+  },
+  "layout": "center",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "الحمد لله",
+    "subtitle": "على النعم الصغيرة والأيام الجميلة"
+  },
+  "assets": [
+    "assets/backgrounds/remembrance.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#5a5546",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "الحمد لله",
+      "x": 0.5,
+      "y": 0.39199999999999996,
+      "size": 94,
+      "color": "#5a5546",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "على النعم الصغيرة والأيام الجميلة",
+      "x": 0.5,
+      "y": 0.55,
+      "size": 35,
+      "color": "#5a5546",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#5a5546",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#5a5546",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#5a5546",
+      "width": 0.7
+    }
+  ]
+}

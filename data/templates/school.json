@@ -1,0 +1,107 @@
+{
+  "id": "school",
+  "name": "خطوة معرفة",
+  "category": "مدرسة",
+  "description": "خطوة معرفة · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#e8d9b5",
+    "asset": "assets/backgrounds/school.webp"
+  },
+  "layout": "top",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "عامٌ مليء بالاكتشاف",
+    "subtitle": "كل سؤال بداية لفكرة"
+  },
+  "assets": [
+    "assets/backgrounds/school.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.18,
+      "size": 27,
+      "color": "#355745",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "عامٌ مليء بالاكتشاف",
+      "x": 0.5,
+      "y": 0.328,
+      "size": 94,
+      "color": "#355745",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "كل سؤال بداية لفكرة",
+      "x": 0.5,
+      "y": 0.44,
+      "size": 35,
+      "color": "#355745",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#355745",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#355745",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#355745",
+      "width": 0.7
+    }
+  ]
+}

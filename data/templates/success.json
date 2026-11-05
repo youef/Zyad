@@ -1,0 +1,107 @@
+{
+  "id": "success",
+  "name": "فرحة إنجاز",
+  "category": "نجاح",
+  "description": "فرحة إنجاز · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#472f44",
+    "asset": "assets/backgrounds/success.webp"
+  },
+  "layout": "center",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "تستحق هذا الفرح",
+    "subtitle": "للجهد ثمرة، وللنجاح حكاية"
+  },
+  "assets": [
+    "assets/backgrounds/success.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#f3dbbd",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "تستحق هذا الفرح",
+      "x": 0.5,
+      "y": 0.39199999999999996,
+      "size": 94,
+      "color": "#f3dbbd",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "للجهد ثمرة، وللنجاح حكاية",
+      "x": 0.5,
+      "y": 0.55,
+      "size": 35,
+      "color": "#f3dbbd",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#f3dbbd",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#f3dbbd",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#f3dbbd",
+      "width": 0.7
+    }
+  ]
+}

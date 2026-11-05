@@ -1,46 +1,10 @@
-const cacheName = 'zyad-public-v5-3';
-const revision = '?v=20261104r4';
-const assets = [
-  './', 'studio/', 'studio/studio.js', 'studio/studio.css', 'manifest.webmanifest', 'assets/favicon.svg', 'assets/app-180.png',
-  'assets/app-192.png', 'assets/app-512.png', 'assets/ornament.svg', 'assets/qr.png',
-  ...['main.js', 'style.css', 'card.js', 'planner.js', 'templates.js', 'design.js']
-    .flatMap(file => ['assets/' + file, 'assets/' + file + revision]),
-  ...['royal', 'modern', 'night', 'heritage', 'desert', 'pearl']
-    .map(id => 'images/templates/' + id + '.webp'),
-  'data/config.json', 'data/history.json'
-];
-const allowed = new Set(assets.map(path => new URL(path, self.registration.scope).href));
-self.addEventListener('install', event => {
-  event.waitUntil(caches.open(cacheName).then(cache => cache.addAll(assets)));
-});
-self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(keys
-    .filter(key => key.startsWith('zyad-public-') && key !== cacheName)
-    .map(key => caches.delete(key)))));
-});
-self.addEventListener('fetch', event => {
-  if (event.request.method !== 'GET') return;
-  const url = new URL(event.request.url);
-  const root = new URL(self.registration.scope);
-  if (url.origin !== root.origin) return;
-  if (event.request.mode === 'navigate' &&
-      [root.pathname, root.pathname + 'index.html'].includes(url.pathname)) {
-    url.href = root.href;
-  } else if (['data/config.json', 'data/history.json', 'images/templates/']
-    .some(path => url.pathname.startsWith(root.pathname + path))) {
-    url.search = '';
-  }
-  if (!allowed.has(url.href)) return;
-  event.respondWith((async () => {
-    const cache = await caches.open(cacheName);
-    try {
-      const response = await fetch(event.request);
-      if (response.ok && response.type === 'basic') await cache.put(url.href, response.clone());
-      return response;
-    } catch (error) {
-      const saved = await cache.match(url.href);
-      if (saved) return saved;
-      throw error;
-    }
-  })());
-});
+const VERSION='zyad-public-v6-1',LIMIT=90;
+const core=['','index.html','studio/','studio/studio.js','templates/','library/','settings/','admin/',
+ 'assets/app.css','assets/home.css','assets/style.css','assets/main.js','assets/home.js','assets/card.js','assets/design.js','assets/templates.js','assets/planner.js','assets/catalog.js','assets/engine.js','assets/storage.js','assets/common.js','assets/rules.js','assets/migration.js','assets/gallery.js','assets/library.js','assets/settings.js','assets/admin.js','assets/admin-plus.js',
+ 'assets/fonts/cairo-arabic.woff2','assets/vendor/qrcode.js','assets/vendor/fflate.js','manifest.webmanifest','assets/app-192.png','assets/app-512.png','assets/app-180.png','assets/favicon.svg','assets/qr.png','assets/ornament.svg','assets/icons.svg','data/config.json','data/history.json','data/assets.json','assets/backgrounds/saudi-emerald.webp'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(VERSION).then(c=>c.addAll(core.map(p=>new URL(p,self.registration.scope).href)))));
+self.addEventListener('message',e=>{if(e.data?.type==='ACTIVATE')self.skipWaiting();});
+self.addEventListener('activate',e=>e.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('zyad-public-')&&key!==VERSION)await caches.delete(key);await self.clients.claim();})()));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url),base=new URL(self.registration.scope);if(u.origin!==base.origin||!u.pathname.startsWith(base.pathname))return;u.search='';
+ e.respondWith((async()=>{const c=await caches.open(VERSION),saved=await c.match(u.href);if(/\.(png|webp|woff2)$/.test(u.pathname)&&saved)return saved;
+ try{const r=await fetch(e.request);if(r.ok&&r.type==='basic'&&Number(r.headers.get('content-length')||0)<8*1024*1024){await c.put(u.href,r.clone());const keys=await c.keys();const extra=keys.filter(k=>!core.some(p=>new URL(p,base).href===k.url));while(extra.length>LIMIT)await c.delete(extra.shift());}return r;}catch(err){if(saved)return saved;return new Response('غير متوفر دون اتصال. افتح هذا العنصر أثناء الاتصال أولًا.',{status:503,headers:{'Content-Type':'text/plain;charset=utf-8'}});}})());});

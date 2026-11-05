@@ -1,0 +1,118 @@
+{
+  "id": "countdown",
+  "name": "لحظة اقتراب",
+  "category": "عد تنازلي",
+  "description": "لحظة اقتراب · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#263e3b",
+    "asset": "assets/backgrounds/countdown.webp"
+  },
+  "layout": "countdown",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "نقترب من الفرح",
+    "subtitle": "كل يوم يقربنا من اللحظة"
+  },
+  "assets": [
+    "assets/backgrounds/countdown.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#f3ddaf",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "نقترب من الفرح",
+      "x": 0.5,
+      "y": 0.33,
+      "size": 94,
+      "color": "#f3ddaf",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "كل يوم يقربنا من اللحظة",
+      "x": 0.5,
+      "y": 0.45,
+      "size": 35,
+      "color": "#f3ddaf",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "count",
+      "type": "countdown",
+      "text": "",
+      "target": "",
+      "x": 0.5,
+      "y": 0.61,
+      "size": 132,
+      "color": "#f3ddaf",
+      "width": 0.8
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#f3ddaf",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#f3ddaf",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#f3ddaf",
+      "width": 0.7
+    }
+  ]
+}

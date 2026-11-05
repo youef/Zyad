@@ -1,0 +1,118 @@
+{
+  "id": "business",
+  "name": "توقيع العلامة",
+  "category": "تجاري",
+  "description": "توقيع العلامة · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#e9e2d5",
+    "asset": "assets/backgrounds/business.webp"
+  },
+  "layout": "business",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "تفاصيل تصنع الفرق",
+    "subtitle": "منتجك هنا • أضف وصفًا مختصرًا"
+  },
+  "assets": [
+    "assets/backgrounds/business.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.19,
+      "size": 27,
+      "color": "#263e35",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "تفاصيل تصنع الفرق",
+      "x": 0.5,
+      "y": 0.32,
+      "size": 94,
+      "color": "#263e35",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "منتجك هنا • أضف وصفًا مختصرًا",
+      "x": 0.5,
+      "y": 0.43,
+      "size": 35,
+      "color": "#263e35",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "photo",
+      "type": "shape",
+      "shape": "circle",
+      "x": 0.5,
+      "y": 0.61,
+      "width": 0.29,
+      "height": 0.17,
+      "color": "#263e35",
+      "opacity": 0.12
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#263e35",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#263e35",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#263e35",
+      "width": 0.7
+    }
+  ]
+}

@@ -8,13 +8,13 @@ const params=new URLSearchParams(location.search);
 const selected=params.get('date');dateInput.value=/^\d{4}-\d{2}-\d{2}$/.test(selected||'')?selected:saToday();
 $('#year').textContent=String(new Date().getFullYear());
 function say(msg){status.textContent=msg;}
-function syncQuickDays(){document.querySelectorAll('[data-quick-day]').forEach(button=>{
- const target=isoAdd(saToday(),Number(button.dataset.quickDay));
+function quickDate(n){if(n!==30)return isoAdd(saToday(),n);const [y,m,d]=saToday().split('-').map(Number),a=new Date(Date.UTC(y,m,1)),last=new Date(Date.UTC(a.getUTCFullYear(),a.getUTCMonth()+1,0)).getUTCDate();a.setUTCDate(Math.min(d,last));return a.toISOString().slice(0,10);}function syncQuickDays(){document.querySelectorAll('[data-quick-day]').forEach(button=>{
+ const target=quickDate(Number(button.dataset.quickDay));
  button.classList.toggle('active',dateInput.value===target);
  button.setAttribute('aria-pressed',String(dateInput.value===target));
 });}
 document.querySelectorAll('[data-quick-day]').forEach(button=>button.addEventListener('click',()=>{
- setDate(isoAdd(saToday(),Number(button.dataset.quickDay)));
+ setDate(quickDate(Number(button.dataset.quickDay)));
 }));
 function activeConfig(preset){
  const id=validPreset(preset)?preset:publishedConfig.design?.preset||'royal';

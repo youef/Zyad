@@ -1,0 +1,11 @@
+{
+  "status": "passed",
+  "checks": [
+    "mouse drag + undo",
+    "malformed project rejection",
+    "export failure + successful retry",
+    "2x PNG 2160x3840",
+    "v1 migration and backup",
+    "dark appearance persists"
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "id": "saudi-emerald",
+  "name": "زمرد السعودية",
+  "category": "سعودي",
+  "description": "زمرد السعودية · تكوين معماري قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#123f35",
+    "asset": "assets/backgrounds/saudi-emerald.webp"
+  },
+  "layout": "arch",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "يومٌ يشبه طموحك",
+    "subtitle": "مساحة لأحلام كبيرة"
+  },
+  "assets": [
+    "assets/backgrounds/saudi-emerald.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.24,
+      "size": 27,
+      "color": "#f6e6c5",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "يومٌ يشبه طموحك",
+      "x": 0.5,
+      "y": 0.387,
+      "size": 94,
+      "color": "#f6e6c5",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "مساحة لأحلام كبيرة",
+      "x": 0.5,
+      "y": 0.535,
+      "size": 35,
+      "color": "#f6e6c5",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#f6e6c5",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#f6e6c5",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#f6e6c5",
+      "width": 0.7
+    }
+  ]
+}

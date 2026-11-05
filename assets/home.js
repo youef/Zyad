@@ -1,0 +1,6 @@
+import {toast} from './common.js';import {isoAdd,saToday,renderPoster,getPngBlob} from './card.js';import {download} from './engine.js';
+await window.__posterReady;
+const status=document.getElementById('page-status');const weekly=document.createElement('button');weekly.className='btn secondary';weekly.textContent='حزمة أسبوعية ZIP';document.querySelector('.action-buttons').append(weekly);
+weekly.onclick=async()=>{if(weekly.disabled)return;weekly.disabled=true;try{const cfg=await(await fetch('data/config.json')).json(),files={};for(let i=0;i<7;i++){status.textContent=`تجهيز بطاقة ${i+1} من 7…`;const date=isoAdd(document.getElementById('chosen-date').value||saToday(),i),c=document.createElement('canvas');await renderPoster(c,cfg,date);files[date+'.png']=new Uint8Array(await(await getPngBlob(c)).arrayBuffer());}download(new File([ZyadZip.zipSync(files,{level:0})],'zyad-week.zip',{type:'application/zip'}));status.textContent='اكتملت الحزمة الأسبوعية';}catch(e){toast(e.message);}finally{weekly.disabled=false;}};
+const modern=document.createElement('a');modern.className='btn primary';modern.href='studio/';modern.textContent='＋ صمّم بطاقة';document.querySelector('.action-buttons').prepend(modern);
+const name=document.getElementById('brand-title');name.textContent='بطاقتي الذكية';document.title='بطاقتي الذكية | Zyad Smart Cards';

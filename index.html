@@ -11,6 +11,8 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/style.css?v=20261104r4">
+  <link rel="stylesheet" href="assets/app.css">
+  <link rel="stylesheet" href="assets/home.css">
 </head>
 <body class="ios-home">
   <header class="site-header"><div class="wrap topbar">
@@ -18,10 +20,11 @@
     <nav aria-label="التنقل"><a class="active" href="#poster-section">البطاقة</a><a href="#template-gallery">القوالب</a><a href="#smart-planner">التقويم</a><a href="#archive">الأرشيف</a><a class="admin-nav" href="admin/">لوحة الإدارة <span aria-hidden="true">↗</span></a></nav>
   </div></header>
   <main class="wrap">
+    <div class="home-welcome"><span class="eyebrow">صُنع ليشبهك / بطاقتي الذكية</span><div><a href="settings/">الإعدادات</a><button data-theme-toggle aria-label="تبديل المظهر">◐</button></div></div>
     <section class="hero" id="poster-section">
       <div class="hero-copy">
         <span class="eyebrow"><span class="live-dot"></span> تتحدث يوميًا بتوقيت السعودية</span>
-        <h1>بطاقتك اليوم<br><em>بتصميمك أنت.</em></h1>
+        <h1>لحظاتك الجميلة،<br><em>تستحق بطاقة.</em></h1>
         <p>تقويم هجري وميلادي، مواعيد الرواتب والدعم، الفصول والمناسبات. اختر التاريخ، واحفظ بطاقتك، وشاركها بسهولة.</p>
         <div class="date-toolbar"><label for="chosen-date">تاريخ البطاقة</label><div class="date-controls"><button class="icon-btn" type="button" id="prev" aria-label="اليوم السابق">→</button><input id="chosen-date" type="date" aria-label="تاريخ البطاقة"><button class="icon-btn" type="button" id="next" aria-label="اليوم التالي">←</button><button id="today" type="button" class="subtle">اليوم</button></div></div>
         <div class="quick-cards"><span class="quick-cards-caption">بطاقات جاهزة للتوليد</span>
@@ -29,7 +32,7 @@
   <button type="button" data-quick-day="0">بطاقة اليوم</button>
   <button type="button" data-quick-day="1">بطاقة الغد</button>
   <button type="button" data-quick-day="7">بعد أسبوع</button>
-  <button type="button" data-quick-day="30">بعد 30 يومًا</button>
+  <button type="button" data-quick-day="30">بعد شهر</button>
  </div></div>
  <div class="action-buttons"><button class="btn primary" id="download" type="button">↓ تنزيل PNG</button><button class="btn secondary" id="download-4k" type="button">تنزيل 4K</button><button class="btn secondary" id="share" type="button">↗ مشاركة البطاقة</button></div>
         <p class="help-note" id="page-status" role="status">يتم تحميل البطاقة...</p>
@@ -37,6 +40,7 @@
       </div>
       <div class="poster-shell"><div class="poster-top"><span>معاينة البطاقة</span><span class="poster-quality">1080 × 1920</span></div><canvas width="1080" height="1920" id="poster" aria-label="البطاقة اليومية"></canvas><div class="poster-bottom">اسحب الصورة أو نزّلها للمشاركة</div></div>
     </section>
+    <section id="creative-templates"><div class="home-studio-banner"><div><span class="eyebrow">مساحتك للإبداع</span><h2>الفكرة منك. والتفاصيل عليك.</h2><p>24 خلفية أصلية، محرر طبقات، وتصدير بكل المقاسات التي تحتاجها.</p></div><a class="button" href="studio/">افتح الاستوديو ←</a></div><div class="home-template-heading"><div><span class="eyebrow">مختارات من الاستوديو</span><h2>ابدأ بقالب، واترك أثرك.</h2></div><a href="templates/" class="button">كل القوالب الـ24 ←</a></div><div id="smart-template-grid" data-limit="8" class="design-grid"></div></section>
     <section id="template-gallery" class="template-public-section">
       <div class="section-head"><div><span class="eyebrow">مكتبة التصاميم</span><h2>اختر قالب البطاقة</h2></div>
        <p>كل تصميم يعمل فعليًا. جرّبه مباشرة أو نزّل صورته بالتاريخ الذي اخترته.</p></div>
@@ -48,9 +52,12 @@
   <footer class="site-footer"><div class="wrap footer-content"><span>© <span id="year"></span> <span id="footer-brand">بطاقتي اليومية</span></span><span>صُممت خصيصًا للبطاقات والتقاويم العربية</span></div></footer>
   <nav class="app-tabs" aria-label="أقسام بطاقتي الذكية">
     <a href="#poster-section">الرئيسية</a><a href="#smart-planner">التقويم</a>
-    <a href="studio/">إنشاء بطاقة</a><a href="#template-gallery">القوالب</a><a href="#archive">الأرشيف</a>
+    <a href="studio/">إنشاء بطاقة</a><a href="templates/">القوالب</a><a href="library/">مكتبتي</a>
   </nav>
   <p class="connection-note" id="connection-note" role="status" hidden>أنت دون اتصال. تُعرض البيانات المحفوظة على الجهاز.</p>
   <script type="module" src="assets/main.js?v=20261104r4"></script>
+  <script src="assets/vendor/fflate.js"></script>
+  <script type="module" src="assets/gallery.js"></script>
+  <script type="module" src="assets/home.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,curr
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
 const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v4';
+window.zyadAdmin={getConfig:()=>config,changed:()=>changed()};
 let config=null,published=null,token='',sha='',timer=0;
 dateField.value=saToday();
 const syncFields=()=>document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});
@@ -173,7 +174,7 @@ function base64utf8(s){const bytes=new TextEncoder().encode(s);let value='';cons
 async function api(url,method='GET',body=null){const r=await fetch(url,{method,headers:{'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Authorization':'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(r.status===401?'رمز GitHub غير صحيح':r.status===403?'لا توجد صلاحية كافية أو انتهى الحد المسموح':r.status===409?'تغير الملف في GitHub خلال التعديل؛ حدّث الصفحة وراجع التغييرات':j.message||`HTTP ${r.status}`);return j;}
 function getFile(){return api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH+'?ref=main');}
 async function publish(){if(!config)return;token=$('#github-token').value.trim();if(!token){tab('publish');setStatus('للنشر أدخل رمز GitHub أولًا. لا تحتاجه للمعاينة أو تنزيل البطاقة.',false);return;}const button=$('#publish-config');button.disabled=true;button.textContent='جارٍ الحفظ...';setStatus('جارٍ التحقق من الملف وحفظ الإعدادات...');try{
-  const remote=await getFile();sha=remote.sha;
+  const remote=await getFile();const latest=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(remote.content.replace(/\s/g,'')),c=>c.charCodeAt(0))));if(JSON.stringify(latest)!==JSON.stringify(published))throw Error('تغيرت الإعدادات المنشورة منذ فتح اللوحة. صدّر مسودتك ثم أعد تحميل الصفحة قبل النشر لمنع استبدال تغييرات أخرى.');sha=remote.sha;
   const body={message:'Update daily card content and design from admin panel',content:base64utf8(JSON.stringify(config,null,2)+'\n'),sha,branch:'main'};
   await api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH,'PUT',body);
   published=cloneConfig(config);localStorage.removeItem(DRAFT_KEY);draftStatus.textContent='تم حفظ نسخة الإدارة على GitHub';setStatus('نجح حفظ التغييرات في main. سيُعاد إنشاء البطاقة ونشر الموقع بواسطة GitHub Actions. راقب سجل Actions للتأكد من اكتمال النشر.');

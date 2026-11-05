@@ -1,0 +1,111 @@
+{
+  "id": "founding-day",
+  "name": "جذور راسخة",
+  "category": "تأسيس",
+  "description": "جذور راسخة · تكوين تحريري قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#765541",
+    "asset": "assets/backgrounds/founding-day.webp"
+  },
+  "layout": "editorial",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "جذورنا حكاية",
+    "subtitle": "اعتزاز بالماضي وشغف بالمستقبل"
+  },
+  "assets": [
+    "assets/backgrounds/founding-day.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.59,
+      "y": 0.19,
+      "size": 27,
+      "color": "#533b26",
+      "weight": 500,
+      "width": 0.64,
+      "align": "right"
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "جذورنا حكاية",
+      "x": 0.59,
+      "y": 0.368,
+      "size": 94,
+      "color": "#533b26",
+      "weight": 800,
+      "width": 0.64,
+      "align": "right"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "اعتزاز بالماضي وشغف بالمستقبل",
+      "x": 0.59,
+      "y": 0.5,
+      "size": 35,
+      "color": "#533b26",
+      "weight": 500,
+      "width": 0.64,
+      "align": "right"
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.59,
+      "y": 0.76,
+      "size": 28,
+      "color": "#533b26",
+      "width": 0.64,
+      "align": "right"
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.59,
+      "y": 0.8,
+      "size": 23,
+      "color": "#533b26",
+      "width": 0.64,
+      "align": "right"
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#533b26",
+      "width": 0.7
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "generator": "OpenAI built-in image_gen (not API/CLI)",
+  "createdAt": "2026-11-04",
+  "backgroundPromptTemplate": "Original premium Saudi greeting card background, vertical 9:16. {style} Keep central 65% calm empty negative space for Arabic text added by software, top/bottom 12% safe. No text, letters, dates, numbers, logos or watermark. Flat usable artwork not mockup.",
+  "decorationPromptTemplate": "Create a single isolated decorative PNG asset for a premium Saudi greeting card editor. {style} Genuine fully transparent background. Antique quiet gold and subtle natural material texture. No text, letters, numbers, logos or watermark. Crisp edges, generous transparent padding.",
+  "backgrounds": {
+    "saudi-emerald": "Premium Saudi emerald and warm ivory; sculptural Najdi architectural arches framing the edges, fine quiet brushed antique gold lines, deep emerald matte plaster, soft studio shadows and subtle paper texture; calm central 65%, blank top and bottom 12%; no text, dates, logos, numbers or watermark.",
+    "royal-gold": "Deep royal green velvet paper with a fine antique gold double rectangular border and subtle embossed fan corner details, noble understated luxury.",
+    "islamic-geometry": "Muted petrol blue and ivory, intricate eight-point Islamic geometry confined to the top quarter and outer margins, subtle embossed gold line work.",
+    "ivory-modern": "Warm ivory handmade paper, large sculptural cream folded-paper curves from the bottom left, soft shadows, minimal contemporary Swiss editorial composition.",
+    "midnight": "Midnight navy textured sky with sparse delicate golden constellation points at upper corners, silky curved moonlit hills at the bottom.",
+    "desert-sands": "Layered sunlit Saudi sand dunes in warm beige and dusty peach along the lower fifth, faint grain, broad calm warm ivory sky.",
+    "najdi": "Authentic Najdi mud architecture silhouette low at the base, ochre plaster paper, fine traditional triangular details framing one side.",
+    "national-day": "Forest green monochrome paper landscape with restrained palm frond relief at bottom and tiny gold rays in corners; no flags or emblems.",
+    "founding-day": "Sepia archival parchment, delicate silhouette of old Diriyah adobe buildings at bottom, restrained geometric Sadu woven edge in dark brown.",
+    "ramadan": "Deep teal blue night, one small luminous antique brass hanging lantern in upper corner, very subtle pointed arch relief framing an empty center.",
+    "eid": "Warm pearl ivory, gold confetti sparsely near corners, delicate translucent pale gold ribbons low along edge, airy festive elegance.",
+    "friday": "Sage and ivory paper, a faint mosque pointed-arch silhouette embossed as concentric curves around sides, olive sprig tucked into lower corner.",
+    "remembrance": "Warm linen paper, a single soft botanical shadow crossing lower corner and a delicate concentric circular gold line near the top, pure calm minimalism.",
+    "salary": "Dark muted jade, restrained elegant gold rounded rectangular ledger lines along bottom quarter, thin grid and tiny coin-like metallic circular accents at corners.",
+    "school": "Warm ivory and forest green, sculptural paper-cut open-book forms at bottom, tiny pencil and abstract circular learning motifs in upper corner.",
+    "graduation": "Deep emerald paper with a realistic tiny black graduation cap and thin antique gold tassel tucked low in one corner, subtle laurel relief in margins, dignified academic luxury.",
+    "wedding": "Champagne ivory silk paper, delicate white jasmine and fine pearl-like points around lower corners, thin sweeping gold arch, airy romantic understated luxury.",
+    "newborn": "Pale sage cream watercolor paper, soft tiny crescent mobile and cloud details only near upper corners, botanical edges, gender-neutral gentle welcome.",
+    "success": "Muted plum and warm champagne, minimal bursts of gold confetti near outer margins and elegant sculptural folded ribbon at lower edge, celebratory quiet center.",
+    "business": "Warm greige modern luxury brand backdrop, asymmetric abstract architectural stone plinth low at left, olive green geometric shadow along right edge, large quiet editorial center.",
+    "winter": "Muted slate blue winter watercolor, layered misty mountain silhouette low at base, tiny silver fern relief framing lower edge, calm luminous ivory center.",
+    "summer": "Warm pale apricot and sand, soft abstract sun disc near upper corner, linen paper with tropical leaf shadows low at edges, modern Mediterranean Saudi summer feeling.",
+    "countdown": "Dark forest jade, concentric fine brass circles cropped at corners like an elegant clock, faint warm spotlight in the empty center, luxurious restrained anticipation.",
+    "personal-story": "Pale warm sage paper, asymmetric torn-paper collage details only at lower edge, soft botanical shadow, a thin sculptural ivory ribbon near top left, editorial personal journal."
+  },
+  "decorations": {
+    "gold-frame": "An extremely fine antique-gold rectangular double-line border frame with tiny refined floral knots at four corners, empty transparent interior.",
+    "najdi-corner": "One ornamental Najdi traditional triangular corner motif in brushed antique gold, simple stepped geometry.",
+    "arch": "An elegant thin antique gold Saudi architectural pointed arch outline, empty interior, refined double contour.",
+    "geometric-star": "One delicate Islamic eight-point geometric star rosette, intricate thin antique gold lines, symmetrical luxury ornament.",
+    "crescent": "One elegant slender antique-brass crescent moon, gently textured, with three tiny golden star points clustered beside it.",
+    "olive": "One slender graceful olive branch spray, desaturated sage leaves and a thin quiet gold stem, natural refined botanical.",
+    "palm": "One single decorative Saudi palm frond, delicately etched gold leaf silhouette, symmetrical long graceful leaves.",
+    "floral": "One fine white jasmine floral corner spray, ivory petals and desaturated sage leaves, subtle soft natural dimensional texture."
+  }
+}

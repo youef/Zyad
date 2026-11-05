@@ -62,7 +62,7 @@ function detail(record){
   const hero=elem('div','planner-modal-hero');
   attach(hero,elem('span','planner-chip',record.category),elem('h3','',record.title),elem('p','',item.summary||item.details||'تفاصيل هذا الحدث'));
   const facts=elem('div','planner-modal-facts');
-  for(const [k,v]of [['الميلادي',dayLabel(record.date)],['الهجري',hijriDate(record.date,data)],['المتبقي',remainingLabel(record.days)],['التكرار',eventType(item)]]){
+  for(const [k,v]of [['الميلادي',dayLabel(record.date)],['الهجري',hijriDate(record.date,data)],['المتبقي',remainingLabel(record.days)],['التكرار',eventType(item)],['المنطقة الزمنية','Asia/Riyadh'],['حالة الموعد',item.custom?'مخصص':item.source?'راجع المصدر المرفق':'تقديري — راجع الجهة المختصة']]){
     attach(facts,attach(elem('div'),elem('small','',k),elem('strong','',v)));
   }
   const body=elem('div','planner-modal-body');
@@ -80,6 +80,8 @@ function detail(record){
   const view=elem('button','btn primary','عرض بطاقة يوم الحدث');view.type='button';
   view.onclick=()=>{dialog.close();const input=document.getElementById('chosen-date');if(input){input.value=record.date;input.dispatchEvent(new Event('change'));}document.getElementById('poster-section')?.scrollIntoView({behavior:'smooth'});};
   actions.append(view);
+  const create=elem('a','btn primary','إنشاء بطاقة من الحدث');create.href='studio/?template=countdown&date='+saToday()+'&target='+record.date+'&title='+encodeURIComponent(record.title);actions.append(create);
+  const share=elem('button','btn secondary','مشاركة الحدث');share.onclick=async()=>{try{const text=record.title+' — '+dayLabel(record.date);if(navigator.share)await navigator.share({title:record.title,text});else await navigator.clipboard.writeText(text);}catch(e){if(e.name!=='AbortError')share.textContent='تعذرت المشاركة';}};actions.append(share);
   const ics=elem('button','btn secondary','إضافة إلى تقويم الجوال');ics.type='button';
   ics.onclick=()=>{
     const escape=s=>String(s||'').replaceAll('\\','\\\\').replaceAll('\n','\\n').replaceAll(',','\\,').replaceAll(';','\\;');
@@ -93,7 +95,7 @@ function detail(record){
     const url=URL.createObjectURL(new Blob([value],{type:'text/calendar;charset=utf-8'}));
     const a=document.createElement('a');a.href=url;a.download='zyad-event-'+record.date+'.ics';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),5000);
   };actions.append(ics);
-  const href=validHref(item.link);if(href){const link=elem('a','btn secondary','رابط الجهة');link.href=href;link.target='_blank';link.rel='noopener noreferrer';actions.append(link);}
+  const href=validHref(item.source||item.link);if(href){const link=elem('a','btn secondary','رابط الجهة / المصدر');link.href=href;link.target='_blank';link.rel='noopener noreferrer';actions.append(link);}
   attach(dialog,close,hero,facts,body,future,actions);
   dialog.showModal();
 }
@@ -140,7 +142,7 @@ function render(){
   renderCalendar();
 }
 export function mountPlanner(config,selected=saToday()){
-  data=config;fromDate=selected;horizon=[6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;rows=futureEvents(data,fromDate,horizon);
+  let custom=[];try{custom=JSON.parse(localStorage.getItem('zyad-custom-events')||'[]');}catch{}data={...config,counters:[...(config.counters||[]),...custom]};fromDate=selected;horizon=[1,3,6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;rows=futureEvents(data,fromDate,horizon);
   container=document.getElementById('smart-planner');
   if(!container)return;
   if(!container.dataset.initialized){
@@ -153,10 +155,16 @@ export function mountPlanner(config,selected=saToday()){
     attach(heading,h,stats);
     const range=elem('label','planner-range','مدى عرض المستقبل');
     const rangePicker=elem('select');rangePicker.setAttribute('aria-label','عدد الأشهر القادمة');
-    for(const n of [6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);rangePicker.append(option);}
+    for(const n of [1,3,6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);rangePicker.append(option);}
     rangePicker.value=String(horizon);
     rangePicker.onchange=()=>{horizon=Number(rangePicker.value);rows=futureEvents(data,fromDate,horizon);chosenMonth=monthKey(fromDate);chosenDate='';render();};
     range.append(rangePicker);
+    const add=elem('button','btn secondary','＋ حدث شخصي');add.type='button';add.onclick=()=>{
+      const form=elem('dialog','planner-dialog'),title=elem('h3','','حدث على هذا الجهاز'),fields={};
+      const close=elem('button','','إغلاق');close.onclick=()=>{form.close();form.remove();};form.append(close,title);
+      for(const [key,label,type]of [['label','اسم الحدث','text'],['date','التاريخ الميلادي','date'],['day','يوم الشهر / اليوم الهجري','number'],['hijriMonth','الشهر الهجري','number'],['details','الوصف','text'],['location','المكان','text'],['link','الرابط','url']]){const wrap=elem('label','field',label),input=elem('input');input.type=type;input.maxLength=350;fields[key]=input;wrap.append(input);form.append(wrap);}fields.date.value=selected;fields.day.value='1';fields.hijriMonth.value='9';
+      const mode=elem('select');for(const [v,t]of [['once','مرة واحدة'],['yearly','سنوي'],['monthly','شهري'],['hijri','هجري سنوي']]){const o=elem('option','',t);o.value=v;mode.append(o);}const modeLabel=elem('label','field','التكرار');modeLabel.append(mode);form.append(modeLabel);const save=elem('button','btn primary','حفظ الحدث'),msg=elem('p');form.append(save,msg);
+      save.onclick=()=>{if(!fields.label.value.trim()){msg.textContent='أدخل اسم الحدث';return;}const m=mode.value,rec={id:crypto.randomUUID(),label:fields.label.value.trim(),mode:m==='once'||m==='yearly'?'date':m,repeat:m==='yearly'?'yearly':'none',date:fields.date.value,day:Math.max(1,Math.min(31,Number(fields.day.value)||1)),hijriMonth:Math.max(1,Math.min(12,Number(fields.hijriMonth.value)||9)),hijriDay:Math.max(1,Math.min(30,Number(fields.day.value)||1)),details:fields.details.value,location:fields.location.value,link:fields.link.value,category:'أحداثي',custom:true,enabled:true};try{const list=JSON.parse(localStorage.getItem('zyad-custom-events')||'[]');if(list.length>=100)throw Error('الحد الأقصى 100 حدث شخصي');list.push(rec);localStorage.setItem('zyad-custom-events',JSON.stringify(list));data.counters.push(rec);rows=futureEvents(data,fromDate,horizon);form.close();form.remove();render();}catch(e){msg.textContent=e.message;}};document.body.append(form);form.showModal();};range.append(add);
     const months=elem('div','planner-months');months.id='planner-months';
     const content=elem('div','planner-content'),aside=elem('aside','planner-calendar'),right=elem('div','planner-results');
     const top=elem('div','planner-calendar-head');const title=elem('h3');title.id='planner-current-month';

@@ -1,0 +1,107 @@
+{
+  "id": "wedding",
+  "name": "وعدٌ جميل",
+  "category": "زواج",
+  "description": "وعدٌ جميل · تكوين معماري قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#eee4d6",
+    "asset": "assets/backgrounds/wedding.webp"
+  },
+  "layout": "arch",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "بارك الله لكما",
+    "subtitle": "بداية حكاية تجمع قلبين"
+  },
+  "assets": [
+    "assets/backgrounds/wedding.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.24,
+      "size": 27,
+      "color": "#6d6250",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "بارك الله لكما",
+      "x": 0.5,
+      "y": 0.405,
+      "size": 94,
+      "color": "#6d6250",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "بداية حكاية تجمع قلبين",
+      "x": 0.5,
+      "y": 0.535,
+      "size": 35,
+      "color": "#6d6250",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#6d6250",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#6d6250",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#6d6250",
+      "width": 0.7
+    }
+  ]
+}

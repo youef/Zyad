@@ -1,0 +1,107 @@
+{
+  "id": "national-day",
+  "name": "دارنا",
+  "category": "وطني",
+  "description": "دارنا · تكوين معاصر قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#0b583d",
+    "asset": "assets/backgrounds/national-day.webp"
+  },
+  "layout": "top",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "لنا في الدار حكاية",
+    "subtitle": "فخر يمتد، وطموح يتجدد"
+  },
+  "assets": [
+    "assets/backgrounds/national-day.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.18,
+      "size": 27,
+      "color": "#f8edce",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "لنا في الدار حكاية",
+      "x": 0.5,
+      "y": 0.31,
+      "size": 94,
+      "color": "#f8edce",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "فخر يمتد، وطموح يتجدد",
+      "x": 0.5,
+      "y": 0.44,
+      "size": 35,
+      "color": "#f8edce",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#f8edce",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#f8edce",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#f8edce",
+      "width": 0.7
+    }
+  ]
+}

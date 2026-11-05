@@ -1,0 +1,107 @@
+{
+  "id": "friday",
+  "name": "نور الجمعة",
+  "category": "جمعة",
+  "description": "نور الجمعة · تكوين معماري قابل للتحرير",
+  "version": 2,
+  "updatedAt": "2026-11-04",
+  "supportedSizes": [
+    [
+      1080,
+      1920
+    ],
+    [
+      1080,
+      1080
+    ],
+    [
+      1080,
+      1350
+    ],
+    [
+      1920,
+      1080
+    ]
+  ],
+  "background": {
+    "color": "#e9eee1",
+    "asset": "assets/backgrounds/friday.webp"
+  },
+  "layout": "arch",
+  "safeAreas": {
+    "top": 0.12,
+    "bottom": 0.12,
+    "sides": 0.08
+  },
+  "defaultValues": {
+    "title": "جمعة طيبة",
+    "subtitle": "أمنيات بالخير والطمأنينة لكم"
+  },
+  "assets": [
+    "assets/backgrounds/friday.png"
+  ],
+  "layers": [
+    {
+      "id": "tag",
+      "type": "text",
+      "text": "بطاقتي الذكية",
+      "x": 0.5,
+      "y": 0.24,
+      "size": 27,
+      "color": "#2c5144",
+      "weight": 500,
+      "width": 0.8
+    },
+    {
+      "id": "title",
+      "type": "text",
+      "text": "جمعة طيبة",
+      "x": 0.5,
+      "y": 0.42300000000000004,
+      "size": 94,
+      "color": "#2c5144",
+      "weight": 800,
+      "width": 0.8,
+      "align": "center"
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "text": "أمنيات بالخير والطمأنينة لكم",
+      "x": 0.5,
+      "y": 0.535,
+      "size": 35,
+      "color": "#2c5144",
+      "weight": 500,
+      "width": 0.78
+    },
+    {
+      "id": "gregorian",
+      "type": "gregorian",
+      "x": 0.5,
+      "y": 0.76,
+      "size": 28,
+      "color": "#2c5144",
+      "width": 0.8
+    },
+    {
+      "id": "hijri",
+      "type": "hijri",
+      "x": 0.5,
+      "y": 0.8,
+      "size": 23,
+      "color": "#2c5144",
+      "width": 0.8
+    },
+    {
+      "id": "signature",
+      "type": "watermark",
+      "text": "ZYAD SMART CARDS",
+      "x": 0.5,
+      "y": 0.87,
+      "size": 19,
+      "color": "#2c5144",
+      "width": 0.7
+    }
+  ]
+}
