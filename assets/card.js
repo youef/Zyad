@@ -1,6 +1,11 @@
 import {renderPremium} from './design.js?v=20261104r4';
 import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js';
+import {renderListCalendar} from './list-calendar.js';
+import {drawDailyPanel} from './daily-panel.js';
+import {resolveContent} from './daily.js';
+import {fontStack,loadTypeface} from './typography.js';
+import './vendor/qrcode.js';
 /* Shared pure card renderer: no user text is inserted into HTML. */
 const W = 1080, H = 1920;
 const imageCache = new Map();
@@ -85,12 +90,12 @@ function roundedRect(ctx,x,y,w,h,r,fill,stroke=null,lineWidth=1) {
   if(fill){ctx.fillStyle=fill;ctx.fill();}if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lineWidth;ctx.stroke();}
 }
 function centralText(ctx,text,x,y,size,color,weight='700',maxWidth) {
-  ctx.save();ctx.direction='rtl';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.font=`${weight} ${size}px ${FONT}`;
-  if(maxWidth){while(ctx.measureText(String(text)).width>maxWidth&&size>13){size-=1;ctx.font=`${weight} ${size}px ${FONT}`;}}
+  ctx.save();ctx.direction='rtl';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=color;ctx.font=`${weight} ${size}px ${ctx.zyadFont||FONT}`;
+  if(maxWidth){while(ctx.measureText(String(text)).width>maxWidth&&size>13){size-=1;ctx.font=`${weight} ${size}px ${ctx.zyadFont||FONT}`;}}
   ctx.fillText(String(text),x,y);ctx.restore();
 }
 function linesFor(ctx,raw,maxWidth,fontSize,maxLines=3) {
-  ctx.font=`700 ${fontSize}px ${FONT}`;
+  ctx.font=`700 ${fontSize}px ${ctx.zyadFont||FONT}`;
   const words=String(raw||'').replace(/\s+/g,' ').trim().split(' ').filter(Boolean);
   const result=[];let line='';
   for(const word of words){const next=line?`${line} ${word}`:word;if(ctx.measureText(next).width>maxWidth&&line){result.push(line);line=word;}else{line=next;}}
@@ -137,16 +142,20 @@ export function cloneConfig(config) {return JSON.parse(JSON.stringify(config));}
 export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   if(!canvas||!config)throw Error('لا توجد إعدادات صالحة للبطاقة');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) iso=saToday();
+  config=resolveContent(config,iso);await loadTypeface(config.design?.fontFamily);
   await (document.fonts?.ready ?? Promise.resolve());
   const root=options.rootPrefix || 'assets/';
   const imageSrc=String(config.brand?.logo||'');
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg)$/i.test(imageSrc);
   const definition=presetInfo(config.design?.preset),art=options.preview?definition.calendar?.background:definition.calendar?.original;
-  const [logo, qr, background]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,config.settings?.showQr?fetchImage(root+'qr.png'):null,art?fetchImage(new URL('../'+art,import.meta.url).href):null]);
+  const qrImage=async()=>{if(config.settings?.showQr===false)return null;if(config.card?.qrUrl){const u=new URL(config.card.qrUrl);if(!['http:','https:'].includes(u.protocol))throw Error('رابط QR غير صالح');const cv=document.createElement('canvas');await globalThis.ZyadQR.toCanvas(cv,u.href,{width:320,margin:1,errorCorrectionLevel:'M'});return cv;}return fetchImage(root+'qr.png');};
+  const [logo, qr, background]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,qrImage(),art?fetchImage(new URL('../'+art,import.meta.url).href):null]);
   if(art&&!background)throw Error('تعذر تحميل خلفية القالب. تحقق من الاتصال وأعد المحاولة.');
   const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
+  ctx.zyadFont=fontStack(config.design?.fontFamily);
+  if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
   if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
   const c=config.theme||{},green=c.green||'#064b43',soft=c.greenLight||'#37765e',gold=c.gold||'#c99a42',cream=c.cream||'#f8f5ea',ink=c.ink||'#103f38';
   if((config.design?.preset||'royal')!=='heritage') { renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate}); return canvas; }
@@ -169,7 +178,8 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   roundedRect(ctx,285,380,510,61,18,'rgba(204,157,67,.14)',gold,2);
   centralText(ctx,config.brand?.name||'البطاقة اليومية',540,409,36,ink,'800',485);
   // Quote block.
-  if(config.settings?.showQuote!==false){
+  if(config.settings?.showQuote!==false&&config.daily){drawDailyPanel(ctx,config,55,468,970,254,{gold,ink});}
+  else if(config.settings?.showQuote!==false){
     ctx.save();ctx.direction='rtl';ctx.textAlign='center';
     let fontSize=39;let lines=linesFor(ctx,config.card?.quote||'',935,fontSize,4);
     while(lines.length>3 && fontSize>30){fontSize-=2;lines=linesFor(ctx,config.card?.quote||'',935,fontSize,4);}

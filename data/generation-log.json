@@ -2,6 +2,12 @@
   {
     "date": "2026-11-05",
     "status": "success",
+    "templateId": "founding-day",
+    "generatedAt": "2026-11-05T08:24:04.890Z"
+  },
+  {
+    "date": "2026-11-05",
+    "status": "success",
     "templateId": "saudi-emerald",
     "generatedAt": "2026-11-05T07:54:36.621Z"
   },

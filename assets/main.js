@@ -1,9 +1,12 @@
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {mountPlanner} from './planner.js?v=20261104r4';
 import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=20261104r4';
+import {dailyTemplate} from './daily.js';
+import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
 let config=null,publishedConfig=null,activePreset='',renderId=0;
+let automatic=localStorage.getItem('zyad-template-mode')!=='manual';
 let galleryObserver=null,galleryRevision=0;
 let gallerySearch='';
 function filterCalendarGallery(){document.querySelectorAll('.public-template-card').forEach(card=>{const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);card.hidden=Boolean(gallerySearch&&!`${p.name} ${p.description} ${p.category}`.includes(gallerySearch));});}
@@ -27,7 +30,7 @@ function activeConfig(preset){
 function updateUrl(){
  const url=new URL(location.href);
  if(dateInput.value===saToday())url.searchParams.delete('date');else url.searchParams.set('date',dateInput.value);
- if(activePreset===(publishedConfig.design?.preset||'royal'))url.searchParams.delete('template');else url.searchParams.set('template',activePreset);
+ if(automatic||activePreset===(publishedConfig.design?.preset||'royal'))url.searchParams.delete('template');else url.searchParams.set('template',activePreset);
  history.replaceState(null,'',url.pathname+url.search+url.hash);
 }
 async function exportPreset(id){
@@ -54,7 +57,7 @@ function renderGallery(){
   const desc=document.createElement('small');desc.textContent=preset.description;
   const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='جارٍ تجهيز تاريخ '+dateInput.value;
   select.append(img,fallback,art,heading,desc,previewDate);
-  select.onclick=async()=>{activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});await refresh();};
+  select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});await refresh();};
   const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='تنزيل هذا التصميم';
   download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ التوليد...';try{await exportPreset(preset.id);}catch(e){say('فشل التوليد: '+e.message);}finally{download.disabled=false;download.textContent='تنزيل هذا التصميم';}};
   item.append(select,download);grid.append(item);galleryObserver.observe(item);
@@ -69,10 +72,11 @@ async function refresh(){
   if(id!==renderId)return;
   canvas.width=temp.width;canvas.height=temp.height;canvas.getContext('2d').drawImage(temp,0,0);
   mountPlanner(config,dateInput.value);
+  window.dispatchEvent(new CustomEvent('zyad-calendar-updated',{detail:{config:JSON.parse(JSON.stringify(config)),date:dateInput.value,automatic}}));
   say('بطاقة '+CARD_PRESETS.find(x=>x.id===activePreset)?.name+' جاهزة للتنزيل والمشاركة.');
  }catch(e){console.error(e);say('تعذر عرض البطاقة: '+e.message);}
 }
-function setDate(v){dateInput.value=v;updateUrl();renderGallery();refresh();}
+function setDate(v){dateInput.value=v;if(automatic&&(publishedConfig.design?.autoRotate||publishedConfig.smartRules?.some(r=>r.enabled!==false))){activePreset=dailyTemplate(publishedConfig,v,CARD_PRESETS);config=activeConfig(activePreset);}updateUrl();renderGallery();refresh();}
 $('#prev').addEventListener('click',()=>setDate(isoAdd(dateInput.value,-1)));
 $('#next').addEventListener('click',()=>setDate(isoAdd(dateInput.value,1)));
 $('#today').addEventListener('click',()=>setDate(saToday()));
@@ -81,12 +85,12 @@ function exportAction(id,action){$(id).addEventListener('click',async()=>{const 
 exportAction('#download',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);downloadFile(`calendar-${iso}-${preset}.png`,await getPngBlob(c));say('تم تجهيز الصورة للتنزيل.');});
 exportAction('#download-4k',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso,{scale:2});downloadFile(`calendar-${iso}-${preset}-4k.png`,await getPngBlob(c));say('تم تجهيز الصورة بالدقة المضاعفة 2160 × 3840.');});
 exportAction('#share',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);const file=new File([await getPngBlob(c)],`calendar-${iso}-${preset}.png`,{type:'image/png'});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'بطاقتي الذكية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
-window.zyadCalendar={getConfig:()=>config?JSON.parse(JSON.stringify(config)):null,getDate:()=>dateInput.value};
+window.zyadCalendar={getConfig:()=>config?JSON.parse(JSON.stringify(config)):null,getDate:()=>dateInput.value,setDate,automatic:()=>automatic,rotate:()=>{automatic=true;localStorage.setItem('zyad-template-mode','auto');setDate(dateInput.value);}};
 async function loadArchive(){try{const r=await fetch('data/history.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('not found');const list=await r.json();const grid=$('#archive-grid');if(!Array.isArray(list)||!list.length)return;grid.replaceChildren();for(const rec of list.slice(0,24)){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)||!/^images\/[\w.-]+\.png$/.test(rec.path))continue;
   const a=document.createElement('a');a.className='archive-item';a.href=rec.path;a.download=`calendar-${rec.date}.png`;const img=document.createElement('img');img.src=rec.path;img.alt='بطاقة يوم '+rec.date;img.loading='lazy';const caption=document.createElement('span');caption.textContent=rec.date+'  ↓';a.append(img,caption);grid.append(a);
 }}catch(e){console.warn('No archived card yet',e);}}
-window.__posterReady=(async()=>{try{const r=await fetch('data/config.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('فشل تحميل إعدادات البطاقة');publishedConfig=await r.json();const requested=new URLSearchParams(location.search).get('template');let saved='';try{saved=localStorage.getItem('zyad-public-template')||'';}catch{}activePreset=validPreset(requested)?requested:validPreset(saved)?saved:(publishedConfig.design?.preset||'royal');config=activeConfig(activePreset);renderGallery();$('#brand-title').textContent=config.brand?.name||'بطاقتي اليومية';$('#footer-brand').textContent=config.brand?.name||'بطاقتي اليومية';document.title=(config.brand?.name||'بطاقتي اليومية')+' | التقويم والمواعيد';await refresh();await loadArchive();return true;}catch(e){console.error(e);say(e.message);return false;}})();
+window.__posterReady=(async()=>{try{const r=await fetch('data/config.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('فشل تحميل إعدادات البطاقة');publishedConfig=await r.json();if(params.get('project')){const project=validateDesign(await get(params.get('project')));if(project.kind==='calendar'){publishedConfig=project.config;dateInput.value=/^\d{4}-\d{2}-\d{2}$/.test(selected||'')?selected:project.date;automatic=false;}}const requested=new URLSearchParams(location.search).get('template');let saved='';try{saved=localStorage.getItem('zyad-public-template')||'';}catch{}if(validPreset(requested))automatic=false;activePreset=validPreset(requested)?requested:automatic&&(publishedConfig.design?.autoRotate||publishedConfig.smartRules?.some(r=>r.enabled!==false))?dailyTemplate(publishedConfig,dateInput.value,CARD_PRESETS):params.has('project')?(publishedConfig.design?.preset||'royal'):validPreset(saved)?saved:(publishedConfig.design?.preset||'royal');config=activeConfig(activePreset);renderGallery();$('#brand-title').textContent=config.brand?.name||'بطاقتي اليومية';$('#footer-brand').textContent=config.brand?.name||'بطاقتي اليومية';document.title=(config.brand?.name||'بطاقتي اليومية')+' | التقويم والمواعيد';await refresh();await loadArchive();return true;}catch(e){console.error(e);say(e.message);return false;}})();
 
 const connectionNote = $('#connection-note');
 function showConnection() {

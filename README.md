@@ -1,12 +1,12 @@
-# بطاقتي الذكية | Zyad Smart Cards — 2.0
+# بطاقتي الذكية | Zyad Smart Cards — 3.0
 
-24 قالب مناسبات جديدًا و24 خلفية PNG وثماني زخارف شفافة، مع محرر طبقات ومكتبة محلية وتصدير بأربعة مقاسات. بقيت قوالب التقويم والأرشيف والإعدادات السابقة محفوظة.
+واجهة تطبيق عربية للمواعيد وبطاقة اليوم، مع 42 قالب تقويم و24 قالب تصميم حر، وأربعة خطوط عربية ومحتوى يومي بمصادره. التطبيق واستوديو التقويم والإدارة تتبادل البطاقة القابلة للتحرير.
 
-- [تقرير التنفيذ والاختبارات والحدود](docs/IMPLEMENTATION-REPORT.md)
-- [دليل إضافة قالب أو أصل PNG](docs/ADDING-TEMPLATES.md)
-- [هوية Canva وقالبا الجمعة والتخرج](https://canva.link/gup4y1ntpz6gvbp)
-- للتشغيل: `npm ci` ثم `npm run dev`.
-- للتحقق: `npm test`، ثم `npm run test:browser` و`node scripts/check-extra.mjs`.
+- [تقرير التطوير والاختبارات](docs/APP-UPGRADE.md)
+- [التطبيق](https://youef.github.io/Zyad/) · [الإدارة](https://youef.github.io/Zyad/admin/) · [استوديو التقويم](https://youef.github.io/Zyad/studio/calendar.html)
+- [هوية Canva](https://canva.link/gup4y1ntpz6gvbp)
+- التشغيل: `npm ci` ثم `npm run dev`.
+- التحقق: `npm test` و`node scripts/check-app.mjs` و`node scripts/check-settings.mjs` و`node scripts/check-calendars.mjs` و`npm run test:browser` و`node scripts/check-extra.mjs`.
 
 ---
 # بطاقتي اليومية — Zyad • الإصدار الثاني

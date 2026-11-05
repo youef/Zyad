@@ -1,3 +1,4 @@
+@import url('./fonts.css');
 @font-face{font-family:Cairo;src:url('fonts/cairo-arabic.woff2') format('woff2');font-style:normal;font-weight:200 1000;font-display:swap}
 :root{--paper:#f6f4ee;--surface:#fffef9;--ink:#193e34;--muted:#7a8479;--green:#123f35;--gold:#ac8855;--line:#dedfd4;--soft:#e8ede4;color-scheme:light;font-family:Cairo,Tahoma,Arial,sans-serif}
 :root[data-theme=dark]{--paper:#14251f;--surface:#1b3027;--ink:#f2ecdc;--muted:#a9b8a9;--green:#90ceb3;--line:#3e5144;--soft:#293f33;color-scheme:dark}

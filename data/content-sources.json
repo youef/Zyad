@@ -1,0 +1,166 @@
+{
+  "reviewedAt": "2026-11-05",
+  "method": "مراجعة النص العربي للمرجع، ومطابقة المقتطف دون تغيير ألفاظه؛ الإسناد والمتن الكامل عبر رابط المصدر.",
+  "sources": [
+    {
+      "id": "h01",
+      "url": "https://sunnah.com/bukhari:6018",
+      "reference": "صحيح البخاري 6018"
+    },
+    {
+      "id": "h02",
+      "url": "https://sunnah.com/bukhari:6116",
+      "reference": "صحيح البخاري 6116"
+    },
+    {
+      "id": "h03",
+      "url": "https://sunnah.com/bukhari:6023",
+      "reference": "صحيح البخاري 6023"
+    },
+    {
+      "id": "h04",
+      "url": "https://sunnah.com/bukhari:13",
+      "reference": "صحيح البخاري 13"
+    },
+    {
+      "id": "h05",
+      "url": "https://sunnah.com/bukhari:10",
+      "reference": "صحيح البخاري 10"
+    },
+    {
+      "id": "h06",
+      "url": "https://sunnah.com/bukhari:6013",
+      "reference": "صحيح البخاري 6013"
+    },
+    {
+      "id": "h07",
+      "url": "https://sunnah.com/bukhari:5027",
+      "reference": "صحيح البخاري 5027"
+    },
+    {
+      "id": "h08",
+      "url": "https://sunnah.com/bukhari:6114",
+      "reference": "صحيح البخاري 6114"
+    },
+    {
+      "id": "h09",
+      "url": "https://sunnah.com/bukhari:6009",
+      "reference": "صحيح البخاري 6009"
+    },
+    {
+      "id": "h10",
+      "url": "https://sunnah.com/bukhari:6406",
+      "reference": "صحيح البخاري 6406"
+    },
+    {
+      "id": "h11",
+      "url": "https://sunnah.com/muslim:2626",
+      "reference": "صحيح مسلم 2626"
+    },
+    {
+      "id": "h12",
+      "url": "https://sunnah.com/muslim:2588",
+      "reference": "صحيح مسلم 2588"
+    },
+    {
+      "id": "h13",
+      "url": "https://sunnah.com/muslim:2564c",
+      "reference": "صحيح مسلم 2564c"
+    },
+    {
+      "id": "h14",
+      "url": "https://sunnah.com/muslim:2593",
+      "reference": "صحيح مسلم 2593"
+    },
+    {
+      "id": "h15",
+      "url": "https://sunnah.com/muslim:223",
+      "reference": "صحيح مسلم 223"
+    },
+    {
+      "id": "h16",
+      "url": "https://sunnah.com/muslim:55a",
+      "reference": "صحيح مسلم 55a"
+    },
+    {
+      "id": "h17",
+      "url": "https://sunnah.com/muslim:91a",
+      "reference": "صحيح مسلم 91a"
+    },
+    {
+      "id": "h18",
+      "url": "https://sunnah.com/muslim:2664",
+      "reference": "صحيح مسلم 2664"
+    },
+    {
+      "id": "h19",
+      "url": "https://sunnah.com/bukhari:6464",
+      "reference": "صحيح البخاري 6464"
+    },
+    {
+      "id": "h20",
+      "url": "https://sunnah.com/bukhari:6412",
+      "reference": "صحيح البخاري 6412"
+    },
+    {
+      "id": "h21",
+      "url": "https://sunnah.com/bukhari:6094",
+      "reference": "صحيح البخاري 6094"
+    },
+    {
+      "id": "h22",
+      "url": "https://sunnah.com/bukhari:2989",
+      "reference": "صحيح البخاري 2989"
+    },
+    {
+      "id": "h23",
+      "url": "https://sunnah.com/muslim:223",
+      "reference": "صحيح مسلم 223"
+    },
+    {
+      "id": "h24",
+      "url": "https://sunnah.com/muslim:2664",
+      "reference": "صحيح مسلم 2664"
+    },
+    {
+      "id": "d01",
+      "url": "https://sunnah.com/muslim:2721",
+      "reference": "دعاء مأثور — صحيح مسلم 2721"
+    },
+    {
+      "id": "d02",
+      "url": "https://sunnah.com/muslim:2722",
+      "reference": "دعاء مأثور — صحيح مسلم 2722"
+    },
+    {
+      "id": "d03",
+      "url": "https://sunnah.com/muslim:2697a",
+      "reference": "دعاء مأثور — صحيح مسلم 2697"
+    },
+    {
+      "id": "d04",
+      "url": "https://www.islamweb.net/ar/library/content/1/4870/",
+      "reference": "دعاء مأثور — صحيح مسلم 2654"
+    },
+    {
+      "id": "d05",
+      "url": "https://sunnah.com/bukhari:6389",
+      "reference": "دعاء مأثور — صحيح البخاري 6389"
+    },
+    {
+      "id": "d06",
+      "url": "https://sunnah.com/bukhari:6369",
+      "reference": "دعاء مأثور — صحيح البخاري 6369"
+    },
+    {
+      "id": "d07",
+      "url": "https://sunnah.com/muslim:2739",
+      "reference": "دعاء مأثور — صحيح مسلم 2739"
+    },
+    {
+      "id": "d08",
+      "url": "https://sunnah.com/muslim:486",
+      "reference": "دعاء مأثور — صحيح مسلم 486"
+    }
+  ]
+}

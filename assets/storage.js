@@ -1,3 +1,4 @@
+import {validateCalendar} from './calendar-project.js';
 const db=new Promise((resolve,reject)=>{const q=indexedDB.open('zyad-library',1);q.onupgradeneeded=()=>{for(const s of ['designs','assets','settings'])q.result.createObjectStore(s,{keyPath:'id'});};q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error);});
 export async function access(store,mode,fn){const d=await db;return new Promise((resolve,reject)=>{const t=d.transaction(store,mode),q=fn(t.objectStore(store));t.oncomplete=()=>resolve(q.result);t.onabort=t.onerror=()=>reject(t.error||Error('تعذر الحفظ المحلي'));});}
 export const getAll=(s='designs')=>access(s,'readonly',s=>s.getAll());
@@ -5,6 +6,7 @@ export const get=(id,s='designs')=>access(s,'readonly',s=>s.get(id));
 export const put=(r,s='designs')=>access(s,'readwrite',s=>s.put(structuredClone(r)));
 export function validImage(src){return typeof src==='string'&&src.length<8*1024*1024&&(/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(src)||/^assets\/(backgrounds|decorations)\/[\w-]+\.(png|webp)$/.test(src));}
 export function validateDesign(d){
+ if(d?.kind==='calendar'&&d.version===3){if(!/^\d{4}-\d{2}-\d{2}$/.test(d.date||''))throw Error('تاريخ غير صالح');return {...structuredClone(d),dimensions:[1080,1920],config:validateCalendar(d.config)};}
  if(!d||d.version!==2||!Array.isArray(d.layers)||d.layers.length>100||!Array.isArray(d.dimensions)||![[1080,1920],[1080,1080],[1080,1350],[1920,1080]].some(a=>a.join()===d.dimensions.join()))throw Error('ملف المشروع غير صالح أو إصداره غير مدعوم');
  if(!/^\d{4}-\d{2}-\d{2}$/.test(d.date||''))throw Error('تاريخ غير صالح');
  const kinds=['text','image','shape','decoration','logo','gregorian','hijri','countdown','qr','watermark'];

@@ -14,6 +14,8 @@ on:
       - 'admin/**'
       - 'assets/**'
       - 'data/config.json'
+      - 'data/content-library.json'
+      - 'data/content-sources.json'
       - 'package.json'
       - 'package-lock.json'
       - 'data/templates/**'
@@ -53,6 +55,8 @@ jobs:
         run: npm test
       - name: Check studio in Chromium
         run: |
+          node scripts/check-app.mjs
+          node scripts/check-settings.mjs
           node scripts/check-calendars.mjs
           node scripts/check-platform.mjs
           node scripts/check-extra.mjs

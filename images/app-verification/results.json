@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "checks": [
+    "500 days deterministic content/design rotation without adjacent repeats",
+    "24 sourced hadith excerpts + 40 clearly attributed supplications",
+    "original manual content preserved",
+    "app navigation, events, favorites, editable calendar handoff, save, local app preview, admin handoff and settings persistence 390",
+    "app navigation, events, favorites, editable calendar handoff, save, local app preview, admin handoff and settings persistence 1440"
+  ]
+}

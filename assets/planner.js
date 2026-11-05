@@ -78,7 +78,7 @@ function detail(record){
   future.append(dates);
   const actions=elem('div','planner-modal-actions');
   const view=elem('button','btn primary','عرض بطاقة يوم الحدث');view.type='button';
-  view.onclick=()=>{dialog.close();const input=document.getElementById('chosen-date');if(input){input.value=record.date;input.dispatchEvent(new Event('change'));}document.getElementById('poster-section')?.scrollIntoView({behavior:'smooth'});};
+  view.onclick=()=>{location.hash='poster-section';dialog.close();const input=document.getElementById('chosen-date');if(input){input.value=record.date;input.dispatchEvent(new Event('change'));}document.getElementById('poster-section')?.scrollIntoView({behavior:'smooth'});};
   actions.append(view);
   const create=elem('a','btn primary','إنشاء بطاقة من الحدث');create.href='studio/?template=countdown&date='+saToday()+'&target='+record.date+'&title='+encodeURIComponent(record.title);actions.append(create);
   const share=elem('button','btn secondary','مشاركة الحدث');share.onclick=async()=>{try{const text=record.title+' — '+dayLabel(record.date);if(navigator.share)await navigator.share({title:record.title,text});else await navigator.clipboard.writeText(text);}catch(e){if(e.name!=='AbortError')share.textContent='تعذرت المشاركة';}};actions.append(share);
@@ -99,6 +99,7 @@ function detail(record){
   attach(dialog,close,hero,facts,body,future,actions);
   dialog.showModal();
 }
+export function openPlannerEvent(record){if(dialog&&data)detail(record);}
 function renderCalendar(){
   const grid=container.querySelector('#planner-days');grid.replaceChildren();
   const [y,m]=chosenMonth.split('-').map(Number),start=new Date(Date.UTC(y,m-1,1)).getUTCDay(),count=maxDay(y,m);

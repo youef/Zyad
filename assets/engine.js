@@ -1,3 +1,4 @@
+import {fontStack,loadTypeface} from './typography.js';
 import {validImage} from './storage.js';
 const cache=new Map();
 const font='"Cairo",Tahoma,Arial,sans-serif';
@@ -13,7 +14,7 @@ export function layerText(l,d){
 }
 function cover(c,im,x,y,w,h,fit='cover'){const s=fit==='contain'?Math.min(w/im.width,h/im.height):Math.max(w/im.width,h/im.height);c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);c.restore();}
 export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null}={}){
- await document.fonts.ready;const [w,h]=d.dimensions;canvas.width=w*scale;canvas.height=h*scale;const c=canvas.getContext('2d');c.scale(scale,scale);
+ await Promise.all([...new Set(d.layers.map(l=>l.font))].map(f=>loadTypeface(f)));await document.fonts.ready;const [w,h]=d.dimensions;canvas.width=w*scale;canvas.height=h*scale;const c=canvas.getContext('2d');c.scale(scale,scale);
  c.fillStyle=d.background.color||'#f4eee1';c.fillRect(0,0,w,h);
  if(d.background.gradient){const g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,d.background.color);g.addColorStop(1,d.background.gradient);c.fillStyle=g;c.fillRect(0,0,w,h);}
  if(d.background.asset)cover(c,await loadImage(d.background.asset),0,0,w,h);
@@ -31,7 +32,7 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
    c.beginPath();if(l.shape==='circle')c.ellipse(x,y,bw/2,bh/2,0,0,Math.PI*2);else c.roundRect(box.x,box.y,bw,bh,16);c.fill();if(l.border)c.stroke();
   }else{
    c.direction='rtl';c.textBaseline='middle';c.textAlign=l.align||'center';let size=l.size*Math.min(w/1080,h/1350);const text=layerText(l,d),words=text.split(/\s+/);let lines=[];
-   const wrap=()=>{lines=[];let line='';c.font=`${l.weight||700} ${size}px ${l.font==='serif'?'Georgia,serif':font}`;for(const word of words){const next=line?line+' '+word:word;if(line&&c.measureText(next).width>bw){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);};
+   const wrap=()=>{lines=[];let line='';c.font=`${l.weight||700} ${size}px ${fontStack(l.font)}`;for(const word of words){const next=line?line+' '+word:word;if(line&&c.measureText(next).width>bw){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);};
    wrap();while((lines.length>4||lines.length*size*(l.lineHeight||1.6)>h*.18||lines.some(s=>c.measureText(s).width>bw))&&size>14){size-=2;wrap();}
    const lineHeight=size*(l.lineHeight||1.6),th=Math.max(size,lines.length*lineHeight),tx=l.align==='right'?x+bw/2:l.align==='left'?x-bw/2:x;
    lines.forEach((s,i)=>c.fillText(s,tx,y+(i-(lines.length-1)/2)*lineHeight,bw));box={id:l.id,x:x-bw/2,y:y-th/2,w:bw,h:th};

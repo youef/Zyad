@@ -1,64 +1,16 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#064b43">
-  <meta name="description" content="بطاقة تقويم يومية سعودية تتحدث تلقائيًا، قابلة للتنزيل والمشاركة مع أرشيف محفوظ.">
-  <title>بطاقتي اليومية | التقويم والمواعيد</title>
-  <link rel="manifest" href="manifest.webmanifest">
-  <link rel="apple-touch-icon" href="assets/app-180.png">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="assets/style.css?v=20261104r4">
-  <link rel="stylesheet" href="assets/app.css">
-  <link rel="stylesheet" href="assets/home.css">
-</head>
-<body class="ios-home">
-  <header class="site-header"><div class="wrap topbar">
-    <a class="brand" href="./" aria-label="الصفحة الرئيسية"><span class="brand-icon">✦</span><span><strong id="brand-title">بطاقتي اليومية</strong><small>التقويم السعودي الذكي</small></span></a>
-    <nav aria-label="التنقل"><a class="active" href="#poster-section">البطاقة</a><a href="#template-gallery">القوالب</a><a href="#smart-planner">التقويم</a><a href="#archive">الأرشيف</a><a class="admin-nav" href="admin/">لوحة الإدارة <span aria-hidden="true">↗</span></a></nav>
-  </div></header>
-  <main class="wrap">
-    <div class="home-welcome"><span class="eyebrow">صُنع ليشبهك / بطاقتي الذكية</span><div><a href="settings/">الإعدادات</a><button data-theme-toggle aria-label="تبديل المظهر">◐</button></div></div>
-    <section class="hero" id="poster-section">
-      <div class="hero-copy">
-        <span class="eyebrow"><span class="live-dot"></span> تتحدث يوميًا بتوقيت السعودية</span>
-        <h1>لحظاتك الجميلة،<br><em>تستحق بطاقة.</em></h1>
-        <p>تقويم هجري وميلادي، مواعيد الرواتب والدعم، الفصول والمناسبات. اختر التاريخ، واحفظ بطاقتك، وشاركها بسهولة.</p>
-        <div class="date-toolbar"><label for="chosen-date">تاريخ البطاقة</label><div class="date-controls"><button class="icon-btn" type="button" id="prev" aria-label="اليوم السابق">→</button><input id="chosen-date" type="date" aria-label="تاريخ البطاقة"><button class="icon-btn" type="button" id="next" aria-label="اليوم التالي">←</button><button id="today" type="button" class="subtle">اليوم</button></div></div>
-        <div class="quick-cards"><span class="quick-cards-caption">بطاقات جاهزة للتوليد</span>
- <div class="quick-card-actions" role="group" aria-label="اختيار يوم البطاقة">
-  <button type="button" data-quick-day="0">بطاقة اليوم</button>
-  <button type="button" data-quick-day="1">بطاقة الغد</button>
-  <button type="button" data-quick-day="7">بعد أسبوع</button>
-  <button type="button" data-quick-day="30">بعد شهر</button>
- </div></div>
- <div class="action-buttons"><button class="btn primary" id="download" type="button">↓ تنزيل PNG</button><button class="btn secondary" id="download-4k" type="button">تنزيل 4K</button><button class="btn secondary" id="share" type="button">↗ مشاركة البطاقة</button></div>
-        <p class="help-note" id="page-status" role="status">يتم تحميل البطاقة...</p>
-        <div class="mini-features"><span>✓ تصميم عربي</span><span>✓ تحديث تلقائي</span><span>✓ صور عالية الدقة</span></div>
-      </div>
-      <div class="poster-shell"><div class="poster-top"><span>معاينة البطاقة</span><span class="poster-quality">1080 × 1920</span></div><canvas width="1080" height="1920" id="poster" aria-label="البطاقة اليومية"></canvas><div class="poster-bottom">اسحب الصورة أو نزّلها للمشاركة</div></div>
-    </section>
-    <section id="template-gallery" class="template-public-section">
-      <div class="section-head"><div><span class="eyebrow">مكتبة التصاميم</span><h2>اختر قالب البطاقة</h2></div>
-       <p>كل تصميم يعمل فعليًا. جرّبه مباشرة أو نزّل صورته بالتاريخ الذي اخترته.</p></div>
-      <div class="calendar-library-note"><span>30 قالب تقويم كامل · التاريخان والعبارة وجميع العدّادات وQR</span><label>البحث في قوالب التقويم<input id="calendar-search" type="search" placeholder="تراثي، رمضان، ليلي، مواعيد…"></label></div>
-      <div id="public-template-grid" class="public-template-grid" aria-label="قوالب البطاقات"></div>
-    </section>
-    <section id="smart-planner" class="smart-planner wrap" aria-label="التقويم الذكي للأحداث القادمة"></section>
-    <section id="creative-templates"><div class="home-studio-banner"><div><span class="eyebrow">إبداع يتجاوز التقويم</span><h2>تريد تصميمًا بلمستك؟</h2><p>قوالب التقويم أعلاه تعمل بالتاريخ والعدّادات. افتح الاستوديو لتصميم تهنئة أو ستوري بطبقات حرة.</p></div><a class="button" href="studio/">افتح الاستوديو ←</a></div></section>
-    <section id="archive" class="archive-section"><div class="section-head"><div><span class="eyebrow">أرشيف الأيام</span><h2>البطاقات المحفوظة</h2></div><p>تُضاف صورة كل يوم تلقائيًا بعد النشر.</p></div><div id="archive-grid" class="archive-grid"><div class="empty-state">تُعرض البطاقات المنشورة هنا تلقائيًا.</div></div></section>
-  </main>
-  <footer class="site-footer"><div class="wrap footer-content"><span>© <span id="year"></span> <span id="footer-brand">بطاقتي اليومية</span></span><span>صُممت خصيصًا للبطاقات والتقاويم العربية</span></div></footer>
-  <nav class="app-tabs" aria-label="أقسام بطاقتي الذكية">
-    <a href="#poster-section">الرئيسية</a><a href="#smart-planner">التقويم</a>
-    <a href="studio/">إنشاء بطاقة</a><a href="#template-gallery">القوالب</a><a href="library/">مكتبتي</a>
-  </nav>
-  <p class="connection-note" id="connection-note" role="status" hidden>أنت دون اتصال. تُعرض البيانات المحفوظة على الجهاز.</p>
-  <script type="module" src="assets/main.js?v=20261104r4"></script>
-  <script src="assets/vendor/fflate.js"></script>
-  <script type="module" src="assets/gallery.js"></script>
-  <script type="module" src="assets/home.js"></script>
-</body>
-</html>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#174e40"><meta name="description" content="مواعيدك وبطاقة يومك وإلهام متجدد في تطبيق عربي واحد."><title>بطاقتي الذكية | Zyad Smart Cards</title><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="assets/app-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="assets/style.css?v=app8"><link rel="stylesheet" href="assets/app.css?v=app8"><link rel="stylesheet" href="assets/shell.css?v=app8"></head>
+<body class="smart-app">
+<aside class="app-sidebar"><a class="brand" href="#today-app"><span class="brand-icon">✦</span><span><strong id="brand-title">بطاقتي الذكية</strong><small>مساحة يومك الجميل</small></span></a><span class="sidebar-caption">مساحتك اليومية</span><nav class="side-links"><a href="#today-app">⌂ <span>اليوم</span></a><a href="#smart-planner">▦ <span>التقويم</span></a><a href="#template-gallery">◈ <span>مكتبة التصاميم</span><small>42</small></a><a href="studio/calendar.html">✎ <span>استوديو التقويم</span></a><a href="library/">▤ <span>مكتبتي</span></a><a href="#archive">◷ <span>أرشيف البطاقات</span></a></nav><div class="sidebar-bottom"><a href="settings/">إعدادات التطبيق</a><a href="admin/">لوحة الإدارة ↗</a><button id="install-app" hidden>تثبيت التطبيق</button><small>بتوقيت السعودية · الرياض</small></div></aside>
+<div class="app-workspace"><header class="app-header"><div><span class="eyebrow" id="app-greeting">كل يوم، بداية جميلة</span><h1 id="app-view-title">يومك بين يديك<span class="live-dot"></span></h1></div><div class="header-actions"><button data-theme-toggle aria-label="تبديل المظهر">◐</button><a href="settings/" aria-label="إعدادات التطبيق">⚙</a><a class="profile-badge" href="admin/" aria-label="لوحة الإدارة">ب</a></div></header>
+<div class="app-date-strip"><div><a class="today-card-link" href="#poster-section">بطاقة اليوم ↗</a><span id="today-hijri"></span><strong id="today-gregorian"></strong></div><div class="date-controls"><button class="icon-btn" id="prev" aria-label="اليوم السابق">→</button><label><span class="sr-only">تاريخ البطاقة</span><input id="chosen-date" type="date"></label><button class="icon-btn" id="next" aria-label="اليوم التالي">←</button><button id="today" class="subtle">اليوم</button></div></div>
+<main><section id="today-app" data-app-view><div class="home-stats" id="home-stats"></div><div class="day-workspace">
+<section class="agenda-panel app-panel"><div class="panel-title"><div><span class="eyebrow">في الأفق</span><h2>مواعيدك القادمة</h2></div><button id="new-personal-event" aria-label="إضافة موعد شخصي">＋</button></div><div class="agenda-filters" id="agenda-filters"><button data-filter="all" class="active">الكل</button><button data-filter="wallet">الاستحقاقات</button><button data-filter="favorites">المفضلة</button><button data-filter="personal">أحداثي</button></div><label class="agenda-search"><span>⌕</span><input id="agenda-search" type="search" placeholder="ابحث عن موعد…" aria-label="البحث في المواعيد"></label><div id="upcoming-list"></div><a class="all-events-link" href="#smart-planner">عرض التقويم الكامل ←</a><small class="schedule-notice">المواعيد تقديرية؛ التفاصيل ومصدر الموعد في كل حدث.</small></section>
+<section id="poster-section" class="card-panel app-panel"><div class="panel-title"><div><span class="eyebrow">مصمّمة ليومك</span><h2>بطاقتك اليومية</h2></div><span class="quality-tag">HD</span></div><div class="card-mode"><button id="daily-style">✦ تصميم يومي متجدد</button><a href="#template-gallery">تغيير القالب</a></div><div class="poster-shell"><canvas id="poster" width="1080" height="1920" aria-label="البطاقة اليومية"></canvas></div><div class="quick-card-actions"><button data-quick-day="0">اليوم</button><button data-quick-day="1">غدًا</button><button data-quick-day="7">بعد أسبوع</button><button data-quick-day="30">بعد شهر</button></div><div class="action-buttons"><button id="download" class="btn primary">↓ حفظ الصورة</button><button id="share" class="btn secondary">↗ مشاركة</button><button id="download-4k" class="btn secondary">دقة مضاعفة</button><button id="edit-calendar" class="btn secondary">✎ تعديل البطاقة</button></div><p id="page-status" class="help-note" role="status">جارٍ تجهيز بطاقة يومك…</p></section>
+<aside class="inspiration-panel"><div class="inspiration-intro"><span class="eyebrow">فسحة لروحك</span><h2>معنى يرافق يومك.</h2><p>حديث ودعاء يتجددان مع تاريخ البطاقة.</p></div><div id="daily-inspiration"></div><a class="studio-shortcut" href="studio/calendar.html"><span>✎</span><strong>مساحتك للإبداع</strong><small>عدّل التقويم والخطوط والمواعيد، واحفظ نسختك.</small><b>افتح الاستوديو ←</b></a><a class="freeform-link" href="studio/">استوديو التهاني والطبقات الحرة ↗</a></aside>
+</div></section>
+<section id="template-gallery" data-app-view hidden><div class="section-head"><div><span class="eyebrow">مكتبة التصاميم</span><h2>اختر قالب البطاقة</h2></div><p>42 تصميمًا فعليًا؛ التاريخان والمواعيد والمحتوى اليومي في كل بطاقة.</p></div><div class="calendar-library-note"><span>قوائم · أجندات · تصاميم تصويرية · زخارف · 4 خطوط عربية <a class="btn secondary" href="#poster-section">عرض بطاقتي بالقالب المختار ↗</a></span><label>ابحث عن تصميم<input id="calendar-search" type="search" placeholder="أجندة، أزرق، تراثي، رمضاني…"></label></div><div id="public-template-grid" class="public-template-grid" aria-label="قوالب البطاقات"></div><section id="creative-templates"><a class="btn primary" href="studio/">24 قالب تهنئة وستوري بطبقات حرة ↗</a></section></section>
+<section id="smart-planner" data-app-view hidden class="smart-planner" aria-label="التقويم الذكي للأحداث القادمة"></section>
+<section id="archive" data-app-view hidden class="archive-section"><div class="section-head"><div><span class="eyebrow">أرشيف الأيام</span><h2>البطاقات المنشورة</h2></div><p>صورة كل يوم محفوظة للرجوع إليها.</p></div><div id="archive-grid" class="archive-grid"></div></section>
+</main><footer class="app-footer">© <span id="year"></span> <span id="footer-brand">بطاقتي الذكية</span><a href="admin/">إدارة المنصة ↗</a></footer></div>
+<nav class="app-tabs" aria-label="أقسام التطبيق"><a href="#today-app">اليوم</a><a href="#smart-planner">التقويم</a><a href="studio/calendar.html">إنشاء</a><a href="#template-gallery">التصاميم</a><a href="library/">مكتبتي</a></nav><p id="connection-note" class="connection-note" role="status" hidden>أنت دون اتصال؛ تُعرض البيانات المحفوظة على هذا الجهاز.</p>
+<script type="module" src="assets/main.js?v=app8"></script><script src="assets/vendor/fflate.js"></script><script type="module" src="assets/home.js?v=app8"></script><script type="module" src="assets/app-shell.js?v=app8"></script></body></html>

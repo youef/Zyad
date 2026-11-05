@@ -1,14 +1,15 @@
 // Print-resolution calendar art. Dates, quotes, counters, branding and QR stay live.
+import {drawDailyPanel} from './daily-panel.js';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};
 function box(c,x,y,w,h,r,fill,stroke,lw=1){c.beginPath();c.roundRect(x,y,w,h,Math.min(r,w/2,h/2));if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}}
-function text(c,str,x,y,size,color,width=900,align='center',weight=700){c.save();c.direction='rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;let s=size;do{c.font=`${weight} ${s}px ${FONT}`;if(c.measureText(String(str||'')).width<=width)break;s--;}while(s>14);c.fillText(String(str||''),x,y,width);c.restore();}
+function text(c,str,x,y,size,color,width=900,align='center',weight=700){c.save();c.direction='rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;let s=size;do{c.font=`${weight} ${s}px ${c.zyadFont||FONT}`;if(c.measureText(String(str||'')).width<=width)break;s--;}while(s>14);c.fillText(String(str||''),x,y,width);c.restore();}
 function poly(c,x,y,rx,ry,n,fill,stroke,indent=1){c.beginPath();for(let i=0;i<n;i++){const a=i*Math.PI*2/n-Math.PI/2,r=i%2?indent:1,px=x+Math.cos(a)*rx*r,py=y+Math.sin(a)*ry*r;i?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=2;c.stroke();}}
 function line(c,x,y,xx,yy,color,width=2){c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.strokeStyle=color;c.lineWidth=width;c.stroke();}
 function circle(c,x,y,r,fill,stroke,width=2){c.beginPath();c.arc(x,y,r,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}}
 function arch(c,x,y,w,h,fill,stroke){c.beginPath();c.moveTo(x,y+h);c.lineTo(x,y+w/2);c.bezierCurveTo(x,y+w*.13,x+w*.32,y+w*.08,x+w/2,y);c.bezierCurveTo(x+w*.68,y+w*.08,x+w,y+w*.13,x+w,y+w/2);c.lineTo(x+w,y+h);c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=2;c.stroke();}}
 function imageCover(c,im){const scale=Math.max(W/im.width,H/im.height);c.drawImage(im,(W-im.width*scale)/2,(H-im.height*scale)/2,im.width*scale,im.height*scale);}
-function wrap(c,value,width,size){c.font=`600 ${size}px ${FONT}`;const out=[];let acc='';for(const word of String(value||'').split(/\s+/)){const next=acc?acc+' '+word:word;if(acc&&c.measureText(next).width>width){out.push(acc);acc=word;}else acc=next;}if(acc)out.push(acc);return out;}
+function wrap(c,value,width,size){c.font=`600 ${size}px ${c.zyadFont||FONT}`;const out=[];let acc='';for(const word of String(value||'').split(/\s+/)){const next=acc?acc+' '+word:word;if(acc&&c.measureText(next).width>width){out.push(acc);acc=word;}else acc=next;}if(acc)out.push(acc);return out;}
 function paragraph(c,value,x,y,width,height,color,preferred=36,min=22){let size=preferred,lines;do{lines=wrap(c,value,width,size);if(lines.length*size*1.65<=height)break;size--;}while(size>min);const max=Math.max(1,Math.floor(height/(size*1.65)));if(lines.length>max){lines=lines.slice(0,max);lines[max-1]=lines[max-1].slice(0,-2)+'…';}const step=size*1.65;lines.forEach((s,i)=>text(c,s,x,y+(i-(lines.length-1)/2)*step,size,color,width,'center',600));}
 function header(c,cfg,iso,tools,p,s){
  const {green,gold,ink,cream}=p,kind=s.header,hh=s.headerHeight,dark=s.dark;
@@ -106,10 +107,10 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  // A quiet translucent reading field preserves contrast without covering the artwork edges.
  const field=dark?rgba(p.cream,.79):rgba(p.cream,.87);box(c,33,103,1014,1538,28,field);
  header(c,cfg,iso,tools,p,s);
- const quoteY=s.headerHeight+30,quoteH=cfg.settings?.showQuote===false?116:244;
+ const quoteY=s.headerHeight+30,quoteH=cfg.settings?.showQuote===false?116:cfg.daily?294:244;
  const quoteFill=dark?rgba('#081e20',.68):rgba('#fffef8',.94);
  if(['editorial','statement','brand','swiss'].includes(s.header)){line(c,74,quoteY,1006,quoteY,p.gold,2);line(c,74,quoteY+quoteH,1006,quoteY+quoteH,p.gold,2);}else box(c,64,quoteY,952,quoteH,s.header==='notebook'?6:24,quoteFill,rgba(p.gold,.4));
- if(cfg.settings?.showQuote!==false){text(c,'❝',540,quoteY+33,43,p.gold);paragraph(c,cfg.card?.quote||'',540,quoteY+quoteH*.51,838,quoteH-90,p.ink,35);if(cfg.card?.attribution)text(c,cfg.card.attribution,540,quoteY+quoteH-23,21,p.ink,830,'center',500);}else text(c,cfg.brand?.subtitle||'مواعيدك المهمة في مكان واحد',540,quoteY+quoteH/2,32,p.ink,850);
+ if(cfg.settings?.showQuote!==false){if(!drawDailyPanel(c,cfg,64,quoteY,952,quoteH,p)){text(c,'❝',540,quoteY+33,43,p.gold);paragraph(c,cfg.card?.quote||'',540,quoteY+quoteH*.51,838,quoteH-90,p.ink,35);if(cfg.card?.attribution)text(c,cfg.card.attribution,540,quoteY+quoteH-23,21,p.ink,830,'center',500);}}else text(c,cfg.brand?.subtitle||'مواعيدك المهمة في مكان واحد',540,quoteY+quoteH/2,32,p.ink,850);
  const items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),timed=items.filter(i=>i.mode!=='manual'),values=timed.map(i=>tools.remaining(i,iso)),nearest=values.length?Math.min(...values):null,next=timed.find(i=>tools.remaining(i,iso)===nearest);
  const titleY=quoteY+quoteH+48; text(c,'المواعيد والعدّادات',1001,titleY,31,p.ink,620,'right');
  if(next&&cfg.design?.highlightNext!==false)text(c,'الأقرب: '+next.label,78,titleY,19,p.ink,350,'left',500);
@@ -125,3 +126,4 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  text(c,cfg.card?.footer||'بطاقتك اليومية',cx,1812,20,p.ink,space,'center',500);
  box(c,48,1866,984,43,14,dark?rgba('#071c21',.92):rgba('#fffef9',.97));text(c,cfg.card?.disclaimer||'المواعيد التقديرية تُراجع مع الجهات الرسمية',540,1887,21,p.ink,948,'center',500);
 }
+export {box,text,paragraph,line,circle,rgba};

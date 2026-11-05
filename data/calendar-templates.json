@@ -727,5 +727,317 @@
       "index": 23,
       "version": 3
     }
+  },
+  {
+    "id": "blue-agenda",
+    "name": "الأجندة الزرقاء",
+    "description": "قائمة زرقاء وأيقونات وعدادات جانبية",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "tajawal",
+    "theme": {
+      "green": "#2b71bd",
+      "cream": "#eef5fc",
+      "greenLight": "#2b71bd",
+      "gold": "#b99858",
+      "ink": "#2b71bd"
+    },
+    "calendar": {
+      "header": "blue-agenda-header",
+      "grid": "blue-agenda-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 30,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "blue"
+    }
+  },
+  {
+    "id": "mint-schedule",
+    "name": "مواعيد بالنعناع",
+    "description": "بطاقات مواعيد هادئة وتاريخان لكل حدث",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "cairo",
+    "theme": {
+      "green": "#237c66",
+      "cream": "#edf6f1",
+      "greenLight": "#237c66",
+      "gold": "#b99858",
+      "ink": "#237c66"
+    },
+    "calendar": {
+      "header": "mint-schedule-header",
+      "grid": "mint-schedule-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 31,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "mint"
+    }
+  },
+  {
+    "id": "rainbow-brush",
+    "name": "ألوان اليوم",
+    "description": "مسحات لونية وأيقونات أصلية للمواعيد",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "tajawal",
+    "theme": {
+      "green": "#087c69",
+      "cream": "#fffaf0",
+      "greenLight": "#087c69",
+      "gold": "#b99858",
+      "ink": "#087c69"
+    },
+    "calendar": {
+      "header": "rainbow-brush-header",
+      "grid": "rainbow-brush-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 32,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "brush"
+    }
+  },
+  {
+    "id": "saudi-list",
+    "name": "جدول الدار",
+    "description": "قائمة سعودية بأيقونات دائرية وتفاصيل واضحة",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "kufi",
+    "theme": {
+      "green": "#116548",
+      "cream": "#f5f8f1",
+      "greenLight": "#116548",
+      "gold": "#b99858",
+      "ink": "#116548"
+    },
+    "calendar": {
+      "header": "saudi-list-header",
+      "grid": "saudi-list-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 33,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "saudi"
+    }
+  },
+  {
+    "id": "financial-table",
+    "name": "دفتر الاستحقاق",
+    "description": "جدول مالي بالأيام والتواريخ والأرقام",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "cairo",
+    "theme": {
+      "green": "#2a505f",
+      "cream": "#f1f5f6",
+      "greenLight": "#2a505f",
+      "gold": "#b99858",
+      "ink": "#2a505f"
+    },
+    "calendar": {
+      "header": "financial-table-header",
+      "grid": "financial-table-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 34,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "table"
+    }
+  },
+  {
+    "id": "metro-timeline",
+    "name": "مسار المواعيد",
+    "description": "خط زمني مترابط لكل موعد",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "tajawal",
+    "theme": {
+      "green": "#686194",
+      "cream": "#f5f2fa",
+      "greenLight": "#686194",
+      "gold": "#b99858",
+      "ink": "#686194"
+    },
+    "calendar": {
+      "header": "metro-timeline-header",
+      "grid": "metro-timeline-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 35,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "timeline"
+    }
+  },
+  {
+    "id": "magazine-columns",
+    "name": "نافذة يومية",
+    "description": "عمودان تحريريّان وتوقيع طباعي",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "amiri",
+    "theme": {
+      "green": "#233f37",
+      "cream": "#faf7ed",
+      "greenLight": "#233f37",
+      "gold": "#b99858",
+      "ink": "#233f37"
+    },
+    "calendar": {
+      "header": "magazine-columns-header",
+      "grid": "magazine-columns-rows",
+      "columns": 2,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 36,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "columns"
+    }
+  },
+  {
+    "id": "week-journal",
+    "name": "مفكرة الأسبوع",
+    "description": "ترويسة أسبوعية ومواعيد بأسلوب الدفتر",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "cairo",
+    "theme": {
+      "green": "#527d73",
+      "cream": "#f0f5ec",
+      "greenLight": "#527d73",
+      "gold": "#b99858",
+      "ink": "#527d73"
+    },
+    "calendar": {
+      "header": "week-journal-header",
+      "grid": "week-journal-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 37,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "week"
+    }
+  },
+  {
+    "id": "postcard-calendar",
+    "name": "بريد اليوم",
+    "description": "قصاصات وتذاكر متوازنة للموعد",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "amiri",
+    "theme": {
+      "green": "#ae704f",
+      "cream": "#fcf1e5",
+      "greenLight": "#ae704f",
+      "gold": "#b99858",
+      "ink": "#ae704f"
+    },
+    "calendar": {
+      "header": "postcard-calendar-header",
+      "grid": "postcard-calendar-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 38,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "tickets"
+    }
+  },
+  {
+    "id": "mono-calendar",
+    "name": "حبر وأرقام",
+    "description": "أبيض وأسود وتباين طباعي عالٍ",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "kufi",
+    "theme": {
+      "green": "#212529",
+      "cream": "#faf9f5",
+      "greenLight": "#212529",
+      "gold": "#808780",
+      "ink": "#212529"
+    },
+    "calendar": {
+      "header": "mono-calendar-header",
+      "grid": "mono-calendar-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 39,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "mono"
+    }
+  },
+  {
+    "id": "lilac-agenda",
+    "name": "أجندة بنفسجية",
+    "description": "ملاحظات لونية ودبابيس رقمية",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "tajawal",
+    "theme": {
+      "green": "#7e5b96",
+      "cream": "#f8f2fa",
+      "greenLight": "#7e5b96",
+      "gold": "#b99858",
+      "ink": "#7e5b96"
+    },
+    "calendar": {
+      "header": "lilac-agenda-header",
+      "grid": "lilac-agenda-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 40,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "notes"
+    }
+  },
+  {
+    "id": "desert-journal",
+    "name": "يوميات الرمل",
+    "description": "دفتر دافئ بخط نسخي وأيقونات نحاسية",
+    "category": "قوائم وأجندات",
+    "symbol": "▤",
+    "fontFamily": "amiri",
+    "theme": {
+      "green": "#8c6340",
+      "cream": "#fbf2df",
+      "greenLight": "#8c6340",
+      "gold": "#b99858",
+      "ink": "#8c6340"
+    },
+    "calendar": {
+      "header": "desert-journal-header",
+      "grid": "desert-journal-rows",
+      "columns": 1,
+      "headerHeight": 400,
+      "dark": false,
+      "index": 41,
+      "version": 4,
+      "layout": "list",
+      "listStyle": "sand"
+    }
   }
 ]

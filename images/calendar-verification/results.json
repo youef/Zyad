@@ -240,11 +240,107 @@
       "height": 960,
       "allCounters": true,
       "dateChange": true
+    },
+    {
+      "id": "blue-agenda",
+      "name": "الأجندة الزرقاء",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "mint-schedule",
+      "name": "مواعيد بالنعناع",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "rainbow-brush",
+      "name": "ألوان اليوم",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "saudi-list",
+      "name": "جدول الدار",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "financial-table",
+      "name": "دفتر الاستحقاق",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "metro-timeline",
+      "name": "مسار المواعيد",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "magazine-columns",
+      "name": "نافذة يومية",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "week-journal",
+      "name": "مفكرة الأسبوع",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "postcard-calendar",
+      "name": "بريد اليوم",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "mono-calendar",
+      "name": "حبر وأرقام",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "lilac-agenda",
+      "name": "أجندة بنفسجية",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "desert-journal",
+      "name": "يوميات الرمل",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
     }
   ],
   "checks": [
-    "30 distinct layouts",
-    "30 distinct counter styles",
+    "42 distinct layouts",
+    "42 distinct counter styles",
     "all configured counters",
     "24-counter capacity",
     "selected date updates every preview",

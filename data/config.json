@@ -236,7 +236,24 @@
     "patternStrength": 0.07,
     "highlightNext": true,
     "showUnit": true,
-    "density": "comfortable"
+    "density": "comfortable",
+    "autoRotate": true,
+    "fontFamily": "cairo",
+    "showIcons": true,
+    "showEventDates": true
   },
-  "savedDesigns": []
+  "savedDesigns": [],
+  "content": {
+    "mode": "daily",
+    "showHadith": true,
+    "showDua": true,
+    "offset": 0,
+    "excludedIds": [],
+    "customDuas": []
+  },
+  "app": {
+    "defaultView": "today-app",
+    "defaultFilter": "all",
+    "showInspiration": true
+  }
 }

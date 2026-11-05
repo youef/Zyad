@@ -1,5 +1,6 @@
 /* A single source of truth for the template gallery and its palette controls. */
 import {CALENDAR_PRESETS,CLASSIC_COMPOSITIONS} from './calendar-catalog.js';
+import {LIST_PRESETS} from './list-presets.js';
 export const CARD_PRESETS=Object.freeze([
  {id:'royal',name:'الملكي السعودي',description:'أخضر زمردي مع زخارف ذهبية',symbol:'✦',theme:{green:'#064b43',greenLight:'#37765e',gold:'#c99a42',cream:'#f8f5ea',ink:'#103f38'}},
  {id:'modern',name:'العصري',description:'مساحات نقية وتباين واضح',symbol:'▦',theme:{green:'#116b60',greenLight:'#539c89',gold:'#c0a15b',cream:'#f2f8f5',ink:'#123d35'}},
@@ -7,7 +8,7 @@ export const CARD_PRESETS=Object.freeze([
  {id:'desert',name:'الصحراء الملكية',description:'هوية رملية ولمسات نحاسية',symbol:'◆',theme:{green:'#693f30',greenLight:'#9a6945',gold:'#bd9259',cream:'#fbf0df',ink:'#5d3d2c'}},
  {id:'pearl',name:'اللؤلؤة',description:'عاجي ونفحات نعناع',symbol:'◇',theme:{green:'#166d5b',greenLight:'#4d9e86',gold:'#bc9555',cream:'#fffdf8',ink:'#155947'}},
  {id:'heritage',name:'التراثي',description:'المدالية الكلاسيكية والزخرفة الأصيلة',symbol:'❖',theme:{green:'#064b43',greenLight:'#37765e',gold:'#c99a42',cream:'#f8f5ea',ink:'#103f38'}}
-].map(p=>({...p,category:'التقويم الكلاسيكي',calendar:CLASSIC_COMPOSITIONS[p.id]})).concat(CALENDAR_PRESETS));
+].map(p=>({...p,category:'التقويم الكلاسيكي',calendar:CLASSIC_COMPOSITIONS[p.id]})).concat(CALENDAR_PRESETS,LIST_PRESETS));
 const byId=new Map(CARD_PRESETS.map(item=>[item.id,item]));
 export const validPreset=id=>byId.has(id);
 export const presetInfo=id=>byId.get(id)||CARD_PRESETS[0];
@@ -15,6 +16,7 @@ export const presetTheme=id=>({...presetInfo(id).theme});
 export function applyPreset(config,id,{updateColors=true}={}){
  if(!validPreset(id))throw Error('قالب غير معروف');
  config.design={pattern:true,patternStrength:.07,highlightNext:true,showUnit:true,density:'comfortable',...(config.design||{}),preset:id};
+ config.design.fontFamily=presetInfo(id).fontFamily||['cairo','tajawal','kufi','amiri'][Math.max(0,CARD_PRESETS.findIndex(p=>p.id===id))%4];
  if(updateColors)config.theme={...config.theme,...presetTheme(id)};
  return config;
 }

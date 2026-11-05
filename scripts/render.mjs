@@ -39,7 +39,7 @@ try{
   const done=await page.evaluate(()=>window.__posterReady);
   if(!done)throw Error('Card initialization failed');
   // Verify the public planner is interactive and publish real UI previews.
-  const planner=page.locator('#smart-planner');
+  await page.evaluate(()=>location.hash='smart-planner');const planner=page.locator('#smart-planner');
   await planner.waitFor({state:'visible',timeout:15000});
   const months=await planner.locator('.planner-month').count();
   const expected=[6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;
@@ -123,12 +123,12 @@ try{
   await admin.close();
   if(runtimeErrors.length)throw Error('Admin page JS errors: '+runtimeErrors.join(' | '));
   // Public template buttons must switch the actual image and preserve URL state.
-  await page.locator('#public-template-grid .public-template-select').nth(4).click();
+  await page.evaluate(()=>location.hash='template-gallery');await page.locator('#template-gallery').waitFor({state:'visible'});await page.locator('#public-template-grid .public-template-select').nth(4).click();
   await page.waitForFunction(()=>new URLSearchParams(location.search).get('template')==='pearl');
   if(await page.locator('.public-template-card.active').count()!==1)throw Error('Public template selection failed');
   const publicSelection=await page.locator('.public-template-card.active').getAttribute('data-preset');
   if(publicSelection!=='pearl')throw Error('Public selected template does not match Canvas');
-  const shortcut=page.locator('[data-quick-day="7"]');
+  await page.evaluate(()=>location.hash='poster-section');await page.locator('#poster-section').waitFor({state:'visible'});const shortcut=page.locator('[data-quick-day="7"]');
   await shortcut.click();
   await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
   const picked=await page.locator('#chosen-date').inputValue();
@@ -137,7 +137,7 @@ try{
   await page.locator('[data-quick-day="0"]').click();
   await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
   // Return site to the published default for its daily generated image.
-  await page.locator('#public-template-grid .public-template-select').first().click();
+  await page.locator('#daily-style').click();
   await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
 
   const dataUrl=await page.locator('#poster').evaluate(canvas=>canvas.toDataURL('image/png'));
