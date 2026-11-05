@@ -31,18 +31,22 @@ function syncTemplate(){
 }
 function initTemplates(){
  const grid=$('#admin-templates');
+ const note=document.createElement('p');note.className='calendar-admin-note';note.textContent=`${CARD_PRESETS.length} قالب تقويم كامل — تظهر القوالب نفسها للمشاهدين في مكتبة التصاميم. اختيار القالب يغيّر البطاقة الفعلية والملف المصدّر.`;
+ const search=document.createElement('label');search.className='field';search.textContent='البحث في قوالب التقويم';const input=document.createElement('input');input.type='search';input.placeholder='اسم القالب أو المناسبة';input.oninput=()=>{const q=input.value.trim();grid.querySelectorAll('.template-choice').forEach(button=>button.hidden=Boolean(q&&!button.textContent.includes(q)));};search.append(input);grid.before(note,search);
+ const back=document.createElement('a');back.href='#admin-templates';back.className='btn secondary full calendar-back';back.textContent='عودة إلى قوالب التقويم ↑';$('.admin-preview').append(back);
+ const reveal=()=>{if(matchMedia('(max-width:760px)').matches)$('.admin-preview').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth',block:'start'});};
  for(const {id,name,description} of CARD_PRESETS){
   const button=document.createElement('button');
   button.type='button';button.className='template-choice';button.dataset.preset=id;
   const preview=document.createElement('canvas');
-  preview.width=180;preview.height=320;preview.className='admin-template-art';
+  preview.width=540;preview.height=960;preview.className='admin-template-art';
   preview.setAttribute('aria-hidden','true');
   const title=document.createElement('strong');title.textContent=name;
   const detail=document.createElement('small');detail.textContent=description;
   button.append(preview,title,detail);
   button.addEventListener('click',()=>{
-   if(config.design?.preset===id)return;
-   applyPreset(config,id);syncFields();syncTemplate();changed();
+   if(config.design?.preset===id){reveal();return;}
+   applyPreset(config,id);syncFields();syncTemplate();changed();reveal();
   });
   grid.append(button);
  }
@@ -87,7 +91,7 @@ async function renderGallery(){
  const work=document.createElement('canvas');
  for(const button of document.querySelectorAll('#admin-templates button')){
   try{
-   await renderPoster(work,duplicateForPreset(snapshot,button.dataset.preset),date,{rootPrefix:'../assets/',basePrefix:'../'});
+   await renderPoster(work,duplicateForPreset(snapshot,button.dataset.preset),date,{rootPrefix:'../assets/',basePrefix:'../',preview:true,scale:.5});
    if(revision!==galleryRevision)return;
    const thumb=button.querySelector('canvas');
    thumb.getContext('2d').drawImage(work,0,0,thumb.width,thumb.height);

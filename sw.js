@@ -1,6 +1,6 @@
-const VERSION='zyad-public-v6-1',LIMIT=90;
+const VERSION='zyad-public-v7-calendars',LIMIT=90;
 const core=['','index.html','studio/','studio/studio.js','templates/','library/','settings/','admin/',
- 'assets/app.css','assets/home.css','assets/style.css','assets/main.js','assets/home.js','assets/card.js','assets/design.js','assets/templates.js','assets/planner.js','assets/catalog.js','assets/engine.js','assets/storage.js','assets/common.js','assets/rules.js','assets/migration.js','assets/gallery.js','assets/library.js','assets/settings.js','assets/admin.js','assets/admin-plus.js',
+ 'assets/app.css','assets/home.css','assets/style.css','assets/main.js','assets/home.js','assets/card.js','assets/design.js','assets/calendar-design.js','assets/calendar-catalog.js','assets/templates.js','assets/planner.js','assets/catalog.js','assets/engine.js','assets/storage.js','assets/common.js','assets/rules.js','assets/migration.js','assets/gallery.js','assets/library.js','assets/settings.js','assets/admin.js','assets/admin-plus.js',
  'assets/fonts/cairo-arabic.woff2','assets/vendor/qrcode.js','assets/vendor/fflate.js','manifest.webmanifest','assets/app-192.png','assets/app-512.png','assets/app-180.png','assets/favicon.svg','assets/qr.png','assets/ornament.svg','assets/icons.svg','data/config.json','data/history.json','data/assets.json','assets/backgrounds/saudi-emerald.webp'];
 self.addEventListener('install',e=>e.waitUntil(caches.open(VERSION).then(c=>c.addAll(core.map(p=>new URL(p,self.registration.scope).href)))));
 self.addEventListener('message',e=>{if(e.data?.type==='ACTIVATE')self.skipWaiting();});

@@ -1,0 +1,731 @@
+[
+  {
+    "id": "royal",
+    "name": "الملكي السعودي",
+    "description": "أخضر زمردي مع زخارف ذهبية",
+    "symbol": "✦",
+    "theme": {
+      "green": "#064b43",
+      "greenLight": "#37765e",
+      "gold": "#c99a42",
+      "cream": "#f8f5ea",
+      "ink": "#103f38"
+    },
+    "category": "التقويم الكلاسيكي",
+    "calendar": {
+      "header": "crest",
+      "grid": "royal",
+      "columns": 4,
+      "headerHeight": 490,
+      "dark": false,
+      "index": 24,
+      "version": 3
+    }
+  },
+  {
+    "id": "modern",
+    "name": "العصري",
+    "description": "مساحات نقية وتباين واضح",
+    "symbol": "▦",
+    "theme": {
+      "green": "#116b60",
+      "greenLight": "#539c89",
+      "gold": "#c0a15b",
+      "cream": "#f2f8f5",
+      "ink": "#123d35"
+    },
+    "category": "التقويم الكلاسيكي",
+    "calendar": {
+      "header": "swiss",
+      "grid": "swiss",
+      "columns": 3,
+      "headerHeight": 450,
+      "dark": false,
+      "index": 25,
+      "version": 3
+    }
+  },
+  {
+    "id": "night",
+    "name": "الليلي",
+    "description": "درجات عميقة وإضاءة ذهبية",
+    "symbol": "☾",
+    "theme": {
+      "green": "#123d36",
+      "greenLight": "#356e62",
+      "gold": "#e0b55b",
+      "cream": "#102a26",
+      "ink": "#edf3e7"
+    },
+    "category": "التقويم الكلاسيكي",
+    "calendar": {
+      "header": "eclipse",
+      "grid": "eclipse",
+      "columns": 4,
+      "headerHeight": 490,
+      "dark": true,
+      "index": 26,
+      "version": 3
+    }
+  },
+  {
+    "id": "desert",
+    "name": "الصحراء الملكية",
+    "description": "هوية رملية ولمسات نحاسية",
+    "symbol": "◆",
+    "theme": {
+      "green": "#693f30",
+      "greenLight": "#9a6945",
+      "gold": "#bd9259",
+      "cream": "#fbf0df",
+      "ink": "#5d3d2c"
+    },
+    "category": "التقويم الكلاسيكي",
+    "calendar": {
+      "header": "landscape",
+      "grid": "terraces",
+      "columns": 4,
+      "headerHeight": 470,
+      "dark": false,
+      "index": 27,
+      "version": 3
+    }
+  },
+  {
+    "id": "pearl",
+    "name": "اللؤلؤة",
+    "description": "عاجي ونفحات نعناع",
+    "symbol": "◇",
+    "theme": {
+      "green": "#166d5b",
+      "greenLight": "#4d9e86",
+      "gold": "#bc9555",
+      "cream": "#fffdf8",
+      "ink": "#155947"
+    },
+    "category": "التقويم الكلاسيكي",
+    "calendar": {
+      "header": "pearl",
+      "grid": "pearls",
+      "columns": 4,
+      "headerHeight": 480,
+      "dark": false,
+      "index": 28,
+      "version": 3
+    }
+  },
+  {
+    "id": "heritage",
+    "name": "التراثي",
+    "description": "المدالية الكلاسيكية والزخرفة الأصيلة",
+    "symbol": "❖",
+    "theme": {
+      "green": "#064b43",
+      "greenLight": "#37765e",
+      "gold": "#c99a42",
+      "cream": "#f8f5ea",
+      "ink": "#103f38"
+    },
+    "category": "التقويم الكلاسيكي"
+  },
+  {
+    "id": "saudi-emerald",
+    "name": "زمرد السعودية",
+    "description": "قوس معماري وعدادات ميدالية",
+    "category": "سعودي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#123f35",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#123f35",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "arch",
+      "grid": "medallion",
+      "columns": 4,
+      "headerHeight": 500,
+      "dark": true,
+      "background": "assets/backgrounds/saudi-emerald.webp",
+      "original": "assets/backgrounds/saudi-emerald.png",
+      "index": 0,
+      "version": 3
+    }
+  },
+  {
+    "id": "royal-gold",
+    "name": "أثر ملكي",
+    "description": "تاج ملكي وعدادات ألماسية",
+    "category": "ملكي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#123e31",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#123e31",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "crown",
+      "grid": "diamonds",
+      "columns": 4,
+      "headerHeight": 470,
+      "dark": true,
+      "background": "assets/backgrounds/royal-gold.webp",
+      "original": "assets/backgrounds/royal-gold.png",
+      "index": 1,
+      "version": 3
+    }
+  },
+  {
+    "id": "islamic-geometry",
+    "name": "تناغم",
+    "description": "شبكة هندسية ونجوم ثمانية",
+    "category": "إسلامي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#254951",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#254951"
+    },
+    "calendar": {
+      "header": "geometry",
+      "grid": "stars",
+      "columns": 4,
+      "headerHeight": 440,
+      "dark": false,
+      "background": "assets/backgrounds/islamic-geometry.webp",
+      "original": "assets/backgrounds/islamic-geometry.png",
+      "index": 2,
+      "version": 3
+    }
+  },
+  {
+    "id": "ivory-modern",
+    "name": "مساحة بيضاء",
+    "description": "صفحة تحريرية وأعمدة أرقام",
+    "category": "عصري",
+    "symbol": "✦",
+    "theme": {
+      "green": "#304c43",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#304c43"
+    },
+    "calendar": {
+      "header": "editorial",
+      "grid": "columns",
+      "columns": 3,
+      "headerHeight": 450,
+      "dark": false,
+      "background": "assets/backgrounds/ivory-modern.webp",
+      "original": "assets/backgrounds/ivory-modern.png",
+      "index": 3,
+      "version": 3
+    }
+  },
+  {
+    "id": "midnight",
+    "name": "بعد المساء",
+    "description": "قمر مضيء ومدارات ليلية",
+    "category": "ليلي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#131d34",
+      "greenLight": "#96bba9",
+      "gold": "#b4c7d5",
+      "cream": "#131d34",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "moon",
+      "grid": "orbits",
+      "columns": 4,
+      "headerHeight": 490,
+      "dark": true,
+      "background": "assets/backgrounds/midnight.webp",
+      "original": "assets/backgrounds/midnight.png",
+      "index": 4,
+      "version": 3
+    }
+  },
+  {
+    "id": "desert-sands",
+    "name": "رمل وضياء",
+    "description": "طبقات رملية وأشرطة منحنية",
+    "category": "صحراوي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#523c2f",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#523c2f"
+    },
+    "calendar": {
+      "header": "dunes",
+      "grid": "waves",
+      "columns": 3,
+      "headerHeight": 460,
+      "dark": false,
+      "background": "assets/backgrounds/desert-sands.webp",
+      "original": "assets/backgrounds/desert-sands.png",
+      "index": 5,
+      "version": 3
+    }
+  },
+  {
+    "id": "najdi",
+    "name": "حكاية نجد",
+    "description": "بوابة نجدية وأبراج تراثية",
+    "category": "تراث",
+    "symbol": "✦",
+    "theme": {
+      "green": "#5c3a21",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#5c3a21"
+    },
+    "calendar": {
+      "header": "najdi",
+      "grid": "battlements",
+      "columns": 4,
+      "headerHeight": 470,
+      "dark": false,
+      "background": "assets/backgrounds/najdi.webp",
+      "original": "assets/backgrounds/najdi.png",
+      "index": 6,
+      "version": 3
+    }
+  },
+  {
+    "id": "national-day",
+    "name": "دارنا",
+    "description": "راية ممتدة ومسارات صاعدة",
+    "category": "وطني",
+    "symbol": "✦",
+    "theme": {
+      "green": "#0b583d",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#0b583d",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "flag",
+      "grid": "chevrons",
+      "columns": 4,
+      "headerHeight": 450,
+      "dark": true,
+      "background": "assets/backgrounds/national-day.webp",
+      "original": "assets/backgrounds/national-day.png",
+      "index": 7,
+      "version": 3
+    }
+  },
+  {
+    "id": "founding-day",
+    "name": "جذور راسخة",
+    "description": "نافذة تراثية وأختام ورقية",
+    "category": "تأسيس",
+    "symbol": "✦",
+    "theme": {
+      "green": "#533b26",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#533b26"
+    },
+    "calendar": {
+      "header": "roots",
+      "grid": "stamps",
+      "columns": 4,
+      "headerHeight": 500,
+      "dark": false,
+      "background": "assets/backgrounds/founding-day.webp",
+      "original": "assets/backgrounds/founding-day.png",
+      "index": 8,
+      "version": 3
+    }
+  },
+  {
+    "id": "ramadan",
+    "name": "ليالي رمضان",
+    "description": "مشكاة رمضان وفوانيس للمواعيد",
+    "category": "رمضان",
+    "symbol": "✦",
+    "theme": {
+      "green": "#143c42",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#143c42",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "lantern",
+      "grid": "lanterns",
+      "columns": 4,
+      "headerHeight": 500,
+      "dark": true,
+      "background": "assets/backgrounds/ramadan.webp",
+      "original": "assets/backgrounds/ramadan.png",
+      "index": 9,
+      "version": 3
+    }
+  },
+  {
+    "id": "eid",
+    "name": "بهجة العيد",
+    "description": "شريط احتفال وبطاقات هدايا",
+    "category": "عيد",
+    "symbol": "✦",
+    "theme": {
+      "green": "#365b48",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#365b48"
+    },
+    "calendar": {
+      "header": "ribbon",
+      "grid": "gifts",
+      "columns": 4,
+      "headerHeight": 460,
+      "dark": false,
+      "background": "assets/backgrounds/eid.webp",
+      "original": "assets/backgrounds/eid.png",
+      "index": 10,
+      "version": 3
+    }
+  },
+  {
+    "id": "friday",
+    "name": "نور الجمعة",
+    "description": "محراب هادئ وأقواس للمواعيد",
+    "category": "جمعة",
+    "symbol": "✦",
+    "theme": {
+      "green": "#2c5144",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#2c5144"
+    },
+    "calendar": {
+      "header": "dome",
+      "grid": "arches",
+      "columns": 4,
+      "headerHeight": 500,
+      "dark": false,
+      "background": "assets/backgrounds/friday.webp",
+      "original": "assets/backgrounds/friday.png",
+      "index": 11,
+      "version": 3
+    }
+  },
+  {
+    "id": "remembrance",
+    "name": "لحظة تأمل",
+    "description": "تكوين طباعي نقي ومواعيد مفتوحة",
+    "category": "عبارات",
+    "symbol": "✦",
+    "theme": {
+      "green": "#5a5546",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#5a5546"
+    },
+    "calendar": {
+      "header": "statement",
+      "grid": "minimal",
+      "columns": 3,
+      "headerHeight": 430,
+      "dark": false,
+      "background": "assets/backgrounds/remembrance.webp",
+      "original": "assets/backgrounds/remembrance.png",
+      "index": 12,
+      "version": 3
+    }
+  },
+  {
+    "id": "salary",
+    "name": "موعدك القادم",
+    "description": "دفتر مواعيد وصفوف مالية",
+    "category": "مواعيد",
+    "symbol": "✦",
+    "theme": {
+      "green": "#234b48",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#234b48",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "ledger",
+      "grid": "ledger",
+      "columns": 3,
+      "headerHeight": 440,
+      "dark": true,
+      "background": "assets/backgrounds/salary.webp",
+      "original": "assets/backgrounds/salary.png",
+      "index": 13,
+      "version": 3
+    }
+  },
+  {
+    "id": "school",
+    "name": "خطوة معرفة",
+    "description": "ورقة مدرسية وفواصل دفترية",
+    "category": "مدرسة",
+    "symbol": "✦",
+    "theme": {
+      "green": "#355745",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#355745"
+    },
+    "calendar": {
+      "header": "notebook",
+      "grid": "notebook",
+      "columns": 4,
+      "headerHeight": 460,
+      "dark": false,
+      "background": "assets/backgrounds/school.webp",
+      "original": "assets/backgrounds/school.png",
+      "index": 14,
+      "version": 3
+    }
+  },
+  {
+    "id": "graduation",
+    "name": "وصلتَ للحلم",
+    "description": "إكليل إنجاز ودروع المواعيد",
+    "category": "تخرج",
+    "symbol": "✦",
+    "theme": {
+      "green": "#183b35",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#183b35",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "laurel",
+      "grid": "badges",
+      "columns": 4,
+      "headerHeight": 490,
+      "dark": true,
+      "background": "assets/backgrounds/graduation.webp",
+      "original": "assets/backgrounds/graduation.png",
+      "index": 15,
+      "version": 3
+    }
+  },
+  {
+    "id": "wedding",
+    "name": "وعدٌ جميل",
+    "description": "دعوة أنيقة وتفاصيل زهرية",
+    "category": "زواج",
+    "symbol": "✦",
+    "theme": {
+      "green": "#6d6250",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#6d6250"
+    },
+    "calendar": {
+      "header": "invitation",
+      "grid": "petals",
+      "columns": 4,
+      "headerHeight": 500,
+      "dark": false,
+      "background": "assets/backgrounds/wedding.webp",
+      "original": "assets/backgrounds/wedding.png",
+      "index": 16,
+      "version": 3
+    }
+  },
+  {
+    "id": "newborn",
+    "name": "أهلًا بالصغير",
+    "description": "غيمة ناعمة ومواعيد مستديرة",
+    "category": "مولود",
+    "symbol": "✦",
+    "theme": {
+      "green": "#4a665b",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#4a665b"
+    },
+    "calendar": {
+      "header": "cloud",
+      "grid": "clouds",
+      "columns": 4,
+      "headerHeight": 470,
+      "dark": false,
+      "background": "assets/backgrounds/newborn.webp",
+      "original": "assets/backgrounds/newborn.png",
+      "index": 17,
+      "version": 3
+    }
+  },
+  {
+    "id": "success",
+    "name": "فرحة إنجاز",
+    "description": "وسام نجاح وأشعة احتفال",
+    "category": "نجاح",
+    "symbol": "✦",
+    "theme": {
+      "green": "#472f44",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#472f44",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "celebration",
+      "grid": "rays",
+      "columns": 4,
+      "headerHeight": 460,
+      "dark": true,
+      "background": "assets/backgrounds/success.webp",
+      "original": "assets/backgrounds/success.png",
+      "index": 18,
+      "version": 3
+    }
+  },
+  {
+    "id": "business",
+    "name": "توقيع العلامة",
+    "description": "هوية تجارية ووحدات هندسية",
+    "category": "تجاري",
+    "symbol": "✦",
+    "theme": {
+      "green": "#263e35",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#263e35"
+    },
+    "calendar": {
+      "header": "brand",
+      "grid": "mono",
+      "columns": 3,
+      "headerHeight": 430,
+      "dark": false,
+      "background": "assets/backgrounds/business.webp",
+      "original": "assets/backgrounds/business.png",
+      "index": 19,
+      "version": 3
+    }
+  },
+  {
+    "id": "winter",
+    "name": "دفء الشتاء",
+    "description": "نافذة شتوية وبطاقات زجاجية",
+    "category": "شتاء",
+    "symbol": "✦",
+    "theme": {
+      "green": "#304c5b",
+      "greenLight": "#778a76",
+      "gold": "#b4c7d5",
+      "cream": "#f8f3e7",
+      "ink": "#304c5b"
+    },
+    "calendar": {
+      "header": "frost",
+      "grid": "glass",
+      "columns": 4,
+      "headerHeight": 490,
+      "dark": false,
+      "background": "assets/backgrounds/winter.webp",
+      "original": "assets/backgrounds/winter.png",
+      "index": 20,
+      "version": 3
+    }
+  },
+  {
+    "id": "summer",
+    "name": "أيام الشمس",
+    "description": "قرص شمس ومواعيد مشعة",
+    "category": "صيف",
+    "symbol": "✦",
+    "theme": {
+      "green": "#735237",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#735237"
+    },
+    "calendar": {
+      "header": "sun",
+      "grid": "sunburst",
+      "columns": 4,
+      "headerHeight": 460,
+      "dark": false,
+      "background": "assets/backgrounds/summer.webp",
+      "original": "assets/backgrounds/summer.png",
+      "index": 21,
+      "version": 3
+    }
+  },
+  {
+    "id": "countdown",
+    "name": "لحظة اقتراب",
+    "description": "موعد بارز وحلقات تنازلية",
+    "category": "عد تنازلي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#263e3b",
+      "greenLight": "#96bba9",
+      "gold": "#b99255",
+      "cream": "#263e3b",
+      "ink": "#f4e7ce"
+    },
+    "calendar": {
+      "header": "spotlight",
+      "grid": "rings",
+      "columns": 4,
+      "headerHeight": 500,
+      "dark": true,
+      "background": "assets/backgrounds/countdown.webp",
+      "original": "assets/backgrounds/countdown.png",
+      "index": 22,
+      "version": 3
+    }
+  },
+  {
+    "id": "personal-story",
+    "name": "يوميات",
+    "description": "قصاصة يومية وإطارات للذكريات",
+    "category": "شخصي",
+    "symbol": "✦",
+    "theme": {
+      "green": "#355143",
+      "greenLight": "#778a76",
+      "gold": "#b99255",
+      "cream": "#f8f3e7",
+      "ink": "#355143"
+    },
+    "calendar": {
+      "header": "polaroid",
+      "grid": "frames",
+      "columns": 4,
+      "headerHeight": 490,
+      "dark": false,
+      "background": "assets/backgrounds/personal-story.webp",
+      "original": "assets/backgrounds/personal-story.png",
+      "index": 23,
+      "version": 3
+    }
+  }
+]

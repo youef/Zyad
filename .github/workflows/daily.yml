@@ -18,6 +18,7 @@ on:
       - 'package-lock.json'
       - 'data/templates/**'
       - 'data/assets.json'
+      - 'data/calendar-templates.json'
       - 'scripts/**'
       - '.github/workflows/daily.yml'
   schedule:
@@ -52,6 +53,7 @@ jobs:
         run: npm test
       - name: Check studio in Chromium
         run: |
+          node scripts/check-calendars.mjs
           node scripts/check-platform.mjs
           node scripts/check-extra.mjs
       - name: Render and archive today's poster

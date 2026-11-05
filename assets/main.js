@@ -4,6 +4,10 @@ import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=2
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
 let config=null,publishedConfig=null,activePreset='',renderId=0;
+let galleryObserver=null,galleryRevision=0;
+let gallerySearch='';
+function filterCalendarGallery(){document.querySelectorAll('.public-template-card').forEach(card=>{const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);card.hidden=Boolean(gallerySearch&&!`${p.name} ${p.description} ${p.category}`.includes(gallerySearch));});}
+$('#calendar-search').addEventListener('input',e=>{gallerySearch=e.target.value.trim();filterCalendarGallery();});
 const params=new URLSearchParams(location.search);
 const selected=params.get('date');dateInput.value=/^\d{4}-\d{2}-\d{2}$/.test(selected||'')?selected:saToday();
 $('#year').textContent=String(new Date().getFullYear());
@@ -27,13 +31,16 @@ function updateUrl(){
  history.replaceState(null,'',url.pathname+url.search+url.hash);
 }
 async function exportPreset(id){
- const snapshot=activeConfig(id),cv=document.createElement('canvas');
- await renderPoster(cv,snapshot,dateInput.value);
- downloadFile('calendar-'+dateInput.value+'-'+id+'.png',await getPngBlob(cv));
+ const snapshot=activeConfig(id),cv=document.createElement('canvas'),iso=dateInput.value;
+ await renderPoster(cv,snapshot,iso);
+ downloadFile('calendar-'+iso+'-'+id+'.png',await getPngBlob(cv));
  say('تم تنزيل بطاقة '+CARD_PRESETS.find(x=>x.id===id).name+'.');
 }
 function renderGallery(){
+ const revision=++galleryRevision;galleryObserver?.disconnect();
  const grid=$('#public-template-grid');if(!grid)return;grid.replaceChildren();
+ let pending=Promise.resolve();
+ galleryObserver=new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;galleryObserver.unobserve(entry.target);const card=entry.target,id=card.dataset.preset,selectedDate=dateInput.value;pending=pending.then(async()=>{if(revision!==galleryRevision)return;try{const art=card.querySelector('.public-template-art');await renderPoster(art,activeConfig(id),selectedDate,{preview:true,scale:.5});if(revision!==galleryRevision)return;art.hidden=false;card.querySelector('img').hidden=true;card.querySelector('.public-template-fallback').hidden=true;card.querySelector('.preview-date').textContent='معاينة بتاريخ '+selectedDate;}catch(e){card.querySelector('.preview-date').textContent='تعذرت المعاينة — أعد المحاولة';}});}}, {rootMargin:'180px'});
  for(const preset of CARD_PRESETS){
   const item=document.createElement('article');item.className='public-template-card';item.dataset.preset=preset.id;
   if(preset.id===activePreset)item.classList.add('active');
@@ -42,14 +49,17 @@ function renderGallery(){
   const img=document.createElement('img');img.src='images/templates/'+preset.id+'.webp?v='+dateInput.value;img.loading='lazy';img.alt='بطاقة قالب '+preset.name;
   img.addEventListener('error',()=>{img.hidden=true;});
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.textContent=preset.symbol;
+  const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
   const heading=document.createElement('strong');heading.textContent=preset.name;
   const desc=document.createElement('small');desc.textContent=preset.description;
-  select.append(img,fallback,heading,desc);
-  select.onclick=async()=>{activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);}catch{}config=activeConfig(activePreset);updateUrl();renderGallery();await refresh();};
+  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='جارٍ تجهيز تاريخ '+dateInput.value;
+  select.append(img,fallback,art,heading,desc,previewDate);
+  select.onclick=async()=>{activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});await refresh();};
   const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='تنزيل هذا التصميم';
   download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ التوليد...';try{await exportPreset(preset.id);}catch(e){say('فشل التوليد: '+e.message);}finally{download.disabled=false;download.textContent='تنزيل هذا التصميم';}};
-  item.append(select,download);grid.append(item);
+  item.append(select,download);grid.append(item);galleryObserver.observe(item);
  }
+ filterCalendarGallery();
 }
 async function refresh(){
  if(!config)return;const id=++renderId;syncQuickDays();say('جارٍ توليد البطاقة...');
@@ -62,14 +72,16 @@ async function refresh(){
   say('بطاقة '+CARD_PRESETS.find(x=>x.id===activePreset)?.name+' جاهزة للتنزيل والمشاركة.');
  }catch(e){console.error(e);say('تعذر عرض البطاقة: '+e.message);}
 }
-function setDate(v){dateInput.value=v;updateUrl();refresh();}
+function setDate(v){dateInput.value=v;updateUrl();renderGallery();refresh();}
 $('#prev').addEventListener('click',()=>setDate(isoAdd(dateInput.value,-1)));
 $('#next').addEventListener('click',()=>setDate(isoAdd(dateInput.value,1)));
 $('#today').addEventListener('click',()=>setDate(saToday()));
 dateInput.addEventListener('change',()=>{if(dateInput.value)setDate(dateInput.value);});
-$('#download').addEventListener('click',async()=>{try{const blob=await getPngBlob(canvas);downloadFile(`calendar-${dateInput.value}-${activePreset}.png`,blob);say('تم تجهيز الصورة للتنزيل.');}catch(e){say(e.message);}});
-$('#download-4k').addEventListener('click',async()=>{try{const big=document.createElement('canvas');await renderPoster(big,config,dateInput.value,{scale:2});const blob=await getPngBlob(big);downloadFile('calendar-'+dateInput.value+'-4k.png',blob);say('تم تجهيز صورة 4K بالدقة الأصلية.');}catch(e){say('تعذر تجهيز الصورة الكبيرة: '+e.message);}});
-$('#share').addEventListener('click',async()=>{try{const blob=await getPngBlob(canvas);const file=new File([blob],`calendar-${dateInput.value}.png`,{type:'image/png'});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:config.brand?.name||'بطاقتي اليومية'});}else if(navigator.share){await navigator.share({title:config.brand?.name||'بطاقتي اليومية',url:location.href});}else{await navigator.clipboard.writeText(location.href);say('تم نسخ رابط البطاقة.');}}catch(e){if(e.name!=='AbortError')say('المشاركة غير متاحة على هذا المتصفح، استخدم تنزيل PNG.');}});
+function exportAction(id,action){$(id).addEventListener('click',async()=>{const button=$(id);if(button.disabled||!config)return;button.disabled=true;const snapshot=JSON.parse(JSON.stringify(config)),iso=dateInput.value,preset=activePreset;try{await action(snapshot,iso,preset);}catch(e){if(e.name!=='AbortError')say('تعذر تجهيز البطاقة: '+e.message);}finally{button.disabled=false;}});}
+exportAction('#download',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);downloadFile(`calendar-${iso}-${preset}.png`,await getPngBlob(c));say('تم تجهيز الصورة للتنزيل.');});
+exportAction('#download-4k',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso,{scale:2});downloadFile(`calendar-${iso}-${preset}-4k.png`,await getPngBlob(c));say('تم تجهيز الصورة بالدقة المضاعفة 2160 × 3840.');});
+exportAction('#share',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);const file=new File([await getPngBlob(c)],`calendar-${iso}-${preset}.png`,{type:'image/png'});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'بطاقتي الذكية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
+window.zyadCalendar={getConfig:()=>config?JSON.parse(JSON.stringify(config)):null,getDate:()=>dateInput.value};
 async function loadArchive(){try{const r=await fetch('data/history.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('not found');const list=await r.json();const grid=$('#archive-grid');if(!Array.isArray(list)||!list.length)return;grid.replaceChildren();for(const rec of list.slice(0,24)){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)||!/^images\/[\w.-]+\.png$/.test(rec.path))continue;
   const a=document.createElement('a');a.className='archive-item';a.href=rec.path;a.download=`calendar-${rec.date}.png`;const img=document.createElement('img');img.src=rec.path;img.alt='بطاقة يوم '+rec.date;img.loading='lazy';const caption=document.createElement('span');caption.textContent=rec.date+'  ↓';a.append(img,caption);grid.append(a);

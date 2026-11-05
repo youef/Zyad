@@ -1,0 +1,256 @@
+{
+  "status": "passed",
+  "templates": [
+    {
+      "id": "royal",
+      "name": "الملكي السعودي",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "modern",
+      "name": "العصري",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "night",
+      "name": "الليلي",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "desert",
+      "name": "الصحراء الملكية",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "pearl",
+      "name": "اللؤلؤة",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "heritage",
+      "name": "التراثي",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "saudi-emerald",
+      "name": "زمرد السعودية",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "royal-gold",
+      "name": "أثر ملكي",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "islamic-geometry",
+      "name": "تناغم",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "ivory-modern",
+      "name": "مساحة بيضاء",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "midnight",
+      "name": "بعد المساء",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "desert-sands",
+      "name": "رمل وضياء",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "najdi",
+      "name": "حكاية نجد",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "national-day",
+      "name": "دارنا",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "founding-day",
+      "name": "جذور راسخة",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "ramadan",
+      "name": "ليالي رمضان",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "eid",
+      "name": "بهجة العيد",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "friday",
+      "name": "نور الجمعة",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "remembrance",
+      "name": "لحظة تأمل",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "salary",
+      "name": "موعدك القادم",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "school",
+      "name": "خطوة معرفة",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "graduation",
+      "name": "وصلتَ للحلم",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "wedding",
+      "name": "وعدٌ جميل",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "newborn",
+      "name": "أهلًا بالصغير",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "success",
+      "name": "فرحة إنجاز",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "business",
+      "name": "توقيع العلامة",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "winter",
+      "name": "دفء الشتاء",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "summer",
+      "name": "أيام الشمس",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "countdown",
+      "name": "لحظة اقتراب",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "personal-story",
+      "name": "يوميات",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    }
+  ],
+  "checks": [
+    "30 distinct layouts",
+    "30 distinct counter styles",
+    "all configured counters",
+    "24-counter capacity",
+    "selected date updates every preview",
+    "five exported QR codes decoded",
+    "public PNG export",
+    "admin selection + persistence",
+    "mobile + desktop without JS errors"
+  ]
+}

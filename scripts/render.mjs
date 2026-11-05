@@ -4,6 +4,7 @@ import {extname,resolve,join,sep} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import QRCode from 'qrcode';
 import {chromium} from 'playwright';
+import {CARD_PRESETS} from '../assets/templates.js';
 
 const root=resolve(fileURLToPath(new URL('..',import.meta.url)));
 const config=JSON.parse(await readFile(join(root,'data/config.json'),'utf8'));
@@ -56,7 +57,7 @@ try{
 
 
   // Each thumbnail is rendered from the same source renderer as the real PNG.
-  const templateIds=['royal','modern','night','desert','pearl','heritage'];
+  const templateIds=CARD_PRESETS.map(t=>t.id);
   const cards=await page.evaluate(async({ids,date})=>{
     const {renderPoster}=await import('/assets/card.js');
     const {duplicateForPreset}=await import('/assets/templates.js');
@@ -65,14 +66,14 @@ try{
     for(const id of ids){
       const canvas=document.createElement('canvas');
       await renderPoster(canvas,duplicateForPreset(original,id),date);
-      const thumb=document.createElement('canvas');thumb.width=270;thumb.height=480;
-      thumb.getContext('2d',{alpha:false}).drawImage(canvas,0,0,270,480);
-      const base64=thumb.toDataURL('image/webp',.86).split(',')[1];
+      const thumb=document.createElement('canvas');thumb.width=540;thumb.height=960;
+      thumb.getContext('2d',{alpha:false}).drawImage(canvas,0,0,540,960);
+      const base64=thumb.toDataURL('image/webp',.94).split(',')[1];
       output.push({id,base64});
     }
     return output;
   },{ids:templateIds,date:today});
-  if(new Set(cards.map(r=>r.base64.slice(0,10000))).size<5)throw Error('Template previews are visually identical');
+  if(new Set(cards.map(r=>r.base64)).size!==templateIds.length)throw Error('Template previews are visually identical');
   await mkdir(join(root,'images/templates'),{recursive:true});
   for(const card of cards){
     if(!templateIds.includes(card.id)||card.base64.length<2000)throw Error('Invalid template preview');
@@ -96,14 +97,14 @@ try{
   for(const id of templateIds){
     await admin.locator('[data-preset="'+id+'"]').click();
     await admin.waitForFunction(name=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: '+name),
-      id==='desert'?'الصحراء الملكية':id==='heritage'?'التراثي':id==='royal'?'الملكي السعودي':id==='modern'?'العصري':id==='night'?'الليلي':'اللؤلؤة',
+      CARD_PRESETS.find(t=>t.id===id).name,
       {timeout:15000});
     const pressed=await admin.locator('[data-preset="'+id+'"]').getAttribute('aria-pressed');
     if(pressed!=='true')throw Error('Admin preset was not activated: '+id);
     checks.push({id,pixel:await colorAt()});
   }
   console.log('Template sample signatures:',JSON.stringify(checks));
-  if(new Set(checks.map(c=>c.pixel)).size<4)throw Error('Admin template selection did not change the actual Canvas');
+  if(new Set(checks.map(c=>c.pixel)).size!==templateIds.length)throw Error('Admin template selection did not change the actual Canvas');
   await admin.locator('[data-preset="desert"]').click();
   await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
   const beforeColor=await colorAt();

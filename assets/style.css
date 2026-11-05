@@ -220,3 +220,5 @@ body { padding-bottom: calc(62px + env(safe-area-inset-bottom)); }
  .admin-page .admin-layout { display:flex; flex-direction:column; }
  .admin-page .editor-panel,.admin-page .admin-preview { width:100%; }
 }
+.public-template-art{width:100%;height:auto;aspect-ratio:9/16;display:block;border-radius:12px}.public-template-art[hidden],.public-template-select img[hidden],.public-template-fallback[hidden]{display:none!important}.preview-date{font-size:10px!important;min-height:0!important;color:#7e6c45!important}.template-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-template-art{width:100%;height:auto!important;aspect-ratio:9/16}.template-choice{content-visibility:auto;contain-intrinsic-size:auto 390px}
+.calendar-admin-note{background:#f1f5ec;border:1px solid #d7e5d4;border-radius:14px;padding:15px;font-size:12px;line-height:1.9;color:#254c39}.template-choice[hidden]{display:none!important}.calendar-back{display:none;scroll-margin-top:95px}@media(max-width:760px){.calendar-back{display:flex;margin-top:14px}}#admin-templates,.admin-preview{scroll-margin-top:90px}

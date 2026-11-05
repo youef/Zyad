@@ -1,4 +1,6 @@
 import {renderPremium} from './design.js?v=20261104r4';
+import {presetInfo} from './templates.js';
+import {renderCalendar} from './calendar-design.js';
 /* Shared pure card renderer: no user text is inserted into HTML. */
 const W = 1080, H = 1920;
 const imageCache = new Map();
@@ -60,7 +62,7 @@ export function hijriDate(iso, cfg) {
   if (iso===saToday() && cfg?.settings?.hijriOverride?.trim()) return cfg.settings.hijriOverride.trim();
   const offset=Math.max(-3,Math.min(3,Number(cfg?.settings?.hijriOffset)||0));
   const d=new Date(isoAdd(iso,offset)+'T12:00:00Z');
-  try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{year:'numeric',month:'long',day:'numeric', timeZone:'Asia/Riyadh'}).format(d) + ' هـ'; }
+  try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{year:'numeric',month:'long',day:'numeric', timeZone:'Asia/Riyadh'}).format(d).replace(/\s*هـ\s*$/,'') + ' هـ'; }
   catch { return 'التاريخ الهجري'; }
 }
 function hijriPanel(iso,cfg) {
@@ -127,8 +129,8 @@ function drawBadge(ctx,x,y,value,label,radius,color,gold,cream) {
 function fetchImage(src) {
   if(!src)return Promise.resolve(null);
   if(imageCache.has(src))return imageCache.get(src);
-  const promise=new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>resolve(null);img.src=src;});
-  imageCache.set(src,promise);return promise;
+  const promise=new Promise(resolve=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>{imageCache.delete(src);resolve(null);};img.src=src;});
+  imageCache.set(src,promise);if(imageCache.size>12)imageCache.delete(imageCache.keys().next().value);return promise;
 }
 function deepGet(o,p) {return p.split('.').reduce((acc,k)=>acc?.[k],o);}
 export function cloneConfig(config) {return JSON.parse(JSON.stringify(config));}
@@ -139,10 +141,13 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const root=options.rootPrefix || 'assets/';
   const imageSrc=String(config.brand?.logo||'');
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg)$/i.test(imageSrc);
-  const [logo, qr]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,config.settings?.showQr?fetchImage(root+'qr.png'):null]);
-  const scale=[1,2,3].includes(Number(options.scale))?Number(options.scale):1;
+  const definition=presetInfo(config.design?.preset),art=options.preview?definition.calendar?.background:definition.calendar?.original;
+  const [logo, qr, background]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,config.settings?.showQr?fetchImage(root+'qr.png'):null,art?fetchImage(new URL('../'+art,import.meta.url).href):null]);
+  if(art&&!background)throw Error('تعذر تحميل خلفية القالب. تحقق من الاتصال وأعد المحاولة.');
+  const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
+  if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
   const c=config.theme||{},green=c.green||'#064b43',soft=c.greenLight||'#37765e',gold=c.gold||'#c99a42',cream=c.cream||'#f8f5ea',ink=c.ink||'#103f38';
   if((config.design?.preset||'royal')!=='heritage') { renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate}); return canvas; }
   ctx.fillStyle=cream;ctx.fillRect(0,0,W,H);pattern(ctx,gold,ink);

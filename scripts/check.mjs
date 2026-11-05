@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {isoAdd,daysBetween,remaining,hijriDate} from '../assets/card.js';
+import {validPreset} from '../assets/templates.js';
 const config=JSON.parse(await readFile(new URL('../data/config.json',import.meta.url),'utf8'));
 assert.equal(isoAdd('2026-11-30',1),'2026-12-01');
 assert.equal(daysBetween('2026-11-03','2026-12-01'),28);
@@ -12,7 +13,7 @@ assert(remaining({mode:'hijri',hijriMonth:9,hijriDay:1,enabled:true},'2026-11-04
 assert(hijriDate('2026-11-04',config).length>8);
 assert(Array.isArray(config.counters));
 assert(config.counters.length<=24);
-assert(['royal','modern','night','heritage'].includes(config.design?.preset));
+assert(validPreset(config.design?.preset));
 assert.equal(typeof config.design?.highlightNext,'boolean');
 const {nextEventDates,futureEvents}=await import('../assets/planner.js');
 assert.deepEqual(nextEventDates({mode:'monthly',day:31,enabled:true},'2026-11-04',3),['2026-11-30','2026-12-31','2027-01-31']);
@@ -21,5 +22,5 @@ assert.equal(nextEventDates({mode:'manual',value:19,enabled:true},'2026-11-04',1
 const future=futureEvents(config,'2026-11-04',12);
 assert(future.length>12);
 assert(future.every((item,i)=>i===0 || item.date>=future[i-1].date));
-assert(['royal','modern','night','heritage','desert','pearl'].includes(config.design?.preset));
+assert(validPreset(config.design?.preset));
 console.log('All date, counter, design and future-planner tests passed.');
