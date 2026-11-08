@@ -170,14 +170,42 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
   tab($(".tab.active").dataset.tab);
   $('#export-json').addEventListener('click',()=>downloadFile('zyad-config.json',new Blob([JSON.stringify(config,null,2)],{type:'application/json;charset=utf-8'})));
   $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();redrawSavedDesigns();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
-  $('#connect-github').addEventListener('click',async()=>{const supplied=$('#github-token').value.trim();if(!supplied){setStatus('أدخل رمز الوصول أولًا.',false);return;}token=supplied;try{const f=await getFile();sha=f.sha;setStatus('تم التحقق من الوصول إلى الإعدادات. يمكنك تجربة الحفظ.');}catch(e){token='';setStatus('فشل الاتصال: '+e.message,false);}});
+  $('#connect-github').addEventListener('click',async()=>{const supplied=$('#github-token').value.trim();if(!supplied){setStatus('أدخل رمز الوصول أولًا.',false);return;}token=supplied;const button=$('#connect-github');button.disabled=true;try{const [repoInfo,file]=await Promise.all([api('https://api.github.com/repos/'+REPO),getFile()]);sha=file.sha;if(repoInfo.permissions?.push===false){setStatus('يمكن قراءة الملف، لكن GitHub لا يمنح حسابك صلاحية الكتابة في '+REPO+'. راجع صلاحيات المستودع والرمز (Contents: Read and write).',false);}else{setStatus('نجح فحص قراءة المستودع. للتحقق من الكتابة فعليًا اضغط «حفظ ونشر للزوار»؛ تأكد من منح الرمز Contents: Read and write على '+REPO+'.');}}catch(e){token='';setStatus('فشل فحص الرمز: '+e.message,false);}finally{button.disabled=false;}});
   $('#publish-config').addEventListener('click',publish);
   $('#quick-save').addEventListener('click',()=>{tab('publish');if($('#github-token').value.trim())publish();else {setStatus('أدخل رمز GitHub بصلاحية الكتابة لحفظ التعديلات للجميع.',false);$('#github-token').focus();}});
 }
 function base64utf8(s){const bytes=new TextEncoder().encode(s);let value='';const step=0x8000;for(let i=0;i<bytes.length;i+=step)value+=String.fromCharCode(...bytes.subarray(i,i+step));return btoa(value);}
-async function api(url,method='GET',body=null){const r=await fetch(url,{method,headers:{'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Authorization':'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(r.status===401?'رمز GitHub غير صحيح':r.status===403?'لا توجد صلاحية كافية أو انتهى الحد المسموح':r.status===409?'تغير الملف في GitHub خلال التعديل؛ حدّث الصفحة وراجع التغييرات':j.message||`HTTP ${r.status}`);return j;}
+function githubProblem(response,details={}){
+  const message=String(details?.message||'');
+  const remaining=response.headers.get('x-ratelimit-remaining');
+  const resetSeconds=Number(response.headers.get('x-ratelimit-reset'));
+  const retryAfter=Number(response.headers.get('retry-after'));
+  const rateLimited=response.status===429||(response.status===403&&(remaining==='0'||/rate.?limit|abuse detection/i.test(message)));
+  if(rateLimited){
+    const reset=Number.isFinite(resetSeconds)&&resetSeconds>0?' حاول مجددًا بعد '+new Date(resetSeconds*1000).toLocaleString('ar-SA',{timeZone:'Asia/Riyadh',hour:'2-digit',minute:'2-digit',day:'numeric',month:'long'})+'.':'';
+    const delay=Number.isFinite(retryAfter)&&retryAfter>0?' انتظر '+Math.ceil(retryAfter/60)+' دقيقة على الأقل.':'';
+    return new Error('تجاوز حد طلبات GitHub (HTTP '+response.status+').'+reset+delay+' لا تعاود الضغط المتكرر على النشر.');
+  }
+  if(response.status===401)return new Error('رمز GitHub غير صالح أو انتهت صلاحيته (401). أنشئ رمزًا جديدًا من إعدادات GitHub.');
+  if(response.status===403)return new Error('رفض GitHub الإذن (403). راجع صلاحية Contents: Read and write للمستودع '+REPO+'، وصاحب الرمز، وأي موافقة معلقة على صلاحياته.'+(message?' تفاصيل GitHub: '+message:''));
+  if(response.status===404)return new Error('تعذر الوصول إلى المستودع أو الملف (404). تأكد من اختيار '+REPO+' عند إنشاء رمز الوصول، وأنه يملك صلاحية Contents.');
+  if(response.status===409)return new Error('تغير الملف على GitHub أثناء التعديل (409). صدّر مسودتك، وأعد تحميل الصفحة لمراجعة آخر التغييرات.');
+  if(response.status===422)return new Error('رفض GitHub محتوى التعديل (422). راجع الملف أو صلاحية الرمز. '+message);
+  return new Error('فشل طلب GitHub (HTTP '+response.status+'). '+(message||'حاول مرة أخرى لاحقًا.'));
+}
+async function api(url,method='GET',body=null){
+  let response;
+  try{
+    response=await fetch(url,{method,headers:{'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Authorization':'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store'});
+  }catch(error){
+    throw new Error('تعذر الاتصال بواجهة GitHub. تحقق من الإنترنت أو إعدادات منع التتبع، ثم حاول مرة أخرى.');
+  }
+  const data=await response.json().catch(()=>({}));
+  if(!response.ok)throw githubProblem(response,data);
+  return data;
+}
 function getFile(){return api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH+'?ref=main');}
-async function publish(){if(!config)return;token=$('#github-token').value.trim();if(!token){tab('publish');setStatus('للنشر أدخل رمز GitHub أولًا. لا تحتاجه للمعاينة أو تنزيل البطاقة.',false);return;}const button=$('#publish-config');button.disabled=true;button.textContent='جارٍ الحفظ...';setStatus('جارٍ التحقق من الملف وحفظ الإعدادات...');try{
+async function publish(){if(!config||$('#publish-config').disabled)return;token=$('#github-token').value.trim();if(!token){tab('publish');setStatus('للنشر أدخل رمز GitHub أولًا. لا تحتاجه للمعاينة أو تنزيل البطاقة.',false);return;}const button=$('#publish-config');button.disabled=true;button.textContent='جارٍ الحفظ...';setStatus('جارٍ التحقق من الملف وحفظ الإعدادات...');try{
   const remote=await getFile();const latest=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(remote.content.replace(/\s/g,'')),c=>c.charCodeAt(0))));if(JSON.stringify(latest)!==JSON.stringify(published))throw Error('تغيرت الإعدادات المنشورة منذ فتح اللوحة. صدّر مسودتك ثم أعد تحميل الصفحة قبل النشر لمنع استبدال تغييرات أخرى.');sha=remote.sha;
   const body={message:'Update daily card content and design from admin panel',content:base64utf8(JSON.stringify(config,null,2)+'\n'),sha,branch:'main'};
   await api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH,'PUT',body);
