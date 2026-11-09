@@ -82,6 +82,7 @@ jobs:
           node scripts/check-extra.mjs
           node scripts/check-native-visual.mjs
           node scripts/check-inline-ad.mjs
+          node scripts/check-all-banners.mjs
       - name: Render and archive today's poster
         run: |
           node scripts/render.mjs || node scripts/render.mjs
