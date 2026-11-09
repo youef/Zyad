@@ -39,7 +39,7 @@ export const templates=specs.map(([id,name,category,title,subtitle,bg,ink,layout
   ...(['portrait','business'].includes(layout)?[{id:'photo',type:'shape',shape:'circle',x:.5,y:.65,width:.23,height:.16,color:ink,opacity:.12}]:[]),
   {id:'gregorian',type:'gregorian',x:.5,y:.76,size:28,color:ink,width:.8},
   {id:'hijri',type:'hijri',x:.5,y:.8,size:23,color:ink,width:.8},
-  {id:'signature',type:'watermark',text:'SAUDI CALENDAR',x:.5,y:.87,size:19,color:ink,width:.7}
+  {id:'signature',type:'watermark',text:'SAUDI CALENDAR',x:.5,y:.835,size:19,color:ink,width:.7}
  ]
 }));
 export const templateById=id=>templates.find(t=>t.id===id)||templates[0];
