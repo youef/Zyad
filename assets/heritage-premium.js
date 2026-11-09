@@ -74,10 +74,10 @@ function datePlaque(c,x,top,label,number,month){
   c.save();c.shadowColor='rgba(32,71,51,.07)';c.shadowBlur=10;c.shadowOffsetY=4;
   rr(c,x,382,468,111,20,C.ivory,C.line,2);c.restore();
   rr(c,x+10,392,448,91,14,null,'rgba(199,160,91,.25)',1);
-  rr(c,x+22,393,118,30,13,C.deep);
-  txt(c,label,x+81,408,21,'#ffffff',110,'700');
-  txt(c,number,x+280,431,43,C.deep,430,'900',29,'ltr');
-  txt(c,month,x+238,467,23,C.muted,420,'700');
+  rr(c,x+170,391,128,29,13,C.deep);
+  txt(c,label,x+234,405,21,'#ffffff',118,'700');
+  txt(c,number,x+234,447,42,C.deep,427,'900',28,'ltr');
+  txt(c,month,x+234,480,22,C.muted,420,'700');
 }
 function quote(c,cfg){
   c.save();c.shadowColor='rgba(52,57,31,.07)';c.shadowBlur=14;c.shadowOffsetY=5;
@@ -148,14 +148,14 @@ function social(c,cfg,qr){
   rr(c,54,1716,972,159,25,C.deepest,C.gold,3);
   rr(c,67,1728,948,135,18,null,'rgba(252,224,162,.2)',1);
   if(cfg.settings?.showQr!==false){
-    rr(c,73,1728,152,134,12,'#fff',null);
-    if(qr){c.save();c.imageSmoothingEnabled=false;c.drawImage(qr,84,1736,130,117);c.restore();}
+    rr(c,73,1724,152,144,12,'#fff',null);
+    if(qr){c.save();c.imageSmoothingEnabled=false;c.drawImage(qr,84,1731,130,130);c.restore();}
     else txt(c,'QR',148,1793,40,C.deep,130,'900');
   }
   txt(c,cfg.card?.promo||'اشترك معنا مجانًا',634,1756,36,C.goldLight,730,'900');
   socialPill(c,255,'واتساب',cfg.card?.phone||'0558930532');
   socialPill(c,616,'سناب شات',cfg.card?.social||'z32.y');
-  txt(c,'جميع المواعيد قابلة للتغيير، وتُراجع لدى الجهات الرسمية',540,1902,22,C.muted,990,'700',18);
+  txt(c,'المواعيد تقديرية، ويُرجع للجهات الرسمية للتأكد من مواعيد الصرف',540,1889,18,C.muted,990,'700',16);
 }
 /** Render one sharply structured printable card, including original scannable QR. */
 export function renderHeritage(c,cfg,iso,tools){
