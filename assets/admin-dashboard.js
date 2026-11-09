@@ -11,11 +11,11 @@ if(api?.getConfig()){
  <div class="overview-stat"><small>القوالب</small><strong id="ov-templates">—</strong><span>تصاميم متاحة</span></div>
  <div class="overview-stat"><small>تصاميمي</small><strong id="ov-saved">—</strong><span>قوالب محفوظة</span></div></div>
  <div class="overview-group"><div><h3>إدارة سريعة</h3><p>اختر القسم الذي تريد تطويره اليوم.</p></div><div class="overview-links">
- <button type="button" data-open="counters"><span class="ov-icon">▦</span><span><strong>المواعيد والعدّادات</strong><small>إضافة المناسبات وتعديل التواريخ والأوصاف</small></span><b>‹</b></button>
- <button type="button" data-open="theme"><span class="ov-icon">◈</span><span><strong>القوالب والتصاميم</strong><small>الخطوط والألوان والمظهر النهائي</small></span><b>‹</b></button>
- <button type="button" data-open="content"><span class="ov-icon">✎</span><span><strong>محتوى البطاقة</strong><small>العناوين والرسائل وروابط التواصل</small></span><b>‹</b></button>
- <button type="button" data-open="identity"><span class="ov-icon">◎</span><span><strong>هوية المنصة</strong><small>الاسم والشعار والمعلومات الأساسية</small></span><b>‹</b></button>
- <button type="button" data-open="publish"><span class="ov-icon">↑</span><span><strong>الحفظ والنشر</strong><small>إرسال التعديلات إلى النسخة العامة</small></span><b>‹</b></button>
+ <button type="button" data-open="counters"><span class="ov-icon" data-icon="calendar-days"></span><span><strong>المواعيد والعدّادات</strong><small>إضافة المناسبات وتعديل التواريخ والأوصاف</small></span><b>‹</b></button>
+ <button type="button" data-open="theme"><span class="ov-icon" data-icon="grid-2x2"></span><span><strong>القوالب والتصاميم</strong><small>الخطوط والألوان والمظهر النهائي</small></span><b>‹</b></button>
+ <button type="button" data-open="content"><span class="ov-icon" data-icon="pen-line"></span><span><strong>محتوى البطاقة</strong><small>العناوين والرسائل وروابط التواصل</small></span><b>‹</b></button>
+ <button type="button" data-open="identity"><span class="ov-icon" data-icon="settings"></span><span><strong>هوية المنصة</strong><small>الاسم والشعار والمعلومات الأساسية</small></span><b>‹</b></button>
+ <button type="button" data-open="publish"><span class="ov-icon" data-icon="save"></span><span><strong>الحفظ والنشر</strong><small>إرسال التعديلات إلى النسخة العامة</small></span><b>‹</b></button>
  </div></div>
  <div class="overview-guide"><strong>نصيحة لتحرير آمن</strong><p>تظهر التغييرات في المعاينة مباشرة، لكنها لا تصل إلى الزوار إلا بعد الضغط على «حفظ ونشر». يمكن تصدير نسخة احتياطية JSON من قسم النشر.</p></div>`;
  editor.prepend(panel);
@@ -31,5 +31,7 @@ if(api?.getConfig()){
  panel.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>api.tab(b.dataset.open));
  tab.onclick=()=>{refresh();api.tab('overview');};
  const changed=api.changed;api.changed=()=>{changed();refresh();};
- refresh();api.tab('overview');
+ refresh();
+ // Do not steal navigation from a user/test who selected another tab while modules loaded.
+ if(document.querySelector('.tab.active')?.dataset.tab==='identity')api.tab('overview');
 }
