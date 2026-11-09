@@ -31,14 +31,16 @@ export const templates=specs.map(([id,name,category,title,subtitle,bg,ink,layout
  background:{color:bg,asset:`assets/backgrounds/${id}.webp`},layout,
  safeAreas:{top:.12,bottom:.12,sides:.08},defaultValues:{title,subtitle},assets:[`assets/backgrounds/${id}.png`],
  layers:[
-  {id:'tag',type:'text',text:'بطاقتي الذكية',x:.5,y:.19,size:27,color:ink,weight:500,width:.8},
+  {id:'brand-panel',type:'shape',shape:'rect',x:.85,y:.105,width:.22,height:.102,color:'#fffdf5',opacity:.94},
+  {id:'brand-logo',type:'logo',src:'assets/branding/logo.png',fit:'contain',x:.85,y:.105,width:.19,height:.083,size:24},
+  {id:'tag',type:'text',text:'رزنامة السعودية',x:.5,y:.19,size:27,color:ink,weight:500,width:.8},
   {id:'title',type:'text',text:title,x:layout==='editorial'?.64:.5,y:layout==='top'?.32:.4,size:94,color:ink,weight:800,width:layout==='editorial'?.58:.8,align:layout==='editorial'?'right':'center'},
   {id:'subtitle',type:'text',text:subtitle,x:.5,y:.53,size:35,color:ink,weight:500,width:.78},
   ...(layout==='countdown'?[{id:'count',type:'countdown',text:'',target:'',x:.5,y:.64,size:132,color:ink,width:.8}]:[]),
   ...(['portrait','business'].includes(layout)?[{id:'photo',type:'shape',shape:'circle',x:.5,y:.65,width:.23,height:.16,color:ink,opacity:.12}]:[]),
   {id:'gregorian',type:'gregorian',x:.5,y:.76,size:28,color:ink,width:.8},
   {id:'hijri',type:'hijri',x:.5,y:.8,size:23,color:ink,width:.8},
-  {id:'signature',type:'watermark',text:'ZYAD SMART CARDS',x:.5,y:.87,size:19,color:ink,width:.7}
+  {id:'signature',type:'watermark',text:'SAUDI CALENDAR',x:.5,y:.87,size:19,color:ink,width:.7}
  ]
 }));
 export const templateById=id=>templates.find(t=>t.id===id)||templates[0];
