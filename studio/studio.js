@@ -1,8 +1,8 @@
-import {prepareBanner} from '../assets/advertising.js?v=img1';
+import {prepareBanner} from '../assets/advertising.js?v=banner25';
 import {templates,createDesign} from '../assets/catalog.js';
 import {get,getAll,put,saveDesign,validateDesign} from '../assets/storage.js';
-import {renderDesign,exportImage,download,importImage,layerText} from '../assets/engine.js';
-import {saToday} from '../assets/card.js';
+import {renderDesign,exportImage,download,importImage,layerText} from '../assets/engine.js?v=banner25';
+import {saToday} from '../assets/card.js?v=banner25';
 import {copyLegacyDrafts} from '../assets/migration.js';
 import {selectTemplate} from '../assets/rules.js';
 const el=id=>document.getElementById(id),canvas=el('card'),say=s=>el('status').textContent=s;
