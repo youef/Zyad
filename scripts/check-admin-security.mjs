@@ -10,6 +10,7 @@ const sw=await read('sw.js');
 assert(html.includes('id="zyad-login-form"'),'Admin entry requires login');
 assert(html.includes('id="zyad-private"'),'Editor shell should be gated');
 assert(html.includes('assets/admin-auth.js'),'Login module must load');
+assert(html.includes('branding/logo-transparent.png'),'Admin must use the official transparent logo');
 assert(!html.includes('id="github-token"'),'No GitHub token prompt may appear in browser');
 assert(!html.includes('<script type="module" src="../assets/admin.js'),'Editor cannot boot before authentication');
 assert(auth.includes("request('session')")&&auth.includes("request('config')"),'Server must validate session and repository');
@@ -20,7 +21,7 @@ assert(api.includes("process.env.ZYAD_ADMIN_PASSWORD")&&api.includes("process.en
 assert(api.includes("validSession(req)")&&api.includes("constantEqual"),'Server authorization and constant-time comparison expected');
 assert(api.includes('JSON.stringify(latest.data)!==JSON.stringify(base)'),'Conflict protection must be enabled');
 assert(sw.includes('assets/admin-auth.js'),'Service worker must have secure admin assets');
-assert(!sw.includes('logo-transparent.png'),'Do not precache untracked branding paths');
+assert(sw.includes('logo-transparent.png'),'Official transparent logo should be cached');
 for(const path of ['api/zyad.js','assets/admin-auth.js','assets/admin-dashboard.js','assets/admin.js']){
  execFileSync(process.execPath,['--check',new URL('../'+path,import.meta.url).pathname],{stdio:'pipe'});
 }
