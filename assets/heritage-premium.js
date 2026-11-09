@@ -68,7 +68,7 @@ function heading(c,config,iso,tools){
   txt(c,config.brand?.name||'رزنامة السعودية',457,112,31,C.goldLight,540,'800');
   txt(c,day,540,216,113,'#ffffff',740,'900',85);
   txt(c,'تقويمك ومواعيدك على مدار العام',540,322,27,'#e9d5a9',800,'700');
-  brandStamp(c,tools.logo,760,73,244,96,{background:'#fffdf4',border:C.goldLight,padding:12,radius:18});
+  brandStamp(c,tools.logo,760,82,224,86,{background:null,border:null,padding:0,filter:'brightness(0) invert(1)'});
 }
 function datePlaque(c,x,top,label,number,month){
   c.save();c.shadowColor='rgba(32,71,51,.07)';c.shadowBlur=10;c.shadowOffsetY=4;

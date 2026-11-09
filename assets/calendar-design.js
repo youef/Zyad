@@ -17,7 +17,7 @@ function header(c,cfg,iso,tools,p,s){
  const d=new Date(iso+'T12:00:00Z'),day=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{weekday:'long',timeZone:'Asia/Riyadh'}).format(d),num=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',timeZone:'Asia/Riyadh'}).format(d),month=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{month:'long',year:'numeric',timeZone:'Asia/Riyadh'}).format(d);
  const pale='#f8edcf',surface=dark?rgba(green,.88):rgba(cream,.94);let tx=540,ty=205,ts=94,number=false;
  box(c,280,43,520,61,22,surface,rgba(gold,.55));text(c,cfg.brand?.name||'بطاقتي الذكية',540,74,30,ink,480,'center',700);
- brandStamp(c,tools.logo,835,35,188,80,{background:'#fffdf4',border:gold,radius:16,padding:10});
+ brandStamp(c,tools.logo,835,35,188,80,{background:null,border:null,padding:0});
  switch(kind){
  case 'arch':arch(c,300,124,480,260,rgba(green,.9),gold);tx=540;ty=257;text(c,day,tx,ty,94,pale,440);break;
  case 'crown':poly(c,540,256,353,148,8,green,gold);poly(c,540,256,328,130,8,null,gold);text(c,'✦   ✦   ✦',540,126,29,gold);text(c,day,540,251,99,pale,600);break;

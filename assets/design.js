@@ -65,7 +65,7 @@ export function renderPremium(ctx,cfg,iso,tools){
   ctx.restore();
  }
  label(ctx,cfg.brand?.name||'رزنامة السعودية',459,94,34,'#f6e8ca',515);
- brandStamp(ctx,tools.logo,822,65,190,87,{background:'#fffbef',border:gold,radius:18,padding:10});
+ brandStamp(ctx,tools.logo,822,65,190,87,{background:null,border:null,padding:0,filter:'brightness(0) invert(1)'});
  const date=clockText(iso);
  label(ctx,date.weekday,540,198,109,'#fff',785,'center','900');
  label(ctx,cfg.brand?.subtitle||'مواعيدك اليومية',540,272,28,'#ead7a6',785);

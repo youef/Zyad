@@ -1,9 +1,10 @@
 /* Keep the complete official logo visible in every card without cropping it. */
-export function brandStamp(ctx,img,x,y,width,height,{background='#fffdf5',border='#c7a05b',radius=16,padding=11}={}){
+export function brandStamp(ctx,img,x,y,width,height,{background=null,border=null,radius=16,padding=1,filter='none'}={}){
   if(!img)return false;
   const iw=Number(img.naturalWidth||img.width),ih=Number(img.naturalHeight||img.height);
   if(!iw||!ih)return false;
   ctx.save();
+  ctx.filter=filter;
   ctx.shadowColor='rgba(0,32,26,.14)';
   ctx.shadowBlur=12;ctx.shadowOffsetY=4;
   ctx.beginPath();ctx.roundRect(x,y,width,height,radius);

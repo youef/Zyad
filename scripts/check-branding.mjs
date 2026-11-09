@@ -12,7 +12,8 @@ const png=async p=>{
 const source=await png('assets/branding/logo.png');
 assert(source.size>1000&&source.width>=100&&source.height>=100,'Official source must be a high-quality logo');
 const config=JSON.parse(await read('data/config.json'));
-assert.equal(config.brand.logo,'assets/branding/logo.png');
+assert.equal(config.brand.logo,'assets/branding/logo-transparent.png');
+const transparent=await png('assets/branding/logo-transparent.png');assert(transparent.width>30&&transparent.height>30,'Transparent brand missing');
 assert(config.brand.name.includes('رزنامة'));
 for(const size of [180,192,512]){
  const asset=await png('assets/app-'+size+'.png');
@@ -20,11 +21,11 @@ for(const size of [180,192,512]){
 }
 for(const t of templates){
  const d=createDesign(t.id,'2026-11-09');
- assert(d.layers.some(x=>x.type==='logo'&&x.src==='assets/branding/logo.png'&&x.fit==='contain'),'Missing brand in '+t.id);
+ assert(d.layers.some(x=>x.type==='logo'&&x.src==='assets/branding/logo-transparent.png'&&x.fit==='contain'),'Missing brand in '+t.id);
 }
 for(const path of ['index.html','admin/index.html','studio/index.html','studio/calendar.html','library/index.html','settings/index.html','templates/index.html']){
  const html=await read(path).then(x=>x.toString('utf8'));
- assert(html.includes('branding/logo.png')&&html.includes('branding.css'),'Missing official logo in '+path);
+ assert(html.includes('branding/logo-transparent.png')&&html.includes('branding.css'),'Missing official logo in '+path);
 }
 for(const file of ['assets/design.js','assets/calendar-design.js','assets/list-calendar.js','assets/heritage-premium.js']){
  const s=await read(file).then(x=>x.toString('utf8'));
