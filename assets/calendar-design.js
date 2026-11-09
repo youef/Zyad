@@ -1,4 +1,5 @@
 // Print-resolution calendar art. Dates, quotes, counters, branding and QR stay live.
+import {brandStamp} from './brand-art.js';
 import {drawDailyPanel} from './daily-panel.js';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};
@@ -16,7 +17,7 @@ function header(c,cfg,iso,tools,p,s){
  const d=new Date(iso+'T12:00:00Z'),day=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{weekday:'long',timeZone:'Asia/Riyadh'}).format(d),num=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',timeZone:'Asia/Riyadh'}).format(d),month=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{month:'long',year:'numeric',timeZone:'Asia/Riyadh'}).format(d);
  const pale='#f8edcf',surface=dark?rgba(green,.88):rgba(cream,.94);let tx=540,ty=205,ts=94,number=false;
  box(c,280,43,520,61,22,surface,rgba(gold,.55));text(c,cfg.brand?.name||'بطاقتي الذكية',540,74,30,ink,480,'center',700);
- if(tools.logo){c.save();c.beginPath();c.arc(934,75,29,0,Math.PI*2);c.clip();c.drawImage(tools.logo,905,46,58,58);c.restore();}
+ brandStamp(c,tools.logo,835,35,188,80,{background:'#fffdf4',border:gold,radius:16,padding:10});
  switch(kind){
  case 'arch':arch(c,300,124,480,260,rgba(green,.9),gold);tx=540;ty=257;text(c,day,tx,ty,94,pale,440);break;
  case 'crown':poly(c,540,256,353,148,8,green,gold);poly(c,540,256,328,130,8,null,gold);text(c,'✦   ✦   ✦',540,126,29,gold);text(c,day,540,251,99,pale,600);break;
