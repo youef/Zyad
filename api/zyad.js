@@ -14,14 +14,21 @@ const ALLOWED_ORIGINS = new Set(['https://youef.github.io']);
 const MAX_BODY = 260_000;
 const attempts = new Map();
 
+function sessionMaterial() {
+  // Prefer a dedicated secret; older deployments can derive a private key
+  // from the server-only GitHub token until ZYAD_SESSION_SECRET is configured.
+  if (process.env.ZYAD_SESSION_SECRET?.length >= 32) return process.env.ZYAD_SESSION_SECRET;
+  if (process.env.ZYAD_GITHUB_TOKEN?.length >= 20) return 'github-token:' + process.env.ZYAD_GITHUB_TOKEN;
+  return '';
+}
 function envReady() {
-  return Boolean(process.env.ZYAD_ADMIN_PASSWORD?.length >= 8 && process.env.ZYAD_SESSION_SECRET?.length >= 32);
+  return Boolean(process.env.ZYAD_ADMIN_PASSWORD?.length >= 8 && sessionMaterial());
 }
 function publishReady() {
   return Boolean(process.env.ZYAD_GITHUB_TOKEN?.length >= 20);
 }
 function secret() {
-  return createHash('sha256').update('zyad-session-v2:' + process.env.ZYAD_SESSION_SECRET).digest();
+  return createHash('sha256').update('zyad-session-v3:' + process.env.ZYAD_ADMIN_PASSWORD + ':' + sessionMaterial()).digest();
 }
 function hmac(input) {
   return createHmac('sha256', secret()).update(input).digest('base64url');
@@ -107,7 +114,7 @@ export default async function handler(req,res) {
   if (origin && !ALLOWED_ORIGINS.has(origin)) return fail(res,403,'مصدر الطلب غير مسموح.');
   if (!['GET','POST'].includes(req.method)) return fail(res,405,'الطريقة غير مدعومة.');
   const action = String(req.query.action||'status');
-  if (action === 'status' && req.method === 'GET') return respond(res,200,{ok:true,ready:envReady(),publishReady:publishReady()});
+  if (action === 'status' && req.method === 'GET') return respond(res,200,{ok:true,ready:envReady(),publishReady:publishReady(),apiVersion:'2026-11-09-auth-fix'});
   if (!envReady()) return fail(res,503,'إدارة رزنامة السعودية لم تُضبط بعد. يجب إعداد بيانات الخدمة المحمية على Vercel.');
   if (action === 'login' && req.method === 'POST') {
     const clientIp = String(req.headers['x-forwarded-for']||req.socket?.remoteAddress||'unknown').split(',')[0].trim();
