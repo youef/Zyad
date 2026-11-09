@@ -21,7 +21,7 @@ for(const size of [180,192,512]){
 }
 for(const t of templates){
  const d=createDesign(t.id,'2026-11-09');
- assert(d.layers.some(x=>x.type==='logo'&&x.src==='assets/branding/logo-transparent.png'&&x.fit==='contain'),'Missing brand in '+t.id);
+ assert(!d.layers.some(x=>x.id==='tag'||x.id==='brand-logo'),'Printed template branding should not appear inside '+t.id);
 }
 for(const path of ['index.html','admin/index.html','studio/index.html','studio/calendar.html','library/index.html','settings/index.html','templates/index.html']){
  const html=await read(path).then(x=>x.toString('utf8'));
@@ -29,6 +29,6 @@ for(const path of ['index.html','admin/index.html','studio/index.html','studio/c
 }
 for(const file of ['assets/design.js','assets/calendar-design.js','assets/list-calendar.js','assets/heritage-premium.js']){
  const s=await read(file).then(x=>x.toString('utf8'));
- assert(s.includes('brandStamp('),'Logo must preserve original aspect ratio in '+file);
+ assert(s.includes('drawHangingLogo('),'Logo must hang in the upper-left of '+file);
 }
-console.log('PASS: Official logo, 7 app pages, 42 calendar layouts, 24 freeform cards, and all PWA icon sizes.');
+const freeform=await read('assets/engine.js').then(x=>x.toString('utf8'));assert(freeform.includes('drawHangingLogo('),'Freeform must include a hanging logo');console.log('PASS: Official transparent hanging logo, 7 app pages, 42 calendar layouts, 24 freeform cards and PWA icons.');
