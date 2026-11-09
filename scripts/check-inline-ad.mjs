@@ -31,14 +31,14 @@ try{
       return {changed,early,ratio:changed/(on.width*on.height)};
     };
     const calendar=[];
-    for(const id of ['heritage','royal','night','saudi-emerald','blue-agenda','salary','columns']){
+    for(const id of ['heritage','royal','night','saudi-emerald','blue-agenda','salary','magazine-columns']){
       const c=duplicateForPreset(cfg,id),off=structuredClone(c);
       c.advertising={...cfg.advertising,enabled:true};
       off.advertising={...cfg.advertising,enabled:false};
       const onCanvas=document.createElement('canvas'),offCanvas=document.createElement('canvas');
       await renderPoster(onCanvas,c,date,{preview:true,scale:.5});
       await renderPoster(offCanvas,off,date,{preview:true,scale:.5});
-      const delta=difference(onCanvas,offCanvas,id==='heritage'?.81:.95);
+      const delta=difference(onCanvas,offCanvas,id==='heritage'?0.81:0.95);
       calendar.push({id,...delta});
     }
     const designs=[];
