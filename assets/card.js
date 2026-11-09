@@ -1,4 +1,5 @@
 import {renderPremium} from './design.js?v=20261104r4';
+import {renderHeritage} from './heritage-premium.js?v=20261109v2';
 import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js';
 import {renderListCalendar} from './list-calendar.js';
@@ -182,76 +183,11 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   ctx.zyadFont=fontStack(config.design?.fontFamily);
   if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
   if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
-  const c=config.theme||{},green=c.green||'#064b43',soft=c.greenLight||'#37765e',gold=c.gold||'#c99a42',cream=c.cream||'#f8f5ea',ink=c.ink||'#103f38';
-  if((config.design?.preset||'royal')!=='heritage') { renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate}); return canvas; }
-  ctx.fillStyle=cream;ctx.fillRect(0,0,W,H);pattern(ctx,gold,ink);drawHeritageTrim(ctx,gold,ink);
-  drawLantern(ctx,89,351,gold,green);drawLantern(ctx,991,351,gold,green);
-  // Header: ornamental calendar plaques and central heraldic medallion.
-  ctx.save();ctx.shadowColor='rgba(2,58,45,.25)';ctx.shadowBlur=23;ctx.shadowOffsetY=6;
-  polyOrnament(ctx,540,198,204,184,green,gold);ctx.restore();
-  polyOrnament(ctx,540,198,193,172,null,gold);
-  ctx.lineWidth=3;ctx.strokeStyle=gold;ctx.beginPath();ctx.arc(540,198,153,0,Math.PI*2);ctx.stroke();
-  if(logo){ctx.save();ctx.beginPath();ctx.arc(540,102,34,0,Math.PI*2);ctx.clip();ctx.drawImage(logo,506,68,68,68);ctx.restore();}
-  else centralText(ctx,'✦',540,103,54,gold);
-  centralText(ctx,weekday(iso),540,204,94,'white','800',375);
-  centralText(ctx,config.brand?.subtitle||'بطاقتك اليومية',540,272,27,'#e6d6a4','700',340);
-  roundedRect(ctx,26,147,312,109,22,soft,gold,4);
-  roundedRect(ctx,742,147,312,109,22,soft,gold,4);
-  centralText(ctx,iso.replaceAll('-','/'),182,187,46,'#fff','800',295);
-  centralText(ctx,'ميلادي',182,236,27,'#f7e0a2');
-  const hijri=hijriPanel(iso,config);
-  centralText(ctx,hijri.number,898,187,46,'#fff','800',295);
-  centralText(ctx,hijri.label,898,236,29,'#f7e0a2','800',280);
-  // Elegant brand bar.
-  roundedRect(ctx,285,380,510,61,18,'rgba(204,157,67,.14)',gold,2);
-  centralText(ctx,config.brand?.name||'البطاقة اليومية',540,409,36,ink,'800',485);
-  // Quote block.
-  if(config.settings?.showQuote!==false&&config.daily){drawDailyPanel(ctx,config,55,468,970,254,{gold,ink});}
-  else if(config.settings?.showQuote!==false){
-    ctx.save();ctx.direction='rtl';ctx.textAlign='center';
-    let fontSize=39;let lines=linesFor(ctx,config.card?.quote||'',935,fontSize,4);
-    while(lines.length>3 && fontSize>30){fontSize-=2;lines=linesFor(ctx,config.card?.quote||'',935,fontSize,4);}
-    lines=lines.slice(0,3);const spacing=57, start=501;
-    lines.forEach((line,i)=>centralText(ctx,line,540,start+i*spacing,fontSize,ink,'800',947));ctx.restore();
-    if(config.card?.attribution)centralText(ctx,config.card.attribution,540,693,23,soft,'700',760);
-  }else{centralText(ctx,'مواعيدك اليومية',540,570,64,ink,'800',850);}
-  // Dedicated, readable public-services promotion above the timetable.
-  ctx.save();ctx.strokeStyle=gold;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(65,733);ctx.lineTo(1015,733);ctx.stroke();ctx.restore();
-  if(config.settings?.showContact!==false){
-    roundedRect(ctx,210,742,660,84,18,'rgba(248,237,210,.91)',gold,2);
-    centralText(ctx,'الخدمات العامة',540,763,27,ink,'800',570);
-    centralText(ctx,config.card?.servicePhone||'0538243481',540,799,42,green,'800',570);
+  if((config.design?.preset||'royal')==='heritage'){
+    renderHeritage(ctx,config,iso,{logo,qr,remaining,hijriDate,hijriPanel,weekday});
+  }else{
+    renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate});
   }
-  // Countdown region with automatic compact layout.
-  const counters=(config.counters||[]).filter(item=>item.enabled!==false).slice(0,24);
-  const rows=Math.max(1,Math.ceil(counters.length/4));
-  const available=810;const rowH=Math.min(197,available/rows);const firstY=885;
-  const medalR=Math.min(66,rowH*.32);
-  roundedRect(ctx,42,844,996,Math.max(195,rows*rowH+31),23,'rgba(228,213,173,.26)',gold,1.5);
-  counters.forEach((item,index)=>{
-    const col=index%4,row=Math.floor(index/4);
-    // The first tile appears on the right, matching RTL reading order.
-    const x=934-col*262;
-    const y=firstY+row*rowH;
-    drawBadge(ctx,x,y,remaining(item,iso),item.label||'موعد',medalR,green,gold,cream);
-  });
-  const bottomBase=Math.max(1535,Math.min(1640,885+rows*rowH+42));
-  // Illustrated gold dunes inspired by traditional Saudi card motifs.
-  ctx.save();ctx.beginPath();ctx.moveTo(0,bottomBase+180);ctx.bezierCurveTo(210,bottomBase-36,440,bottomBase+245,640,bottomBase+80);ctx.bezierCurveTo(820,bottomBase-35,960,bottomBase+120,1080,bottomBase+155);ctx.lineTo(1080,H);ctx.lineTo(0,H);ctx.closePath();let hill=ctx.createLinearGradient(0,bottomBase,0,H);hill.addColorStop(0,'#e6a92f');hill.addColorStop(1,'#c38b25');ctx.fillStyle=hill;ctx.fill();ctx.restore();
-  // Heritage subscription plaque with a machine-readable WhatsApp QR (not a decorative placeholder).
-  roundedRect(ctx,278,1644,743,179,23,'rgba(255,251,242,.97)',gold,3);
-  centralText(ctx,config.card?.promo||'اشترك معنا مجانًا',647,1683,36,green,'800',700);
-  centralText(ctx,'واتساب  '+(config.card?.phone||'0558930532'),647,1731,31,green,'800',690);
-  centralText(ctx,'سناب شات  '+(config.card?.social||'z32.y'),647,1773,29,soft,'800',680);
-  centralText(ctx,'امسح الرمز للاشتراك عبر الواتساب',647,1804,19,ink,'700',680);
-  if(config.settings?.showQr!==false){
-    roundedRect(ctx,62,1637,202,202,13,'#fff',gold,5);
-    if(qr){ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(qr,75,1650,176,176);ctx.restore();}
-    else{centralText(ctx,'QR',163,1725,55,green);centralText(ctx,'واتساب',163,1783,25,green);}
-  }
-  ctx.fillStyle=green;ctx.beginPath();ctx.moveTo(0,1844);ctx.bezierCurveTo(355,1820,690,1815,1080,1844);ctx.lineTo(1080,1920);ctx.lineTo(0,1920);ctx.closePath();ctx.fill();
-  centralText(ctx,'إعلان الخدمات العامة • '+(config.card?.servicePhone||'0538243481'),540,1876,31,'#ead08d','800',995);
-  centralText(ctx,config.card?.disclaimer||'المواعيد تقديرية وتُراجع رسميًا',540,1910,18,'#fff','700',1000);
   return canvas;
 }
 export function downloadFile(name,blob){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}
