@@ -1,4 +1,4 @@
-name: Daily card and GitHub Pages
+name: Daily card generation and checks
 
 on:
   push:
@@ -30,11 +30,9 @@ on:
 
 permissions:
   contents: write
-  pages: write
-  id-token: write
 
 concurrency:
-  group: zyad-daily-pages
+  group: zyad-daily-generation
   cancel-in-progress: false
 
 jobs:
@@ -113,26 +111,3 @@ jobs:
               echo "::warning::Image archive push deferred after concurrent commits."
             fi
           fi
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Prepare static site
-        run: |
-          mkdir -p dist
-          cp index.html manifest.webmanifest sw.js dist/
-          cp -R admin assets data images studio templates library settings dist/
-          touch dist/.nojekyll
-      - uses: actions/upload-pages-artifact@v4
-        with:
-          path: dist
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    permissions:
-      pages: write
-      id-token: write
-    steps:
-      - uses: actions/deploy-pages@v4
-        id: deployment
