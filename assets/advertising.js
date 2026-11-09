@@ -46,6 +46,21 @@ export async function prepareBanner(file){
   throw Error('الإعلان يحوي تفاصيل كثيرة؛ استخدم صورة أبسط أو WebP بحجم أصغر');
  }finally{im.close?.();}
 }
+/** Fallback for an older administration API without asset-upload support.
+ * Stored WebP stays below the legacy GitHub JSON publishing size limit. */
+export async function compactBanner(data,maxChars=92000){
+ if(!validBannerSource(data))throw Error('صورة الإعلان غير صالحة');
+ const img=await loadBanner(data);
+ for(const width of [2000,1600,1400,1200,1000,800]){
+  const c=document.createElement('canvas');c.width=width;c.height=width/5;
+  const x=c.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(img,0,0,width,width/5);
+  for(const quality of [.76,.64,.52,.42,.32,.23]){
+   const result=c.toDataURL('image/webp',quality);
+   if(result.startsWith('data:image/webp;base64,')&&result.length<=maxChars)return result;
+  }
+ }
+ throw Error('تعذر ضغط صورة الإعلان؛ جرّب صورة أبسط أو بصيغة WebP.');
+}
 function contain(c,img,x,y,w,h){
  const k=Math.min(w/img.naturalWidth,h/img.naturalHeight),cw=img.naturalWidth*k,ch=img.naturalHeight*k;
  c.save();c.beginPath();c.roundRect(x,y,w,h,10);c.clip();c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';

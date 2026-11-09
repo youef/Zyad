@@ -1,5 +1,5 @@
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
-import {prepareBanner} from './advertising.js?v=img1';
+import {prepareBanner,compactBanner} from './advertising.js?v=img2';
 import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=20261104r4';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
@@ -188,10 +188,16 @@ async function publish(){
  try{
   const uploadedImage=config.advertising?.image||'';
   if(/^data:image\/webp;base64,/.test(uploadedImage)){
-    setStatus('جارٍ رفع الإعلان كصورة WebP مستقلة إلى GitHub...');
-    const upload=await window.zyadAdminClient.request('upload-banner',{method:'POST',body:JSON.stringify({image:uploadedImage})});
-    if(!upload.path||!/^assets\/advertising\/[\w.-]+\.webp$/.test(upload.path))throw Error('لم يؤكد الخادم مسار صورة الإعلان.');
-    config.advertising.image=upload.path;
+    setStatus('جارٍ رفع الإعلان بشكل آمن...');
+    try{
+      const upload=await window.zyadAdminClient.request('upload-banner',{method:'POST',body:JSON.stringify({image:uploadedImage})});
+      if(!upload.path||!/^assets\/advertising\/[\w.-]+\.webp$/.test(upload.path))throw Error('لم يؤكد الخادم مسار صورة الإعلان.');
+      config.advertising.image=upload.path;
+    }catch(error){
+      if(!/مسار الإدارة غير معروف|فشل الطلب 404/.test(error.message||''))throw error;
+      setStatus('خادم الإدارة القديم: جارٍ حفظ نسخة WebP مضغوطة ضمن الإعدادات...');
+      config.advertising.image=await compactBanner(uploadedImage);
+    }
   }
   let result;
   try{result=await window.zyadAdminClient.request('publish',{method:'POST',body:JSON.stringify({config,base:published})});}
