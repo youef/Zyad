@@ -122,6 +122,31 @@ function pattern(ctx,gold,ink) {
   for(let y=15;y<H;y+=184)for(let x=15;x<W;x+=184){ctx.strokeRect(x,y,151,151);}
   ctx.restore();
 }
+function drawHeritageTrim(ctx, gold, ink) {
+  ctx.save();
+  ctx.strokeStyle='rgba(190,145,58,.63)';ctx.lineWidth=4;ctx.strokeRect(13,13,1054,1894);
+  ctx.strokeStyle='rgba(190,145,58,.29)';ctx.lineWidth=2;ctx.strokeRect(26,26,1028,1868);
+  for(const x of [65,1015])for(const y of [65,1855]){
+    ctx.save();ctx.translate(x,y);
+    ctx.strokeStyle=gold;ctx.lineWidth=2;
+    for(let i=0;i<8;i++){ctx.rotate(Math.PI/4);ctx.beginPath();ctx.ellipse(0,19,8,20,0,0,Math.PI*2);ctx.stroke();}
+    ctx.beginPath();ctx.arc(0,0,8,0,Math.PI*2);ctx.fillStyle=gold;ctx.fill();ctx.restore();
+  }
+  ctx.globalAlpha=.16;ctx.strokeStyle=ink;ctx.lineWidth=2;
+  for(let y=460;y<1650;y+=174)for(let x=47;x<1070;x+=174){
+    ctx.save();ctx.translate(x,y);for(let a=0;a<4;a++){
+      ctx.rotate(Math.PI/2);ctx.strokeRect(17,17,28,28);
+    }ctx.restore();
+  }
+  ctx.restore();
+}
+function drawLantern(ctx,x,y,gold,green){
+  ctx.save();ctx.strokeStyle=gold;ctx.lineWidth=3;
+  ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,y-51);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(x-15,y-51);ctx.lineTo(x+15,y-51);ctx.lineTo(x+29,y-11);ctx.lineTo(x+13,y+42);ctx.lineTo(x-13,y+42);ctx.lineTo(x-29,y-11);ctx.closePath();
+  ctx.fillStyle='rgba(202,159,68,.20)';ctx.fill();ctx.stroke();
+  ctx.fillStyle=green;ctx.beginPath();ctx.arc(x,y+2,11,0,Math.PI*2);ctx.fill();ctx.restore();
+}
 function drawBadge(ctx,x,y,value,label,radius,color,gold,cream) {
   const grad=ctx.createRadialGradient(x-15,y-radius*.3,10,x,y,radius*1.5);
   grad.addColorStop(0,'#25805f');grad.addColorStop(.7,color);grad.addColorStop(1,'#06352f');
@@ -159,10 +184,13 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
   const c=config.theme||{},green=c.green||'#064b43',soft=c.greenLight||'#37765e',gold=c.gold||'#c99a42',cream=c.cream||'#f8f5ea',ink=c.ink||'#103f38';
   if((config.design?.preset||'royal')!=='heritage') { renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate}); return canvas; }
-  ctx.fillStyle=cream;ctx.fillRect(0,0,W,H);pattern(ctx,gold,ink);
+  ctx.fillStyle=cream;ctx.fillRect(0,0,W,H);pattern(ctx,gold,ink);drawHeritageTrim(ctx,gold,ink);
+  drawLantern(ctx,89,351,gold,green);drawLantern(ctx,991,351,gold,green);
   // Header: ornamental calendar plaques and central heraldic medallion.
-  polyOrnament(ctx,540,198,204,184,green,gold);
-  ctx.lineWidth=3;ctx.strokeStyle=gold;ctx.beginPath();ctx.arc(540,198,162,0,Math.PI*2);ctx.stroke();
+  ctx.save();ctx.shadowColor='rgba(2,58,45,.25)';ctx.shadowBlur=23;ctx.shadowOffsetY=6;
+  polyOrnament(ctx,540,198,204,184,green,gold);ctx.restore();
+  polyOrnament(ctx,540,198,193,172,null,gold);
+  ctx.lineWidth=3;ctx.strokeStyle=gold;ctx.beginPath();ctx.arc(540,198,153,0,Math.PI*2);ctx.stroke();
   if(logo){ctx.save();ctx.beginPath();ctx.arc(540,102,34,0,Math.PI*2);ctx.clip();ctx.drawImage(logo,506,68,68,68);ctx.restore();}
   else centralText(ctx,'✦',540,103,54,gold);
   centralText(ctx,weekday(iso),540,204,94,'white','800',375);
@@ -187,12 +215,12 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
     lines.forEach((line,i)=>centralText(ctx,line,540,start+i*spacing,fontSize,ink,'800',947));ctx.restore();
     if(config.card?.attribution)centralText(ctx,config.card.attribution,540,693,23,soft,'700',760);
   }else{centralText(ctx,'مواعيدك اليومية',540,570,64,ink,'800',850);}
-  // Contact stripe.
-  ctx.save();ctx.strokeStyle=gold;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(65,734);ctx.lineTo(1015,734);ctx.stroke();ctx.restore();
+  // Dedicated, readable public-services promotion above the timetable.
+  ctx.save();ctx.strokeStyle=gold;ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(65,733);ctx.lineTo(1015,733);ctx.stroke();ctx.restore();
   if(config.settings?.showContact!==false){
-    centralText(ctx,config.card?.promo||'اشترك معنا',540,764,33,green,'800',950);
-    const contact=[config.card?.phone,config.card?.social].filter(Boolean).join('     •     ');
-    if(contact)centralText(ctx,contact,540,805,33,soft,'800',895);
+    roundedRect(ctx,210,742,660,84,18,'rgba(248,237,210,.91)',gold,2);
+    centralText(ctx,'الخدمات العامة',540,763,27,ink,'800',570);
+    centralText(ctx,config.card?.servicePhone||'0538243481',540,799,42,green,'800',570);
   }
   // Countdown region with automatic compact layout.
   const counters=(config.counters||[]).filter(item=>item.enabled!==false).slice(0,24);
@@ -210,20 +238,20 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const bottomBase=Math.max(1535,Math.min(1640,885+rows*rowH+42));
   // Illustrated gold dunes inspired by traditional Saudi card motifs.
   ctx.save();ctx.beginPath();ctx.moveTo(0,bottomBase+180);ctx.bezierCurveTo(210,bottomBase-36,440,bottomBase+245,640,bottomBase+80);ctx.bezierCurveTo(820,bottomBase-35,960,bottomBase+120,1080,bottomBase+155);ctx.lineTo(1080,H);ctx.lineTo(0,H);ctx.closePath();let hill=ctx.createLinearGradient(0,bottomBase,0,H);hill.addColorStop(0,'#e6a92f');hill.addColorStop(1,'#c38b25');ctx.fillStyle=hill;ctx.fill();ctx.restore();
-  // Bottom publication information and QR.
-  roundedRect(ctx,280,1644,720,122,25,'rgba(249,246,232,.96)',gold,2);
-  centralText(ctx,config.card?.footer||'بطاقة تتجدد يوميًا',638,1685,29,green,'800',690);
-  centralText(ctx,config.card?.disclaimer||'',638,1735,22,soft,'700',680);
+  // Heritage subscription plaque with a machine-readable WhatsApp QR (not a decorative placeholder).
+  roundedRect(ctx,278,1644,743,179,23,'rgba(255,251,242,.97)',gold,3);
+  centralText(ctx,config.card?.promo||'اشترك معنا مجانًا',647,1683,36,green,'800',700);
+  centralText(ctx,'واتساب  '+(config.card?.phone||'0558930532'),647,1731,31,green,'800',690);
+  centralText(ctx,'سناب شات  '+(config.card?.social||'z32.y'),647,1773,29,soft,'800',680);
+  centralText(ctx,'امسح الرمز للاشتراك عبر الواتساب',647,1804,19,ink,'700',680);
   if(config.settings?.showQr!==false){
-    roundedRect(ctx,68,1635,194,194,12,'#fff',gold,3);
-    if(qr){ctx.drawImage(qr,78,1645,174,174);}else{
-      centralText(ctx,'QR',165,1710,55,green);
-      centralText(ctx,'للاشتراك',165,1764,23,green);
-    }
+    roundedRect(ctx,62,1637,202,202,13,'#fff',gold,5);
+    if(qr){ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(qr,75,1650,176,176);ctx.restore();}
+    else{centralText(ctx,'QR',163,1725,55,green);centralText(ctx,'واتساب',163,1783,25,green);}
   }
-  ctx.fillStyle=green;ctx.beginPath();ctx.moveTo(0,1832);ctx.bezierCurveTo(355,1815,690,1785,1080,1830);ctx.lineTo(1080,1920);ctx.lineTo(0,1920);ctx.closePath();ctx.fill();
-  centralText(ctx,config.card?.promo||'بطاقتك اليومية',540,1870,38,'#e9c475','800',1000);
-  centralText(ctx,`${weekday(iso)}  •  ${iso}`,540,1906,22,'#fff','700',990);
+  ctx.fillStyle=green;ctx.beginPath();ctx.moveTo(0,1844);ctx.bezierCurveTo(355,1820,690,1815,1080,1844);ctx.lineTo(1080,1920);ctx.lineTo(0,1920);ctx.closePath();ctx.fill();
+  centralText(ctx,'إعلان الخدمات العامة • '+(config.card?.servicePhone||'0538243481'),540,1876,31,'#ead08d','800',995);
+  centralText(ctx,config.card?.disclaimer||'المواعيد تقديرية وتُراجع رسميًا',540,1910,18,'#fff','700',1000);
   return canvas;
 }
 export function downloadFile(name,blob){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}
