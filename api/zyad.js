@@ -1,8 +1,9 @@
 /**
  * Zyad secure administration bridge.
  * Deploy as a Vercel Node.js Function; never publish admin credentials in GitHub Pages.
- * Required encrypted server variables: ZYAD_ADMIN_PASSWORD, ZYAD_GITHUB_TOKEN.
+ * Required encrypted server variables for login: ZYAD_ADMIN_PASSWORD, ZYAD_SESSION_SECRET.
  * Optional: ZYAD_ADMIN_USERNAME (defaults to "admin").
+ * GitHub publishing requires a separate encrypted ZYAD_GITHUB_TOKEN.
  */
 import { createHmac, createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 
@@ -13,10 +14,13 @@ const MAX_BODY = 260_000;
 const attempts = new Map();
 
 function envReady() {
-  return Boolean(process.env.ZYAD_ADMIN_PASSWORD?.length >= 12 && process.env.ZYAD_GITHUB_TOKEN?.length >= 20);
+  return Boolean(process.env.ZYAD_ADMIN_PASSWORD?.length >= 8 && process.env.ZYAD_SESSION_SECRET?.length >= 32);
+}
+function publishReady() {
+  return Boolean(process.env.ZYAD_GITHUB_TOKEN?.length >= 20);
 }
 function secret() {
-  return createHash('sha256').update('zyad-session-v1:' + process.env.ZYAD_ADMIN_PASSWORD + ':' + process.env.ZYAD_GITHUB_TOKEN).digest();
+  return createHash('sha256').update('zyad-session-v2:' + process.env.ZYAD_SESSION_SECRET).digest();
 }
 function hmac(input) {
   return createHmac('sha256', secret()).update(input).digest('base64url');
@@ -48,11 +52,16 @@ function validSession(req) {
   } catch { return false; }
 }
 async function github(path, options={}) {
+  if (options.method && options.method !== 'GET' && !publishReady()) {
+    const error = new Error('النشر يحتاج ربط GitHub: أضف ZYAD_GITHUB_TOKEN بصلاحية Contents: Read and write في إعدادات Vercel.');
+    error.status = 503;
+    throw error;
+  }
   const response = await fetch('https://api.github.com/repos/' + REPO + '/contents/' + path, {
     ...options,
     headers: {
       Accept:'application/vnd.github+json',
-      Authorization:'Bearer ' + process.env.ZYAD_GITHUB_TOKEN,
+      ...(publishReady() ? {Authorization:'Bearer ' + process.env.ZYAD_GITHUB_TOKEN} : {}),
       'X-GitHub-Api-Version':'2022-11-28',
       ...(options.body ? {'Content-Type':'application/json'} : {}),
     },
@@ -97,7 +106,7 @@ export default async function handler(req,res) {
   if (origin && !ALLOWED_ORIGINS.has(origin)) return fail(res,403,'مصدر الطلب غير مسموح.');
   if (!['GET','POST'].includes(req.method)) return fail(res,405,'الطريقة غير مدعومة.');
   const action = String(req.query.action||'status');
-  if (action === 'status' && req.method === 'GET') return respond(res,200,{ok:true,ready:envReady()});
+  if (action === 'status' && req.method === 'GET') return respond(res,200,{ok:true,ready:envReady(),publishReady:publishReady()});
   if (!envReady()) return fail(res,503,'إدارة رزنامة السعودية لم تُضبط بعد. يجب إعداد بيانات الخدمة المحمية على Vercel.');
   if (action === 'login' && req.method === 'POST') {
     const clientIp = String(req.headers['x-forwarded-for']||req.socket?.remoteAddress||'unknown').split(',')[0].trim();
@@ -121,6 +130,7 @@ export default async function handler(req,res) {
     catch(error) { return fail(res,502,error.message); }
   }
   if (action === 'publish' && req.method === 'POST') {
+    if (!publishReady()) return fail(res,503,'النشر غير مفعّل: أضف رمز GitHub للخادم في متغير ZYAD_GITHUB_TOKEN على Vercel.');
     const { config,base } = req.body||{};
     if (!validateConfig(config) || !validateConfig(base)) return fail(res,400,'بيانات الإعدادات غير صالحة.');
     const encoded=Buffer.from(JSON.stringify(config,null,2)+'\n','utf8').toString('base64');
