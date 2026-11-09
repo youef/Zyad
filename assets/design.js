@@ -106,5 +106,5 @@ export function renderPremium(ctx,cfg,iso,tools){
  }
  label(ctx,cfg.card?.footer||'بطاقتك اليومية',604,1792,22,dark?'#d6ceb7':ink,730);
  ctx.fillStyle=dark?'#154b42':green;ctx.fillRect(0,1843,1080,77);
- label(ctx,cfg.card?.disclaimer||'المواعيد التقديرية تخضع للجهات الرسمية',540,1881,23,'#f6e8bb',1030);
+ label(ctx,cfg.card?.disclaimer||'المواعيد التقديرية تخضع للجهات الرسمية',540,1906,15,'#f6e8bb',1030);
 }

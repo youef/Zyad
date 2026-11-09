@@ -130,15 +130,6 @@ function countdown(c,cfg,iso,remaining){
   });
   if(!items.length)txt(c,'لا توجد مواعيد مضافة بعد',540,1120,43,C.muted,890,'800');
 }
-function publicServices(c,cfg){
-  c.save();c.shadowColor='rgba(4,57,43,.09)';c.shadowBlur=12;c.shadowOffsetY=5;
-  rr(c,54,1594,972,103,23,'#f3e6c9',C.gold,2);c.restore();
-  rr(c,71,1608,70,75,18,C.deep);
-  txt(c,'☎',106,1646,40,'#fff',60,'800');
-  txt(c,'إعلان الخدمات العامة',807,1632,34,C.deep,410,'900');
-  txt(c,'للاستفسارات والتواصل',809,1673,21,C.muted,410,'700');
-  txt(c,cfg.card?.servicePhone||'0538243481',352,1648,46,C.deep,390,'900',30,'ltr');
-}
 function socialPill(c,x,label,value){
   rr(c,x,1791,337,68,16,'rgba(255,255,255,.10)','rgba(232,204,136,.43)',1.5);
   txt(c,label,x+169,1810,18,C.goldLight,295,'700');
@@ -172,7 +163,7 @@ export function renderHeritage(c,cfg,iso,tools){
   if(cfg.settings?.showQuote!==false)quote(c,cfg);
   else{rr(c,54,514,972,265,27,C.ivory,C.line,2);txt(c,'لحظات جميلة تبدأ بمعرفة مواعيدك',540,646,43,C.deep,870,'900');}
   countdown(c,cfg,iso,tools.remaining);
-  if(cfg.settings?.showContact!==false)publicServices(c,cfg);
-  else rr(c,54,1594,972,103,23,'#efe5cf',C.line);
+  // A quiet breathing space between counters and subscription information.
+  // The single text-only sponsor line is inserted here by advertising.js.
   social(c,cfg,tools.qr);
 }

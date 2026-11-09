@@ -82,3 +82,44 @@ body.native-ui .admin-ad-section .panel-description{font-size:12px;line-height:1
  body.native-ui.smart-app .date-headline #today-hijri{font-size:14px}
  body.native-ui.smart-app .date-controls{gap:5px}
 }
+
+
+/* Exhibition-style grid: full artwork, succinct metadata and one clear action.
+   The sponsor is part of the exported image, never a second card beneath it. */
+body.native-ui.smart-app .public-template-grid{align-items:start;gap:14px}
+body.native-ui.smart-app .public-template-card{
+  display:flex;flex-direction:column;min-width:0;padding:8px;gap:8px;
+  border:1px solid var(--ios-hair);border-radius:18px;background:var(--ios-surface);
+  box-shadow:0 3px 12px rgba(11,43,29,.035);overflow:hidden
+}
+body.native-ui.smart-app .public-template-card .public-template-select{
+  display:flex;flex-direction:column;align-items:stretch;gap:4px;
+  text-align:right;border:0;background:none;padding:0;min-height:0;overflow:hidden
+}
+body.native-ui.smart-app .public-template-card :is(.public-template-select img,.public-template-fallback,.public-template-art){
+  display:block;width:100%;height:auto;aspect-ratio:9/16;object-fit:contain;
+  border-radius:12px;background:var(--ios-subtle)
+}
+body.native-ui.smart-app .public-template-card :is(.public-template-art[hidden],.public-template-select img[hidden],.public-template-fallback[hidden]){display:none!important}
+body.native-ui.smart-app .public-template-card .public-template-select strong{
+  font-size:14px;line-height:1.5;font-weight:800;color:var(--ios-text);margin:7px 3px 0
+}
+body.native-ui.smart-app .public-template-card .public-template-select small{
+  min-height:0;line-height:1.45;font-size:11px;color:var(--ios-muted);margin-inline:3px;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;line-clamp:1;overflow:hidden
+}
+body.native-ui.smart-app .public-template-card .preview-date{
+  font-size:10px!important;margin:0 3px 2px!important;min-height:0!important
+}
+body.native-ui.smart-app .public-template-card .public-template-download{
+  border:0;min-height:44px;border-radius:12px;background:var(--ios-tint);
+  color:var(--ios-accent);font-weight:750;font-size:12px;padding:9px 6px
+}
+body.native-ui.smart-app .public-template-card.active{
+  border-color:var(--ios-accent);box-shadow:0 0 0 1px var(--ios-accent)
+}
+@media(max-width:800px){
+ body.native-ui.smart-app .public-template-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ body.native-ui.smart-app .public-template-card{padding:7px;border-radius:16px;gap:6px}
+ body.native-ui.smart-app .public-template-card .public-template-select strong{font-size:13px}
+}

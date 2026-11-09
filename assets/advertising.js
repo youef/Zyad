@@ -1,63 +1,72 @@
-/* One professional, readable advertisement contract shared by ALL exported cards.
-   The ad is clearly labeled and uses the published contact details.
-   This draws only into the reserved bottom 230px of calendar posters. */
+/* Saudi Calendar · embedded, text-only sponsorship.
+   Never paint a white card or overwrite a template's native background/QR.
+   The same editorial footer is used on every calendar/freeform export. */
 export const DEFAULT_AD=Object.freeze({
- enabled:true,label:'إعلان',title:'الخدمات العامة',phone:'0538243481',
- whatsapp:'0558930532',snapchat:'z32.y'
+  enabled:true,label:'إعلان',title:'الخدمات العامة',phone:'0538243481',
+  whatsapp:'0558930532',snapchat:'z32.y',style:'text',position:'inside'
 });
+const plain=(v,fallback='',max=72)=>String(v??fallback).replace(/[\r\n\t]+/g,' ').replace(/\s+/g,' ').trim().slice(0,max);
 export function adSettings(config={}){
- const src=config.advertising||{};
- const old=config.card||{};
- const val=(k,oldValue)=>String(src[k]??oldValue??DEFAULT_AD[k]??'').trim().slice(0,72);
- return {enabled:src.enabled!==false,
-   label:val('label',DEFAULT_AD.label),title:val('title',DEFAULT_AD.title),
-   phone:val('phone',old.servicePhone),whatsapp:val('whatsapp',old.phone),
-   snapchat:val('snapchat',old.social)};
+  const source=config.advertising||{},old=config.card||{};
+  return {
+    enabled:source.enabled!==false,
+    label:plain(source.label,DEFAULT_AD.label,24),
+    title:plain(source.title,DEFAULT_AD.title,50),
+    phone:plain(source.phone,old.servicePhone||DEFAULT_AD.phone,25),
+    whatsapp:plain(source.whatsapp,old.phone||DEFAULT_AD.whatsapp,25),
+    snapchat:plain(source.snapchat,old.social||DEFAULT_AD.snapchat,40),
+    style:'text',position:'inside'
+  };
 }
-const drawText=(c,text,x,y,size,color,maxWidth,weight='800',align='right',font='"Cairo",Tahoma,Arial,sans-serif')=>{
- c.save();c.direction='rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;
- c.font=weight+' '+size+'px '+font;
- c.fillText(String(text),x,y,maxWidth);c.restore();
-};
-export function drawCalendarAdvertisement(c,config,qr){
- const ad=adSettings(config);if(!ad.enabled)return;
- c.save();
- // No counter is rendered below y=1675 by any calendar layout.
- c.fillStyle='#f8faf6';c.fillRect(0,1680,1080,240);
- c.fillStyle='#116a50';c.fillRect(0,1680,1080,6);
- c.beginPath();c.roundRect(36,1693,1008,214,23);c.fillStyle='#ffffff';c.fill();
- c.strokeStyle='#dbe7df';c.lineWidth=2;c.stroke();
- c.fillStyle='#e7f3ec';c.beginPath();c.roundRect(743,1712,269,36,16);c.fill();
- drawText(c,ad.label+' · '+ad.title,991,1731,25,'#116a50',231,'800');
- drawText(c,ad.phone,988,1798,57,'#073e31',710,'900','right','Arial,Tahoma,sans-serif');
- drawText(c,'للاستفسارات والخدمات',984,1832,21,'#59695e',500,'700');
- c.strokeStyle='#e2e9e2';c.lineWidth=2;c.beginPath();c.moveTo(243,1850);c.lineTo(995,1850);c.stroke();
- drawText(c,'واتساب: '+ad.whatsapp,992,1873,23,'#116a50',430,'800');
- drawText(c,'سناب: '+ad.snapchat,480,1873,23,'#495b50',245,'800');
- // QR stays in the same 140×140 test/scan region used by all 42 templates.
- if(config.settings?.showQr!==false&&qr){
-   c.beginPath();c.roundRect(67,1697,140,140,11);c.fillStyle='#fff';c.fill();
-   c.imageSmoothingEnabled=false;c.drawImage(qr,75,1705,124,124);c.imageSmoothingEnabled=true;
-   drawText(c,'امسح للاشتراك',139,1866,16,'#496457',174,'700','center');
- }else{
-   drawText(c,'رزنامة السعودية',137,1771,21,'#116a50',155,'800','center');
- }
- drawText(c,config.card?.disclaimer||'المواعيد تقديرية وتراجع لدى الجهات الرسمية',540,1909,15,'#6b7970',1008,'500','center');
- c.restore();
+function caption(ad){
+  const parts=[ad.label||'إعلان'];
+  if(ad.title||ad.phone)parts.push([ad.title,ad.phone].filter(Boolean).join(' '));
+  if(ad.whatsapp)parts.push('واتساب '+ad.whatsapp);
+  if(ad.snapchat)parts.push('سناب '+ad.snapchat);
+  return parts.join('  ·  ');
 }
-export function drawFreeformAdvertisement(c,design){
- const ad=adSettings(design);if(!ad.enabled)return;
- const [w,h]=design.dimensions;const margin=Math.max(14,Math.round(w*.025));
- const height=Math.max(84,Math.min(158,Math.round(h*.103)));
- const top=h-height-margin,wide=w-margin*2;
- c.save();
- c.beginPath();c.roundRect(margin,top,wide,height,Math.max(13,Math.round(height*.17)));
- c.fillStyle='rgba(255,255,255,.96)';c.fill();
- c.lineWidth=Math.max(1,w/1080);c.strokeStyle='rgba(16,102,74,.18)';c.stroke();
- const right=w-margin-16, left=margin+16;
- const fs=Math.max(13,Math.min(30,w*.027));
- drawText(c,ad.label+' | '+ad.title,right,top+height*.29,fs*.72,'#116a50',wide*.79,'800');
- drawText(c,ad.phone,right,top+height*.65,fs*1.45,'#073e32',wide*.68,'900','right','Arial,Tahoma,sans-serif');
- drawText(c,'واتساب '+ad.whatsapp+'  •  سناب '+ad.snapchat,left,top+height*.77,Math.max(11,fs*.63),'#5f7067',wide*.44,'700','left');
- c.restore();
+function rgbaFromLuma(ctx,x,y){
+  // Inspect the actual pixels of the card, not its theme tokens. The background
+  // of each of the 42 art layouts can be dark, light or photographic.
+  try {
+    const scale=ctx.getTransform().a||1;
+    const px=Math.round(x*scale),py=Math.round(y*scale);
+    const img=ctx.getImageData(Math.max(0,px-2),Math.max(0,py-2),5,5).data;
+    let brightness=0,count=0;
+    for(let i=0;i<img.length;i+=4){brightness+=.2126*img[i]+.7152*img[i+1]+.0722*img[i+2];count++;}
+    return brightness/Math.max(1,count)>145;
+  }catch{return true;}
+}
+function drawLine(ctx,text,x,y,maxWidth,size){
+  const light=rgbaFromLuma(ctx,x,y+3);
+  ctx.save();
+  ctx.direction='rtl';ctx.textAlign='center';ctx.textBaseline='middle';
+  let fontSize=size;
+  do{ctx.font=\`700 \${fontSize}px "Cairo",Tahoma,Arial,sans-serif\`;
+    if(ctx.measureText(text).width<=maxWidth||fontSize<=14)break;
+    fontSize-=1;
+  }while(fontSize>14);
+  ctx.fillStyle=light?'rgba(29,67,53,.90)':'rgba(250,250,241,.94)';
+  ctx.shadowColor=light?'rgba(255,255,255,.60)':'rgba(0,0,0,.45)';
+  ctx.shadowBlur=light?1:2;
+  ctx.fillText(text,x,y,maxWidth);
+  ctx.restore();
+}
+export function drawCalendarAdvertisement(ctx,config,_qr,{kind='calendar'}={}){
+  const ad=adSettings(config);if(!ad.enabled)return;
+  // All drawings are INSIDE the original 1080×1920 artwork. QR and existing
+  // footer graphics remain unmodified. The heritage layout reserves a separate
+  // breathing space between the counters and subscription footer.
+  const y=kind==='heritage'?1654:kind==='premium'?1874:1880;
+  const x=540,width=kind==='heritage'?900:950;
+  drawLine(ctx,caption(ad),x,y,width,kind==='heritage'?23:20);
+}
+export function drawFreeformAdvertisement(ctx,design){
+  const ad=adSettings(design);if(!ad.enabled)return;
+  const [w,h]=design.dimensions;
+  const margin=Math.max(20,Math.round(w*.038));
+  const y=h-Math.max(23,Math.round(h*.028));
+  // No panel, shadowed badge or rectangular overlay. This is a literal footer
+  // line inside the artwork, with contrast chosen from the underlying colors.
+  drawLine(ctx,caption(ad),w/2,y,w-margin*2,Math.max(15,Math.min(27,Math.round(w*.020))));
 }

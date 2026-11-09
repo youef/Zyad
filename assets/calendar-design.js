@@ -125,6 +125,7 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  text(c,cfg.card?.promo||cfg.brand?.name||'بطاقتي الذكية',cx,1718,29,p.ink,space);
  const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join('  •  ');if(cfg.settings?.showContact!==false&&contact)text(c,contact,cx,1763,25,p.ink,space,'center',600);
  text(c,cfg.card?.footer||'بطاقتك اليومية',cx,1812,20,p.ink,space,'center',500);
- box(c,48,1866,984,43,14,dark?rgba('#071c21',.92):rgba('#fffef9',.97));text(c,cfg.card?.disclaimer||'المواعيد التقديرية تُراجع مع الجهات الرسمية',540,1887,21,p.ink,948,'center',500);
+ // Keep the template's native footer intact. The discreet sponsor line is drawn at y=1880.
+ text(c,cfg.card?.disclaimer||'المواعيد التقديرية تُراجع مع الجهات الرسمية',540,1904,15,p.ink,948,'center',500);
 }
 export {box,text,paragraph,line,circle,rgba};
