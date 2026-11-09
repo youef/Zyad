@@ -53,6 +53,26 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Generate branded app icons
         run: node scripts/prepare-brand-icons.mjs
+      - name: Publish transparent logo and app icons
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/branding/logo-transparent.png assets/app-180.png assets/app-192.png assets/app-512.png
+          if ! git diff --cached --quiet; then
+            git commit -m "Generate transparent brand artwork"
+            for ATTEMPT in 1 2 3 4 5; do
+              git fetch origin main
+              if ! git rebase -X theirs origin/main; then
+                git rebase --abort || true
+                echo "::warning::Could not rebase generated branding assets."
+                break
+              fi
+              if git push origin HEAD:main; then
+                break
+              fi
+              sleep 3
+            done
+          fi
       - name: Check dates and counters
         run: npm test
       - name: Check studio in Chromium
