@@ -123,3 +123,11 @@ body.native-ui.smart-app .public-template-card.active{
  body.native-ui.smart-app .public-template-card{padding:7px;border-radius:16px;gap:6px}
  body.native-ui.smart-app .public-template-card .public-template-select strong{font-size:13px}
 }
+
+/* A real image-ad asset picker; preview is a 5:1 image, not a second card. */
+.banner-upload{display:grid;gap:10px;max-width:680px;margin:12px 0 18px}
+.banner-upload .banner-preview{display:block;width:100%;aspect-ratio:5/1;max-height:160px;object-fit:contain;border-radius:12px;background:repeating-conic-gradient(#f1f3f1 0% 25%,#e7eae7 0% 50%) 50% / 18px 18px;border:1px solid rgba(68,91,78,.16)}
+.banner-upload .banner-preview[hidden]{display:none}
+.banner-upload .btn,.banner-upload .button,.banner-upload button{min-height:44px;justify-self:start;display:inline-flex;align-items:center;justify-content:center;max-width:100%;font-size:13px;border-radius:12px}
+.banner-upload small{font-size:12px;line-height:1.8;color:var(--ios-muted,#68727c)}
+.studio-ads-panel .banner-upload{margin:14px 0}

@@ -1,4 +1,5 @@
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
+import {prepareBanner} from './advertising.js?v=img1';
 import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=20261104r4';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
@@ -6,7 +7,8 @@ const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draf
 window.zyadAdmin={getConfig:()=>config,changed:()=>changed(),tab:name=>tab(name),refresh:()=>{syncFields();buildCounters();syncTemplate();changed();}};
 let config=null,published=null,timer=0;
 dateField.value=saToday();
-const syncFields=()=>document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});
+const syncBanner=()=>{const image=config?.advertising?.image||'',preview=$('#admin-banner-preview'),status=$('#admin-banner-state');if(!preview)return;preview.hidden=!image;if(image)preview.src=image;else preview.removeAttribute('src');status.textContent=image?'صورة الإعلان جاهزة للمعاينة • احفظ وانشر ليشاهدها الجميع':'لم تُرفع صورة حتى الآن';};
+const syncFields=()=>{document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});syncBanner();};
 const setStatus=(msg,good=true)=>{pubStatus.textContent=msg;pubStatus.style.color=good?'#126847':'#b05245';};
 const setDirty=()=>{try{localStorage.setItem(DRAFT_KEY,JSON.stringify(config));draftStatus.textContent='مسودة محفوظة في هذا المتصفح • غير منشورة';}catch{draftStatus.textContent='تعديلات غير منشورة';}};
 let previewSeq=0;
@@ -152,6 +154,8 @@ const toggle=document.createElement('label');toggle.className='counter-toggle';c
 });}
 function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener(el.type==='checkbox'?'change':'input',()=>{let val=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;updateDeep(config,el.dataset.bind,val);changed();}));
   $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,enabled:true,category:'حدث',summary:'',details:'',notes:'',location:'',link:''});buildCounters();changed();});
+  $('#admin-banner-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;const status=$('#admin-banner-state');status.textContent='جارٍ تهيئة الإعلان بالمقاس 2000 × 400…';try{const result=await prepareBanner(file);config.advertising||={enabled:true};config.advertising.image=result.src;config.advertising.enabled=true;syncFields();changed();status.textContent='تم تجهيز الإعلان '+result.width+'×'+result.height+' • احفظ وانشر ليظهر للجميع';}catch(err){status.textContent=err.message;}finally{e.target.value='';}});
+  $('#admin-banner-clear').addEventListener('click',()=>{config.advertising||={enabled:true};config.advertising.image='';syncFields();changed();});
   $('#clear-logo').addEventListener('click',()=>{config.brand.logo='';$('#logo-file').value='';changed();});
   $('#logo-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;if(!/^image\/(png|jpeg|webp)$/.test(file.type)||file.size>4_000_000){alert('يُرجى اختيار صورة PNG أو JPG أو WebP أقل من 4 ميغابايت.');return;}try{const img=await createImageBitmap(file);const c=document.createElement('canvas');const size=Math.min(400,Math.max(img.width,img.height));c.width=size;c.height=size;const s=Math.min(size/img.width,size/img.height);c.getContext('2d').drawImage(img,(size-img.width*s)/2,(size-img.height*s)/2,img.width*s,img.height*s);const url=c.toDataURL('image/webp',.74);if(url.length>250000){alert('الشعار كبير بعد الضغط. استخدم صورة أصغر.');return;}config.brand.logo=url;changed();}catch(err){alert('تعذر قراءة الصورة.');}});
   dateField.addEventListener('input',()=>{
