@@ -1,6 +1,23 @@
 import {CARD_PRESETS as templates} from './templates.js';import {put} from './storage.js';import {importImage} from './engine.js';import {toast} from './common.js';
 const section=document.createElement('section');section.className='page-wrap';section.innerHTML='<div class="home-template-heading"><div><span class="eyebrow">إدارة الاستوديو</span><h2>الأصول والقواعد</h2></div><a class="button" href="../templates/">القوالب والمعاينات ←</a></div><div class="settings-panel"><h3>رفع أصل إلى مكتبة هذا الجهاز</h3><label>النوع<select id="asset-type"><option value="background">خلفية</option><option value="decoration">زخرفة شفافة</option><option value="logo">شعار</option></select></label><label>التصنيف<input id="asset-category" maxlength="50" placeholder="مثال: رمضان"></label><label class="button">رفع PNG / JPEG / WebP<input type="file" id="asset-upload" accept="image/png,image/jpeg,image/webp" hidden></label><p class="storage-note">تُحفظ الملفات محليًا. لإتاحتها لكل الزوار، أضف الملفات إلى المستودع وفق دليل إضافة الأصول.</p><hr><h3>اختيار قالب اليوم تلقائيًا</h3><p>القواعد تُحفظ مع إعدادات النشر. تُطبّق الأعلى أولوية أولًا، بتوقيت السعودية.</p><div id="smart-rules"></div><button id="add-rule">إضافة قاعدة</button><hr><h3>سجل التوليد</h3><div id="generation-log">جارٍ القراءة…</div><a href="https://github.com/youef/Zyad/actions" class="button" target="_blank" rel="noopener">سجل النجاح والفشل في GitHub ↗</a><p><a href="https://canva.link/gup4y1ntpz6gvbp" target="_blank" rel="noopener">لوحة الهوية في Canva ↗</a></p></div>';
-document.querySelector('main').after(section);document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="../assets/app.css">');
+document.querySelector('main').after(section);
+// Dedicated, mutually-exclusive admin tab. The former always-visible asset
+// workspace overlapped long template lists on iPhones and desktop browsers.
+section.hidden=true;
+section.classList.add('admin-assets-workspace');
+const tabBar=document.querySelector('.tab-list');
+const assetsTab=document.createElement('button');
+assetsTab.type='button';assetsTab.className='tab';assetsTab.dataset.tab='assets';assetsTab.textContent='الأصول والقواعد';
+tabBar.append(assetsTab);
+assetsTab.addEventListener('click',()=>{
+  window.zyadAdmin?.tab?.('assets');
+  section.hidden=false;
+  section.scrollIntoView({block:'start',behavior:'instant'});
+});
+tabBar.addEventListener('click',e=>{
+  if(e.target.closest('[data-tab]')!==assetsTab)section.hidden=true;
+});
+document.head.insertAdjacentHTML('beforeend','<link rel="stylesheet" href="../assets/app.css">');
 document.getElementById('asset-upload').onchange=async e=>{try{const file=e.target.files[0],src=await importImage(file);await put({id:crypto.randomUUID(),name:file.name,src,type:document.getElementById('asset-type').value,category:document.getElementById('asset-category').value,createdAt:new Date().toISOString()},'assets');toast('أُضيف الأصل إلى مكتبة هذا الجهاز');}catch(e){toast(e.message);}};
 for(let i=0;i<100&&!window.zyadAdmin?.getConfig();i++)await new Promise(r=>setTimeout(r,100));
 function renderRules(){const cfg=window.zyadAdmin?.getConfig();if(!cfg)return;cfg.smartRules||=[];const host=document.getElementById('smart-rules');host.replaceChildren();for(const r of cfg.smartRules){const row=document.createElement('div');row.className='two-col';const day=document.createElement('select');for(const [v,t]of [['any','كل يوم'],['0','الأحد'],['1','الإثنين'],['2','الثلاثاء'],['3','الأربعاء'],['4','الخميس'],['5','الجمعة'],['6','السبت']])day.add(new Option(t,v));day.value=r.weekday;day.setAttribute('aria-label','يوم القاعدة');const template=document.createElement('select');templates.forEach(t=>template.add(new Option(t.name,t.id)));template.value=r.templateId;template.setAttribute('aria-label','قالب القاعدة');const priority=document.createElement('input');priority.type='number';priority.value=r.priority;priority.setAttribute('aria-label','الأولوية');const active=document.createElement('label');active.className='inline';const check=document.createElement('input');check.type='checkbox';check.checked=r.enabled;active.append(check,document.createTextNode('مفعّلة'));for(const [input,key]of [[day,'weekday'],[template,'templateId'],[priority,'priority'],[check,'enabled']])input.onchange=()=>{r[key]=input===check?check.checked:input===priority?Number(priority.value):input.value;window.zyadAdmin.changed();};row.append(day,template,priority,active);host.append(row);}}
