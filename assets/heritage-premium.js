@@ -1,5 +1,7 @@
 /* A clean, print-first Saudi heritage card. All content is live and editable. */
-import {brandStamp} from './brand-art.js';
+import {drawHangingLogo} from './brand-art.js';
+import {drawDailyPanel} from './daily-panel.js';
+import {hasCardMessage} from './daily.js';
 const W=1080,H=1920;
 const C={deep:'#073f34',deepest:'#032e29',green:'#0c624b',gold:'#c7a05b',goldLight:'#f4dfaa',paper:'#faf6ed',ivory:'#fffdf8',ink:'#173e35',muted:'#67796c',line:'#e3d5b7'};
 const fallbackFont='"Cairo",Tahoma,Arial,sans-serif';
@@ -65,10 +67,10 @@ function heading(c,config,iso,tools){
   c.strokeStyle=C.gold;c.lineWidth=2;c.beginPath();c.moveTo(360,288);c.lineTo(497,288);c.moveTo(583,288);c.lineTo(720,288);c.stroke();
   star(c,540,288,18,C.goldLight,.9);
   const day=tools.weekday(iso);
-  txt(c,config.brand?.name||'رزنامة السعودية',457,112,31,C.goldLight,540,'800');
+  
   txt(c,day,540,216,113,'#ffffff',740,'900',85);
   txt(c,'تقويمك ومواعيدك على مدار العام',540,322,27,'#e9d5a9',800,'700');
-  brandStamp(c,tools.logo,760,82,224,86,{background:null,border:null,padding:0,filter:'brightness(0) invert(1)'});
+  drawHangingLogo(c,tools.logo,{x:83,y:79,width:186,height:111,light:true});
 }
 function datePlaque(c,x,top,label,number,month){
   c.save();c.shadowColor='rgba(32,71,51,.07)';c.shadowBlur=10;c.shadowOffsetY=4;
@@ -83,10 +85,10 @@ function quote(c,cfg){
   c.save();c.shadowColor='rgba(52,57,31,.07)';c.shadowBlur=14;c.shadowOffsetY=5;
   rr(c,54,514,972,265,27,C.ivory,C.line,2);c.restore();
   rr(c,65,526,950,240,19,null,'rgba(199,160,91,.22)',1);
-  const hadith=cfg.daily?.hadith;
-  const content=hadith?.text||cfg.card?.quote||'كل يوم بداية تستحق الأمل';
-  const source=hadith?.reference||cfg.card?.attribution||'رسالة اليوم';
-  const name=hadith?'من هدي النبي ﷺ':'حكمة اليوم';
+  if(cfg.daily&&drawDailyPanel(c,cfg,54,514,972,265,{gold:C.gold,ink:C.ink}))return;
+  const content=cfg.card?.quote||'';
+  const source=cfg.card?.attribution||'';
+  const name='حكمة اليوم';
   rr(c,383,531,314,43,20,'#f3e9ce');
   txt(c,name,540,553,25,C.deep,290,'800');
   c.save();c.direction='rtl';
@@ -110,16 +112,17 @@ function medal(c,cx,cy,r,n,small){
   if(!small)txt(c,'يوم',cx,cy+31,16,'#efd9a3',100,'700');
 }
 function countdown(c,cfg,iso,remaining){
-  txt(c,'المواعيد القادمة',842,823,37,C.deep,385,'900');
-  txt(c,'الأيام المتبقية',230,823,24,C.muted,335,'700');
-  c.beginPath();c.moveTo(57,849);c.lineTo(1023,849);c.strokeStyle=C.line;c.lineWidth=2;c.stroke();
+  const reading=hasCardMessage(cfg),headerY=reading?823:585,startY=reading?859:621;
+  txt(c,'المواعيد القادمة',842,headerY,37,C.deep,385,'900');
+  txt(c,'الأيام المتبقية',230,headerY,24,C.muted,335,'700');
+  c.beginPath();c.moveTo(57,headerY+26);c.lineTo(1023,headerY+26);c.strokeStyle=C.line;c.lineWidth=2;c.stroke();
   const items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24);
   const cols=4,rows=Math.max(4,Math.ceil(items.length/cols)),gap=11;
-  const w=(972-3*gap)/cols, h=(708-(rows-1)*gap)/rows;
+  const w=(972-3*gap)/cols, h=(1505-startY-(rows-1)*gap)/rows;
   const timed=items.filter(i=>i.mode!=='manual');
   const nearest=timed.length?Math.min(...timed.map(i=>remaining(i,iso)??999999)):null;
   items.forEach((item,i)=>{
-    const col=i%cols,row=Math.floor(i/cols),x=54+(cols-1-col)*(w+gap),y=859+row*(h+gap),cx=x+w/2;
+    const col=i%cols,row=Math.floor(i/cols),x=54+(cols-1-col)*(w+gap),y=startY+row*(h+gap),cx=x+w/2;
     const best=cfg.design?.highlightNext!==false&&item.mode!=='manual'&&remaining(item,iso)===nearest;
     c.save();c.shadowColor='rgba(40,56,43,.065)';c.shadowBlur=7;c.shadowOffsetY=3;
     rr(c,x,y,w,h,17,best?'#fffcf3':'#fffefb',best?C.gold:C.line,best?3:1.5);c.restore();
@@ -160,8 +163,7 @@ export function renderHeritage(c,cfg,iso,tools){
   const month=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{timeZone:'Asia/Riyadh',month:'long'}).format(new Date(iso+'T12:00:00Z'));
   datePlaque(c,54,382,'ميلادي',iso.replaceAll('-','/'),month);
   datePlaque(c,558,382,'هجري',hijri.number,hijri.label);
-  if(cfg.settings?.showQuote!==false)quote(c,cfg);
-  else{rr(c,54,514,972,265,27,C.ivory,C.line,2);txt(c,'لحظات جميلة تبدأ بمعرفة مواعيدك',540,646,43,C.deep,870,'900');}
+  if(hasCardMessage(cfg))quote(c,cfg);
   countdown(c,cfg,iso,tools.remaining);
   // A quiet breathing space between counters and subscription information.
   // The single text-only sponsor line is inserted here by advertising.js.

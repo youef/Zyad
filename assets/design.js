@@ -1,6 +1,9 @@
 
 /* Saudi premium calendar templates rendered offline on Canvas. */
-import {brandStamp} from './brand-art.js';
+import {drawHangingLogo} from './brand-art.js';
+import {drawDailyPanel} from './daily-panel.js';
+import {hasCardMessage} from './daily.js';
+import {hasBanner} from './advertising.js?v=img1';
 const FONT='"Cairo",Tahoma,Arial,sans-serif';
 function rgba(hex,alpha){const c=/^#[a-f\d]{6}$/i.test(hex)?hex:'#064b43';return 'rgba('+[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)).join(',')+','+alpha+')';}
 function round(c,x,y,w,h,r,fill,stroke=null,size=1){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=size;c.strokeStyle=stroke;c.stroke();}}
@@ -64,8 +67,8 @@ export function renderPremium(ctx,cfg,iso,tools){
    ctx.beginPath();ctx.moveTo(center,274);ctx.lineTo(center,262);ctx.stroke();}
   ctx.restore();
  }
- label(ctx,cfg.brand?.name||'رزنامة السعودية',459,94,34,'#f6e8ca',515);
- brandStamp(ctx,tools.logo,822,65,190,87,{background:null,border:null,padding:0,filter:'brightness(0) invert(1)'});
+ 
+ drawHangingLogo(ctx,tools.logo,{x:76,y:62,width:183,height:114,light:true});
  const date=clockText(iso);
  label(ctx,date.weekday,540,198,109,'#fff',785,'center','900');
  label(ctx,cfg.brand?.subtitle||'مواعيدك اليومية',540,272,28,'#ead7a6',785);
@@ -73,38 +76,38 @@ export function renderPremium(ctx,cfg,iso,tools){
   round(ctx,x,337,420,108,17,'rgba(255,255,255,.10)',rgba(gold,.85),2);
   label(ctx,title,x+210,367,23,'#edd39c');label(ctx,value,x+210,413,32,'#fff',401);
  }
- // Reading area with stable line wrapping and protected lower grid.
- round(ctx,58,527,964,260,23,dark?'#17372f':'#fffefa',rgba(gold,.34),2);
- ctx.fillStyle=gold;ctx.fillRect(79,561,5,177);
- label(ctx,'❝',540,567,43,gold);
- if(cfg.settings?.showQuote!==false){
-  const quote=String(cfg.card?.quote||'');let fs=36,arr=wrap(ctx,quote,857,fs,4);
-  while(arr.length>3&&fs>26){fs-=2;arr=wrap(ctx,quote,857,fs,4);}
-  const first=arr.length===1?667:arr.length===2?640:610;
-  arr.slice(0,3).forEach((s,i)=>label(ctx,s,540,first+i*51,fs,dark?'#f8f3e0':ink,860));
-  if(cfg.card?.attribution)label(ctx,cfg.card.attribution,540,758,20,dark?'#cabf9e':soft,820);
- }else label(ctx,'كل مواعيدك المهمة',540,657,47,dark?'#fff':ink,880);
- label(ctx,'المواعيد والعدّادات',999,830,42,dark?'#fcf2e1':ink,730,'right','900');
- ctx.fillStyle=gold;ctx.fillRect(70,829,90,4);
+ // A disabled quote, hadith or dua leaves no title, source, placeholder or card.
+ const showReading=hasCardMessage(cfg),lift=showReading?0:-247;
+ if(showReading){
+   round(ctx,58,527,964,260,23,dark?'#17372f':'#fffefa',rgba(gold,.34),2);
+   if(!drawDailyPanel(ctx,cfg,58,527,964,260,{gold,ink:dark?'#f8f3e0':ink})){
+     const quote=String(cfg.card?.quote||''),fs=36,arr=wrap(ctx,quote,857,fs,4);
+     const first=arr.length===1?667:arr.length===2?640:610;
+     arr.slice(0,3).forEach((line,i)=>label(ctx,line,540,first+i*51,fs,dark?'#f8f3e0':ink,860));
+     if(cfg.card?.attribution)label(ctx,cfg.card.attribution,540,758,20,dark?'#cabf9e':soft,820);
+   }
+ }
+ label(ctx,'المواعيد والعدّادات',999,830+lift,42,dark?'#fcf2e1':ink,730,'right','900');
+ ctx.fillStyle=gold;ctx.fillRect(70,829+lift,90,4);
  const items=(cfg.counters||[]).filter(item=>item.enabled!==false).slice(0,24);
  const timed=items.filter(item=>item.mode!=='manual');
  const nearest=timed.length?Math.min(...timed.map(i=>tools.remaining(i,iso)??99999)):null;
  const next=timed.find(i=>tools.remaining(i,iso)===nearest);
- if(next&&des.highlightNext!==false)label(ctx,'الأقرب: '+next.label,72,830,20,dark?'#e3c68f':soft,444,'left');
+ if(next&&des.highlightNext!==false)label(ctx,'الأقرب: '+next.label,72,830+lift,20,dark?'#e3c68f':soft,444,'left');
  const rows=Math.max(1,Math.ceil(items.length/4)),compact=des.density==='compact'||rows>4;
- const h=Math.min(compact?116:155,Math.floor((1598-883)/rows)-11),space=compact?10:14;
- items.forEach((item,i)=>counter(ctx,item,780-i%4*240,885+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false));
+ const h=Math.min(compact?116:155,Math.floor((1598-(883+lift))/rows)-11),space=compact?10:14;
+ items.forEach((item,i)=>counter(ctx,item,780-i%4*240,885+lift+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false));
  if(!items.length)label(ctx,'لا توجد مواعيد مضافة',540,1170,46,dark?'#fff':soft);
  ctx.strokeStyle=rgba(gold,.8);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(58,1641);ctx.lineTo(1021,1641);ctx.stroke();
- label(ctx,cfg.card?.promo||'تابع البطاقة اليومية',604,1685,32,dark?'#f9e6bd':green,735);
+ if(!hasBanner(cfg))label(ctx,cfg.card?.promo||'تابع البطاقة اليومية',604,1685,32,dark?'#f9e6bd':green,735);
  const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join(' • ');
- if(cfg.settings?.showContact!==false&&contact)label(ctx,contact,605,1731,26,dark?'#ddd3ae':soft,725);
+ if(!hasBanner(cfg)&&cfg.settings?.showContact!==false&&contact)label(ctx,contact,605,1731,26,dark?'#ddd3ae':soft,725);
  if(cfg.settings?.showQr!==false){
   round(ctx,64,1656,188,188,17,'#fff',gold,3);
   if(tools.qr)ctx.drawImage(tools.qr,77,1669,162,162);
   else label(ctx,'QR',157,1740,47,green);
  }
- label(ctx,cfg.card?.footer||'بطاقتك اليومية',604,1792,22,dark?'#d6ceb7':ink,730);
+ if(!hasBanner(cfg))label(ctx,cfg.card?.footer||'بطاقتك اليومية',604,1792,22,dark?'#d6ceb7':ink,730);
  ctx.fillStyle=dark?'#154b42':green;ctx.fillRect(0,1843,1080,77);
  label(ctx,cfg.card?.disclaimer||'المواعيد التقديرية تخضع للجهات الرسمية',540,1906,15,'#f6e8bb',1030);
 }
