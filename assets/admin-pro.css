@@ -89,3 +89,32 @@ body.admin-page .auth-strength:before{content:"●";color:#149769}
 @media(max-width:900px){body.admin-page .admin-layout{grid-template-columns:minmax(0,1fr)}body.admin-page .admin-preview{position:static;max-height:none;order:-1}body.admin-page .admin-preview canvas#poster{max-height:340px;width:auto!important;max-width:100%}}
 @media(max-width:650px){body.admin-page .wrap{width:calc(100% - 24px)!important}body.admin-page .site-header .topbar{min-height:64px}body.admin-page .site-header nav>a:nth-child(2){display:none}body.admin-page .admin-layout{padding-top:14px;gap:14px;padding-bottom:90px}body.admin-page .editor-panel,body.admin-page .admin-preview{border-radius:21px}body.admin-page .admin-preview{padding:16px!important}body.admin-page .panel-heading{padding:24px 20px 14px}body.admin-page .tab-list{padding:5px 13px 14px!important}body.admin-page .tab-content{padding:24px 18px!important}body.admin-page .editor-footer{position:sticky;bottom:0;z-index:9;padding:12px 17px calc(12px + env(safe-area-inset-bottom,0px))!important;backdrop-filter:blur(14px)}body.admin-page #draft-status{font-size:10px}body.admin-page .auth-card{padding:27px 23px;border-radius:24px}body.admin-page .form-grid,body.admin-page .color-grid{grid-template-columns:1fr!important}}
 @media(prefers-reduced-motion:reduce){body.admin-page *,body.admin-page *:before,body.admin-page *:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* Overview */
+body.admin-page .admin-overview{padding-top:22px!important}
+body.admin-page .overview-welcome{background:#f4f8f5;border-radius:19px;padding:23px 25px;margin-bottom:18px}
+body.admin-page .overview-welcome .eyebrow{font-size:11px;color:#218265;font-weight:850}
+body.admin-page .overview-welcome h2{color:#18382b;font-size:23px;line-height:1.5;margin:7px 0 2px;font-weight:850}
+body.admin-page .overview-welcome p{color:#6e8175;line-height:1.8;font-size:12px;margin:4px 0}
+body.admin-page .overview-date{font-size:11px;color:#728b7d;font-weight:750;margin-top:16px}
+body.admin-page .overview-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:28px}
+body.admin-page .overview-stat{background:#fff;border:1px solid #e8ede9;border-radius:16px;padding:17px 18px;display:flex;flex-direction:column;gap:4px;min-width:0}
+body.admin-page .overview-stat small{font-size:11px;color:#617d6d;font-weight:700}
+body.admin-page .overview-stat strong{font-size:30px;color:#0a684e;font-weight:850;font-variant-numeric:tabular-nums}
+body.admin-page .overview-stat span{font-size:10px;color:#8d9b92}
+body.admin-page .overview-group>div:first-child{margin-bottom:14px}
+body.admin-page .overview-group h3{margin:0;color:#254839;font-size:17px}
+body.admin-page .overview-group p{margin:4px 0;color:#809186;font-size:12px}
+body.admin-page .overview-links{display:flex;flex-direction:column;gap:7px}
+body.admin-page .overview-links button{width:100%;display:flex;align-items:center;gap:13px;border:1px solid #edf0ee;background:#fbfcfb;color:#223e32;border-radius:15px;padding:12px 14px;cursor:pointer;text-align:right;min-height:67px;transition:background .17s,transform .17s}
+body.admin-page .overview-links button:hover{background:#f0f7f2}
+body.admin-page .overview-links button:active{transform:scale(.995)}
+body.admin-page .overview-links button span:nth-child(2){flex:1;display:flex;flex-direction:column;gap:3px;min-width:0}
+body.admin-page .overview-links button strong{font-weight:800;font-size:13px}
+body.admin-page .overview-links button small{font-size:10px;color:#8a9c92;font-weight:450}
+body.admin-page .overview-links button b{font-size:24px;font-weight:500;color:#9aada0}
+body.admin-page .ov-icon{width:41px;height:41px;background:#eaf5ec;border-radius:12px;display:grid;place-items:center;color:#12795a;font-size:23px;flex-shrink:0}
+body.admin-page .overview-guide{margin-top:24px;padding:18px 20px;background:#f4f7f4;border-radius:17px}
+body.admin-page .overview-guide strong{font-size:13px;color:#245741}
+body.admin-page .overview-guide p{font-size:12px;color:#7c9083;line-height:1.9;margin:8px 0 0}
+@media(max-width:420px){body.admin-page .overview-stats{gap:8px}body.admin-page .overview-stat{padding:13px 12px}body.admin-page .overview-stat strong{font-size:25px}body.admin-page .overview-welcome{padding:18px}}
