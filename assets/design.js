@@ -1,5 +1,6 @@
 
 /* Saudi premium calendar templates rendered offline on Canvas. */
+import {brandStamp} from './brand-art.js';
 const FONT='"Cairo",Tahoma,Arial,sans-serif';
 function rgba(hex,alpha){const c=/^#[a-f\d]{6}$/i.test(hex)?hex:'#064b43';return 'rgba('+[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)).join(',')+','+alpha+')';}
 function round(c,x,y,w,h,r,fill,stroke=null,size=1){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=size;c.strokeStyle=stroke;c.stroke();}}
@@ -63,8 +64,8 @@ export function renderPremium(ctx,cfg,iso,tools){
    ctx.beginPath();ctx.moveTo(center,274);ctx.lineTo(center,262);ctx.stroke();}
   ctx.restore();
  }
- label(ctx,cfg.brand?.name||'بطاقتي اليومية',540,90,36,'#f6e8ca',640);
- if(tools.logo){ctx.save();ctx.beginPath();ctx.arc(922,107,35,0,2*Math.PI);ctx.clip();ctx.drawImage(tools.logo,887,72,70,70);ctx.restore();}
+ label(ctx,cfg.brand?.name||'رزنامة السعودية',459,94,34,'#f6e8ca',515);
+ brandStamp(ctx,tools.logo,822,65,190,87,{background:'#fffbef',border:gold,radius:18,padding:10});
  const date=clockText(iso);
  label(ctx,date.weekday,540,198,109,'#fff',785,'center','900');
  label(ctx,cfg.brand?.subtitle||'مواعيدك اليومية',540,272,28,'#ead7a6',785);
