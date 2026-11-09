@@ -2,6 +2,12 @@
   {
     "date": "2026-11-09",
     "status": "success",
+    "templateId": "heritage",
+    "generatedAt": "2026-11-09T08:01:19.279Z"
+  },
+  {
+    "date": "2026-11-09",
+    "status": "success",
     "templateId": "remembrance",
     "generatedAt": "2026-11-09T01:46:10.321Z"
   },
