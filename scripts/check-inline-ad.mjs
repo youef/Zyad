@@ -38,7 +38,7 @@ try{
       const onCanvas=document.createElement('canvas'),offCanvas=document.createElement('canvas');
       await renderPoster(onCanvas,c,date,{preview:true,scale:.5});
       await renderPoster(offCanvas,off,date,{preview:true,scale:.5});
-      const delta=difference(onCanvas,offCanvas,id==='heritage'?0.81:0.95);
+      const delta=difference(onCanvas,offCanvas,0.80);
       calendar.push({id,...delta});
     }
     const designs=[];
