@@ -1,5 +1,7 @@
 // Print-resolution calendar art. Dates, quotes, counters, branding and QR stay live.
-import {brandStamp} from './brand-art.js';
+import {drawHangingLogo} from './brand-art.js';
+import {hasCardMessage} from './daily.js';
+import {hasBanner} from './advertising.js?v=img1';
 import {drawDailyPanel} from './daily-panel.js';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};
@@ -16,8 +18,8 @@ function header(c,cfg,iso,tools,p,s){
  const {green,gold,ink,cream}=p,kind=s.header,hh=s.headerHeight,dark=s.dark;
  const d=new Date(iso+'T12:00:00Z'),day=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{weekday:'long',timeZone:'Asia/Riyadh'}).format(d),num=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',timeZone:'Asia/Riyadh'}).format(d),month=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{month:'long',year:'numeric',timeZone:'Asia/Riyadh'}).format(d);
  const pale='#f8edcf',surface=dark?rgba(green,.88):rgba(cream,.94);let tx=540,ty=205,ts=94,number=false;
- box(c,280,43,520,61,22,surface,rgba(gold,.55));text(c,cfg.brand?.name||'بطاقتي الذكية',540,74,30,ink,480,'center',700);
- brandStamp(c,tools.logo,835,35,188,80,{background:null,border:null,padding:0});
+ 
+ drawHangingLogo(c,tools.logo,{x:67,y:25,width:189,height:119,light:dark});
  switch(kind){
  case 'arch':arch(c,300,124,480,260,rgba(green,.9),gold);tx=540;ty=257;text(c,day,tx,ty,94,pale,440);break;
  case 'crown':poly(c,540,256,353,148,8,green,gold);poly(c,540,256,328,130,8,null,gold);text(c,'✦   ✦   ✦',540,126,29,gold);text(c,day,540,251,99,pale,600);break;
@@ -42,7 +44,7 @@ function header(c,cfg,iso,tools,p,s){
  case 'crest':c.beginPath();c.moveTo(270,150);c.lineTo(810,150);c.lineTo(810,299);c.lineTo(540,365);c.lineTo(270,299);c.closePath();c.fillStyle=green;c.fill();c.strokeStyle=gold;c.lineWidth=3;c.stroke();poly(c,540,152,34,29,8,gold);for(const x of [160,920]){line(c,x,182,x,319,gold,3);poly(c,x,250,31,31,8,null,gold);}text(c,day,540,251,103,pale,485);break;
  case 'laurel':poly(c,540,257,203,135,32,green,gold);for(const side of [-1,1])for(let j=0;j<8;j++){const a=(j-3.5)*.18;c.save();c.translate(540+side*(241-Math.abs(j-3.5)*11),255+(j-3.5)*29);c.rotate(side*a);c.beginPath();c.ellipse(0,0,25,9,side*.7,0,Math.PI*2);c.fillStyle=gold;c.fill();c.restore();}text(c,day,540,250,89,pale,370);break;
  case 'cloud':for(const [x,y,r]of [[330,256,82],[437,213,112],[567,225,128],[701,254,83]])circle(c,x,y,r,surface);box(c,280,245,520,104,40,surface);text(c,day,540,260,104,ink,540);break;
- case 'brand':line(c,90,140,420,140,gold,5);line(c,660,350,990,350,gold,5);text(c,day,540,230,122,ink);text(c,'ZYAD / DAILY EDITION',540,325,23,ink,800,'center',400);break;
+ case 'brand':line(c,90,140,420,140,gold,5);line(c,660,350,990,350,gold,5);text(c,day,540,230,122,ink);break;
  case 'frost':box(c,180,142,720,215,48,rgba(cream,.82),rgba(gold,.8),2);line(c,212,169,866,169,'#ffffffaa');text(c,day,540,244,112,ink,650);break;
  case 'sun':for(let i=0;i<32;i++){const a=i*Math.PI/16;line(c,540+Math.cos(a)*153,257+Math.sin(a)*108,540+Math.cos(a)*174,257+Math.sin(a)*124,gold,2);}circle(c,540,257,134,rgba(gold,.15),gold);text(c,day,540,250,100,ink,390);break;
  case 'spotlight':{const next=(cfg.counters||[]).filter(i=>i.enabled!==false&&i.mode!=='manual').map(i=>({i,n:tools.remaining(i,iso)})).sort((a,b)=>a.n-b.n)[0];text(c,day,900,166,65,ink,570,'right');text(c,String(next?.n??0).padStart(2,'0'),278,253,183,gold,340);text(c,next?'يومًا إلى '+next.i.label:'مواعيدك المهمة',936,280,35,ink,540,'right');line(c,470,153,470,349,gold);break;}
@@ -108,10 +110,17 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  // A quiet translucent reading field preserves contrast without covering the artwork edges.
  const field=dark?rgba(p.cream,.79):rgba(p.cream,.87);box(c,33,103,1014,1538,28,field);
  header(c,cfg,iso,tools,p,s);
- const quoteY=s.headerHeight+30,quoteH=cfg.settings?.showQuote===false?116:cfg.daily?294:244;
+ const visible=hasCardMessage(cfg),quoteY=s.headerHeight+30,quoteH=visible?(cfg.daily?294:244):0;
  const quoteFill=dark?rgba('#081e20',.68):rgba('#fffef8',.94);
- if(['editorial','statement','brand','swiss'].includes(s.header)){line(c,74,quoteY,1006,quoteY,p.gold,2);line(c,74,quoteY+quoteH,1006,quoteY+quoteH,p.gold,2);}else box(c,64,quoteY,952,quoteH,s.header==='notebook'?6:24,quoteFill,rgba(p.gold,.4));
- if(cfg.settings?.showQuote!==false){if(!drawDailyPanel(c,cfg,64,quoteY,952,quoteH,p)){text(c,'❝',540,quoteY+33,43,p.gold);paragraph(c,cfg.card?.quote||'',540,quoteY+quoteH*.51,838,quoteH-90,p.ink,35);if(cfg.card?.attribution)text(c,cfg.card.attribution,540,quoteY+quoteH-23,21,p.ink,830,'center',500);}}else text(c,cfg.brand?.subtitle||'مواعيدك المهمة في مكان واحد',540,quoteY+quoteH/2,32,p.ink,850);
+ if(visible){
+   if(['editorial','statement','brand','swiss'].includes(s.header)){
+     line(c,74,quoteY,1006,quoteY,p.gold,2);line(c,74,quoteY+quoteH,1006,quoteY+quoteH,p.gold,2);
+   }else box(c,64,quoteY,952,quoteH,s.header==='notebook'?6:24,quoteFill,rgba(p.gold,.4));
+   if(!drawDailyPanel(c,cfg,64,quoteY,952,quoteH,p)){
+     paragraph(c,cfg.card?.quote||'',540,quoteY+quoteH*.5,838,quoteH-75,p.ink,35);
+     if(cfg.card?.attribution)text(c,cfg.card.attribution,540,quoteY+quoteH-23,21,p.ink,830,'center',500);
+   }
+ }
  const items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),timed=items.filter(i=>i.mode!=='manual'),values=timed.map(i=>tools.remaining(i,iso)),nearest=values.length?Math.min(...values):null,next=timed.find(i=>tools.remaining(i,iso)===nearest);
  const titleY=quoteY+quoteH+48; text(c,'المواعيد والعدّادات',1001,titleY,31,p.ink,620,'right');
  if(next&&cfg.design?.highlightNext!==false)text(c,'الأقرب: '+next.label,78,titleY,19,p.ink,350,'left',500);
@@ -122,9 +131,9 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  box(c,48,1680,984,172,22,dark?rgba('#071c21',.88):rgba('#fffef9',.96),rgba(p.gold,.62),2);
  const qrShown=cfg.settings?.showQr!==false;const cx=qrShown?635:540,space=qrShown?707:890;
  if(qrShown){box(c,67,1697,140,140,12,'#fff');if(tools.qr){c.imageSmoothingEnabled=false;c.drawImage(tools.qr,75,1705,124,124);c.imageSmoothingEnabled=true;}}
- text(c,cfg.card?.promo||cfg.brand?.name||'بطاقتي الذكية',cx,1718,29,p.ink,space);
- const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join('  •  ');if(cfg.settings?.showContact!==false&&contact)text(c,contact,cx,1763,25,p.ink,space,'center',600);
- text(c,cfg.card?.footer||'بطاقتك اليومية',cx,1812,20,p.ink,space,'center',500);
+ if(!hasBanner(cfg))text(c,cfg.card?.promo||'بطاقتك اليومية',cx,1718,29,p.ink,space);
+ const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join('  •  ');if(!hasBanner(cfg)&&cfg.settings?.showContact!==false&&contact)text(c,contact,cx,1763,25,p.ink,space,'center',600);
+ if(!hasBanner(cfg))text(c,cfg.card?.footer||'بطاقتك اليومية',cx,1812,20,p.ink,space,'center',500);
  // Keep the template's native footer intact. The discreet sponsor line is drawn at y=1880.
  text(c,cfg.card?.disclaimer||'المواعيد التقديرية تُراجع مع الجهات الرسمية',540,1904,15,p.ink,948,'center',500);
 }
