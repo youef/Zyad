@@ -1,6 +1,6 @@
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {mountPlanner} from './planner.js?v=20261104r4';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=heritage10';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=banner23';
 import {dailyTemplate} from './daily.js';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
