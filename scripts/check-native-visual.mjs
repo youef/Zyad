@@ -39,7 +39,7 @@ try{
   assert(info.posterWidth>100,'Card preview unreadable '+width);
   if(width<=800){
    assert(info.visibleTab!=='none','Mobile bottom navigation hidden '+width);
-   assert(info.tabWidth>=43&&info.tabHeight>=44,'Mobile tab touch target too small '+width);
+   assert(info.tabWidth>=43&&info.tabHeight>=44,'Mobile tab touch target too small '+width+': '+JSON.stringify(info));
    assert(['rgba(0, 0, 0, 0)','transparent'].includes(info.logoBg),'Header logo backing is not transparent '+width+': '+info.logoBg);
   }
   assert.equal(errors.length,0,'Browser errors '+width+': '+errors.join(' | '));
