@@ -9,6 +9,7 @@ import { createHmac, createHash, randomBytes, timingSafeEqual } from 'node:crypt
 
 const REPO = 'youef/Zyad';
 const PATH = 'data/config.json';
+const BANNER_PATH = 'assets/advertising/active.webp';
 const ALLOWED_ORIGINS = new Set(['https://youef.github.io']);
 const MAX_BODY = 260_000;
 const attempts = new Map();
@@ -128,6 +129,27 @@ export default async function handler(req,res) {
   if (action === 'config' && req.method === 'GET') {
     try { const file=await getConfig(); return respond(res,200,{ok:true,config:file.data}); }
     catch(error) { return fail(res,502,error.message); }
+  }
+  if (action === 'upload-banner' && req.method === 'POST') {
+    if (!publishReady()) return fail(res,503,'رفع الإعلان غير مفعّل: راجع صلاحيات GitHub الآمنة على الخادم.');
+    const input=req.body?.image;
+    if(typeof input!=='string'||input.length>750_000||!/^data:image\/webp;base64,[A-Za-z0-9+/=]+$/.test(input))
+      return fail(res,400,'صورة الإعلان غير صالحة أو كبيرة. ارفع WebP بالمقاس 2000×400.');
+    const bytes=Buffer.from(input.slice('data:image/webp;base64,'.length),'base64');
+    if(bytes.length>570_000||bytes.length<150||bytes.toString('ascii',0,4)!=='RIFF'||bytes.toString('ascii',8,12)!=='WEBP')
+      return fail(res,400,'الملف ليس صورة WebP صالحة.');
+    try{
+      let existing=null;
+      try{existing=await github(BANNER_PATH+'?ref=main');}
+      catch(error){if(error.status!==404)throw error;}
+      const saved=await github(BANNER_PATH,{method:'PUT',body:JSON.stringify({
+        message:'Publish Saudi Calendar advertisement banner',
+        content:bytes.toString('base64'),
+        ...(existing?.sha?{sha:existing.sha}:{}),
+        branch:'main'
+      })});
+      return respond(res,200,{ok:true,path:BANNER_PATH,commit:saved.commit?.sha||null});
+    }catch(error){return fail(res,[403,409,422].includes(error.status)?error.status:502,error.message);}
   }
   if (action === 'publish' && req.method === 'POST') {
     if (!publishReady()) return fail(res,503,'النشر غير مفعّل: أضف رمز GitHub للخادم في متغير ZYAD_GITHUB_TOKEN على Vercel.');

@@ -7,7 +7,7 @@ const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draf
 window.zyadAdmin={getConfig:()=>config,changed:()=>changed(),tab:name=>tab(name),refresh:()=>{syncFields();buildCounters();syncTemplate();changed();}};
 let config=null,published=null,timer=0;
 dateField.value=saToday();
-const syncBanner=()=>{const image=config?.advertising?.image||'',preview=$('#admin-banner-preview'),status=$('#admin-banner-state');if(!preview)return;preview.hidden=!image;if(image)preview.src=image;else preview.removeAttribute('src');status.textContent=image?'صورة الإعلان جاهزة للمعاينة • احفظ وانشر ليشاهدها الجميع':'لم تُرفع صورة حتى الآن';};
+const syncBanner=()=>{const image=config?.advertising?.image||'',preview=$('#admin-banner-preview'),status=$('#admin-banner-state');if(!preview)return;preview.hidden=!image;if(image)preview.src=image.startsWith('assets/')?'../'+image:image;else preview.removeAttribute('src');status.textContent=image?'صورة الإعلان جاهزة للمعاينة • احفظ وانشر ليشاهدها الجميع':'لم تُرفع صورة حتى الآن';};
 const syncFields=()=>{document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});syncBanner();};
 const setStatus=(msg,good=true)=>{pubStatus.textContent=msg;pubStatus.style.color=good?'#126847':'#b05245';};
 const setDirty=()=>{try{localStorage.setItem(DRAFT_KEY,JSON.stringify(config));draftStatus.textContent='مسودة محفوظة في هذا المتصفح • غير منشورة';}catch{draftStatus.textContent='تعديلات غير منشورة';}};
@@ -186,7 +186,16 @@ async function publish(){
  const label=button.textContent;button.textContent='جارٍ الحفظ...';
  setStatus('جارٍ التحقق من جلسة المدير وحفظ الإعدادات...');
  try{
-  const result=await window.zyadAdminClient.request('publish',{method:'POST',body:JSON.stringify({config,base:published})});
+  const uploadedImage=config.advertising?.image||'';
+  if(/^data:image\/webp;base64,/.test(uploadedImage)){
+    setStatus('جارٍ رفع الإعلان كصورة WebP مستقلة إلى GitHub...');
+    const upload=await window.zyadAdminClient.request('upload-banner',{method:'POST',body:JSON.stringify({image:uploadedImage})});
+    if(!upload.path||!/^assets\/advertising\/[\w.-]+\.webp$/.test(upload.path))throw Error('لم يؤكد الخادم مسار صورة الإعلان.');
+    config.advertising.image=upload.path;
+  }
+  let result;
+  try{result=await window.zyadAdminClient.request('publish',{method:'POST',body:JSON.stringify({config,base:published})});}
+  catch(error){if(uploadedImage.startsWith('data:image/'))config.advertising.image=uploadedImage;throw error;}
   published=cloneConfig(config);localStorage.removeItem(DRAFT_KEY);
   draftStatus.textContent='تم الحفظ على GitHub بنجاح';
   setStatus('نجح النشر في main. ستُحدّث GitHub Actions الموقع والبطاقات.'+(result.commit?' · '+result.commit.slice(0,7):''));
