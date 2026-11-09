@@ -42,7 +42,7 @@ function centeredLines(c,src,maxWidth,size,maxLines){
   const lines=[];let line='';
   for(const word of words){
     const next=line?line+' '+word:word;
-    if(line&&c.measureText(next)>maxWidth){lines.push(line);line=word;}else line=next;
+    if(line&&c.measureText(next).width>maxWidth){lines.push(line);line=word;}else line=next;
   }
   if(line)lines.push(line);
   if(lines.length>maxLines){
