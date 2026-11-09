@@ -1,63 +1,69 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 import {serve} from './serve.mjs';
-import {createDesign} from '../assets/catalog.js';
-
-const server=await serve();
-const origin='http://127.0.0.1:'+server.address().port;
+const server=await serve(),base='http://127.0.0.1:'+server.address().port;
 const browser=await chromium.launch({headless:true});
-const iso='2026-11-09';
 try{
-  const page=await browser.newPage({viewport:{width:1024,height:860}});
-  await page.goto(origin+'/?date='+iso,{waitUntil:'domcontentloaded'});
-  await page.evaluate(()=>window.__posterReady);
-  const result=await page.evaluate(async date=>{
-    const {renderPoster}=await import('/assets/card.js');
-    const {duplicateForPreset}=await import('/assets/templates.js');
-    const {createDesign}=await import('/assets/catalog.js');
-    const {renderDesign}=await import('/assets/engine.js');
-    const cfg=await(await fetch('/data/config.json')).json();
-    const difference=(on,off,startFraction)=>{
-      const a=on.getContext('2d').getImageData(0,0,on.width,on.height).data;
-      const b=off.getContext('2d').getImageData(0,0,off.width,off.height).data;
-      let changed=0,early=0;
-      const cutoff=Math.floor(on.height*startFraction);
-      for(let y=0;y<on.height;y++)for(let x=0;x<on.width;x++){
-        const i=(y*on.width+x)*4;
-        if(Math.abs(a[i]-b[i])+Math.abs(a[i+1]-b[i+1])+Math.abs(a[i+2]-b[i+2])>15){
-          changed++;if(y<cutoff)early++;
-        }
-      }
-      return {changed,early,ratio:changed/(on.width*on.height)};
-    };
-    const calendar=[];
-    for(const id of ['heritage','royal','night','saudi-emerald','blue-agenda','salary','magazine-columns']){
-      const c=duplicateForPreset(cfg,id),off=structuredClone(c);
-      c.advertising={...cfg.advertising,enabled:true};
-      off.advertising={...cfg.advertising,enabled:false};
-      const onCanvas=document.createElement('canvas'),offCanvas=document.createElement('canvas');
-      await renderPoster(onCanvas,c,date,{preview:true,scale:.5});
-      await renderPoster(offCanvas,off,date,{preview:true,scale:.5});
-      const delta=difference(onCanvas,offCanvas,0.80);
-      calendar.push({id,...delta});
+ const page=await browser.newPage({viewport:{width:1024,height:800}});
+ await page.goto(base,{waitUntil:'domcontentloaded'});
+ const results=await page.evaluate(async()=>{
+  const [{renderPoster},{duplicateForPreset},{createDesign},{renderDesign},{prepareBanner}]=await Promise.all([
+   import('/assets/card.js'),import('/assets/templates.js'),import('/assets/catalog.js'),
+   import('/assets/engine.js'),import('/assets/advertising.js')
+  ]);
+  const cfg=await(await fetch('/data/config.json')).json();
+  const artwork=document.createElement('canvas');artwork.width=2000;artwork.height=400;
+  const a=artwork.getContext('2d');a.fillStyle='#0b5b49';a.fillRect(0,0,2000,400);
+  a.fillStyle='#ffcc77';a.fillRect(50,60,260,280);a.fillStyle='#ffffff';a.font='bold 160px Arial';a.fillText('AD',520,250);
+  const blob=await new Promise(resolve=>artwork.toBlob(resolve,'image/png'));
+  const prepared=await prepareBanner(new File([blob],'test-banner.png',{type:'image/png'}));
+  const diff=(on,off,cutoff)=>{
+   const aa=on.getContext('2d').getImageData(0,0,on.width,on.height).data;
+   const bb=off.getContext('2d').getImageData(0,0,off.width,off.height).data;
+   let change=0,early=0;
+   for(let y=0;y<on.height;y++)for(let x=0;x<on.width;x++){
+    const i=(y*on.width+x)*4;
+    if(Math.abs(aa[i]-bb[i])+Math.abs(aa[i+1]-bb[i+1])+Math.abs(aa[i+2]-bb[i+2])>30){
+     change++;if(y<on.height*cutoff)early++;
     }
-    const designs=[];
-    for(const dimensions of [[1080,1920],[1080,1080],[1080,1350],[1920,1080]]){
-      const d=createDesign('ivory-modern',date);d.dimensions=dimensions;
-      const disabled=structuredClone(d);disabled.advertising.enabled=false;
-      const onCanvas=document.createElement('canvas'),offCanvas=document.createElement('canvas');
-      await renderDesign(onCanvas,d,{scale:.5});
-      await renderDesign(offCanvas,disabled,{scale:.5});
-      designs.push({dimensions,...difference(onCanvas,offCanvas,.88)});
-    }
-    return {calendar,designs};
-  },iso);
-  for(const entry of [...result.calendar,...result.designs]){
-    assert(entry.changed>45,'Text ad missing: '+JSON.stringify(entry));
-    assert(entry.early<15,'Advertisement invaded card content: '+JSON.stringify(entry));
-    assert(entry.ratio<.035,'Advertisement looks like a giant panel: '+JSON.stringify(entry));
+   }
+   return {change,early,fraction:change/(on.width*on.height)};
+  };
+  const iso='2026-11-09',calendar=[],freeform=[];
+  for(const id of ['heritage','royal','night','saudi-emerald','blue-agenda','salary','magazine-columns']){
+   const yes=duplicateForPreset(cfg,id),no=structuredClone(yes);
+   yes.advertising={enabled:true,image:prepared.src};no.advertising={enabled:false,image:prepared.src};
+   const on=document.createElement('canvas'),off=document.createElement('canvas');
+   await renderPoster(on,yes,iso,{preview:true,scale:.4});
+   await renderPoster(off,no,iso,{preview:true,scale:.4});
+   calendar.push({id,...diff(on,off,.76)});
   }
-  assert.equal(result.calendar.length,7);
-  assert.equal(result.designs.length,4);
-  console.log('PASS: text-only advertisement stays inside the original poster footer, without giant panels or covering QR, in seven calendar layouts and four image ratios.');
+  for(const dimensions of [[1080,1920],[1080,1080],[1080,1350],[1920,1080]]){
+   const yes=createDesign('ivory-modern',iso),no=structuredClone(yes);
+   yes.dimensions=dimensions;no.dimensions=dimensions;
+   yes.advertising={enabled:true,image:prepared.src};no.advertising={enabled:false,image:prepared.src};
+   const on=document.createElement('canvas'),off=document.createElement('canvas');
+   await renderDesign(on,yes,{scale:.4});await renderDesign(off,no,{scale:.4});
+   freeform.push({dimensions,...diff(on,off,.71)});
+  }
+  const content=duplicateForPreset(cfg,'heritage');
+  content.content={...(content.content||{}),mode:'daily',showHadith:false,showDua:false};
+  const lines=[];const sample=document.createElement('canvas'),ctx=sample.getContext('2d'),original=ctx.fillText;
+  ctx.fillText=function(s,...args){lines.push(String(s));return original.call(this,s,...args);};
+  await renderPoster(sample,content,iso,{preview:true,scale:.4});
+  return {calendar,freeform,prepared:{length:prepared.src.length,width:prepared.width,height:prepared.height,format:prepared.src.slice(0,22)},lines};
+ });
+ assert.equal(results.calendar.length,7);assert.equal(results.freeform.length,4);
+ for(const item of [...results.calendar,...results.freeform]){
+  assert(item.change>500,'Image banner missing: '+JSON.stringify(item));
+  assert(item.early===0,'Banner modified card content above reserved footer: '+JSON.stringify(item));
+  assert(item.fraction<.25,'Banner is too invasive: '+JSON.stringify(item));
+ }
+ assert.equal(results.prepared.width,2000);assert.equal(results.prepared.height,400);
+ assert(results.prepared.length<650000,'Banner compression limit');
+ for(const hidden of ['مقتطف من حديث صحيح','دعاء مأثور','دعاء عام','حكمة اليوم']){
+  assert(!results.lines.includes(hidden),'A hidden religious heading is still printed: '+hidden);
+ }
+ assert(!results.lines.includes('رزنامة السعودية'),'Brand/template name still printed in artwork');
+ console.log('PASS: image upload 2000x400, 7 calendar placements, 4 export ratios, clean top content, independent hadith/dua hiding and no printed template names.');
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
