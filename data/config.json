@@ -13,7 +13,8 @@
     "showContact": true,
     "showQr": true,
     "archiveDays": 0,
-    "plannerMonths": 12
+    "plannerMonths": 12,
+    "showTemplateTitle": false
   },
   "card": {
     "quote": "أعظم الناس غرورًا من اغترّ بالدنيا وعاجلها، فآثرها على الآخرة ورضي بها بديلًا من الآخرة.",
@@ -263,6 +264,9 @@
     "title": "الخدمات العامة",
     "phone": "0538243481",
     "whatsapp": "0558930532",
-    "snapchat": "z32.y"
+    "snapchat": "z32.y",
+    "image": "",
+    "kind": "image",
+    "fit": "contain"
   }
 }

@@ -1,5 +1,5 @@
 import {renderPremium} from './design.js?v=20261104r4';
-import {drawCalendarAdvertisement} from './advertising.js?v=ad1';
+import {drawCalendarAdvertisement,loadBanner,hasBanner} from './advertising.js?v=img1';
 import {renderHeritage} from './heritage-premium.js?v=20261109v2';
 import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js';
@@ -176,7 +176,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg)$/i.test(imageSrc);
   const definition=presetInfo(config.design?.preset),art=options.preview?definition.calendar?.background:definition.calendar?.original;
   const qrImage=async()=>{if(config.settings?.showQr===false)return null;if(config.card?.qrUrl){const u=new URL(config.card.qrUrl);if(!['http:','https:'].includes(u.protocol))throw Error('رابط QR غير صالح');const cv=document.createElement('canvas');await globalThis.ZyadQR.toCanvas(cv,u.href,{width:320,margin:1,errorCorrectionLevel:'M'});return cv;}return fetchImage(root+'qr.png');};
-  const [logo, qr, background]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,qrImage(),art?fetchImage(new URL('../'+art,import.meta.url).href):null]);
+  const [logo, qr, background, banner]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,qrImage(),art?fetchImage(new URL('../'+art,import.meta.url).href):null,hasBanner(config)?loadBanner(config.advertising.image):null]);
   if(art&&!background)throw Error('تعذر تحميل خلفية القالب. تحقق من الاتصال وأعد المحاولة.');
   const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
@@ -189,7 +189,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const adKind=definition.calendar
     ?(definition.calendar.layout==='list'?'list':'calendar')
     :(config.design?.preset==='heritage'?'heritage':'premium');
-  drawCalendarAdvertisement(ctx,config,qr,{kind:adKind});
+  drawCalendarAdvertisement(ctx,config,banner,{kind:adKind});
   return canvas;
 }
 export function downloadFile(name,blob){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}

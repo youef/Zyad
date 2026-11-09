@@ -1,5 +1,6 @@
 import {fontStack,loadTypeface} from './typography.js';
-import {drawFreeformAdvertisement} from './advertising.js?v=ad1';
+import {drawFreeformAdvertisement,bannerForDesign} from './advertising.js?v=img1';
+import {drawHangingLogo} from './brand-art.js';
 import {validImage} from './storage.js';
 const cache=new Map();
 const font='"Cairo",Tahoma,Arial,sans-serif';
@@ -15,13 +16,14 @@ export function layerText(l,d){
 }
 function cover(c,im,x,y,w,h,fit='cover'){const s=fit==='contain'?Math.min(w/im.width,h/im.height):Math.max(w/im.width,h/im.height);c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);c.restore();}
 export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null}={}){
- await Promise.all([...new Set(d.layers.map(l=>l.font))].map(f=>loadTypeface(f)));await document.fonts.ready;const [w,h]=d.dimensions;canvas.width=w*scale;canvas.height=h*scale;const c=canvas.getContext('2d');c.scale(scale,scale);
+ await Promise.all([...new Set(d.layers.map(l=>l.font))].map(f=>loadTypeface(f)));await document.fonts.ready;
+ const [banner,brand]=await Promise.all([bannerForDesign(d),loadImage(d.brand?.logo||'assets/branding/logo-transparent.png').catch(()=>null)]);const [w,h]=d.dimensions;canvas.width=w*scale;canvas.height=h*scale;const c=canvas.getContext('2d');c.scale(scale,scale);
  c.fillStyle=d.background.color||'#f4eee1';c.fillRect(0,0,w,h);
  if(d.background.gradient){const g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,d.background.color);g.addColorStop(1,d.background.gradient);c.fillStyle=g;c.fillRect(0,0,w,h);}
  if(d.background.asset)cover(c,await loadImage(d.background.asset),0,0,w,h);
  const bounds=[];
  for(const l of d.layers){
-  if(l.hidden)continue;c.save();c.globalAlpha=l.opacity??1;const x=l.x*w,y=l.y*h,bw=(l.width||.8)*w,bh=(l.height||.15)*h;
+  if(l.hidden||['brand-logo','tag','signature'].includes(l.id))continue;c.save();c.globalAlpha=l.opacity??1;const x=l.x*w,y=l.y*h,bw=(l.width||.8)*w,bh=(l.height||.15)*h;
   c.fillStyle=l.color||'#123f35';c.strokeStyle=l.borderColor||l.color||'#123f35';c.lineWidth=l.border||0;
   if(l.shadow){c.shadowColor='#00000055';c.shadowBlur=15;c.shadowOffsetY=5;}
   let box={id:l.id,x:x-bw/2,y:y-bh/2,w:bw,h:bh};
@@ -40,7 +42,8 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
   }
   bounds.push(box);c.restore();
  }
- drawFreeformAdvertisement(c,d);
+ drawFreeformAdvertisement(c,d,banner);
+ drawHangingLogo(c,brand,{x:w*.047,y:h*.019,width:w*.17,height:Math.min(h*.105,w*.105),light:false});
  if(guides){c.save();c.strokeStyle='#ffffff88';c.setLineDash([12,12]);c.lineWidth=2;for(const y of [.12,.88]){c.beginPath();c.moveTo(0,y*h);c.lineTo(w,y*h);c.stroke();}c.restore();}
  const b=bounds.find(b=>b.id===selection);if(b){c.save();c.strokeStyle='#42b696';c.lineWidth=3;c.strokeRect(b.x,b.y,b.w,b.h);c.fillStyle='#fff';c.fillRect(b.x+b.w-9,b.y+b.h-9,18,18);c.restore();}
  return bounds;
