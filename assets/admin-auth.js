@@ -13,7 +13,9 @@ async function request(action,opt={}){
 window.zyadAdminClient={request,logout:()=>{sessionStorage.removeItem(KEY);location.reload();}};
 async function unlock(){
  if(started)return;
- await request('session');started=true;
+ await request('session');
+ await request('config');
+ started=true;
  document.body.classList.remove('zyad-locked');
  document.querySelector('#zyad-private').removeAttribute('aria-hidden');
  document.querySelector('#zyad-auth-screen').hidden=true;
