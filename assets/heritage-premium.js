@@ -1,4 +1,5 @@
 /* A clean, print-first Saudi heritage card. All content is live and editable. */
+import {brandStamp} from './brand-art.js';
 const W=1080,H=1920;
 const C={deep:'#073f34',deepest:'#032e29',green:'#0c624b',gold:'#c7a05b',goldLight:'#f4dfaa',paper:'#faf6ed',ivory:'#fffdf8',ink:'#173e35',muted:'#67796c',line:'#e3d5b7'};
 const fallbackFont='"Cairo",Tahoma,Arial,sans-serif';
@@ -59,16 +60,15 @@ function heading(c,config,iso,tools){
   rr(c,45,45,990,321,39,g);c.restore();
   rr(c,58,57,964,295,30,null,'rgba(241,210,138,.8)',3);
   rr(c,71,70,938,269,24,null,'rgba(250,241,210,.22)',1);
-  for(const x of [148,932]){
-    star(c,x,118,43,C.goldLight,.72);star(c,x,298,24,C.goldLight,.66);
-  }
-  c.strokeStyle=C.gold;c.lineWidth=3;c.beginPath();c.moveTo(414,254);c.lineTo(492,254);c.moveTo(588,254);c.lineTo(666,254);c.stroke();
-  star(c,540,254,23,C.goldLight,.98);
+  star(c,137,119,28,C.goldLight,.78);
+  star(c,935,301,19,C.goldLight,.72);
+  c.strokeStyle=C.gold;c.lineWidth=2;c.beginPath();c.moveTo(360,288);c.lineTo(497,288);c.moveTo(583,288);c.lineTo(720,288);c.stroke();
+  star(c,540,288,18,C.goldLight,.9);
   const day=tools.weekday(iso);
-  txt(c,config.brand?.name||'بطاقتي اليومية',540,107,32,C.goldLight,590,'700');
-  txt(c,day,540,193,118,'#ffffff',740,'900',85);
-  txt(c,'تقويمك ومواعيدك على مدار العام',540,301,28,'#e9d5a9',800,'700');
-  if(tools.logo){c.save();c.beginPath();c.arc(132,206,36,0,Math.PI*2);c.clip();c.drawImage(tools.logo,96,170,72,72);c.restore();}
+  txt(c,config.brand?.name||'رزنامة السعودية',457,112,31,C.goldLight,540,'800');
+  txt(c,day,540,216,113,'#ffffff',740,'900',85);
+  txt(c,'تقويمك ومواعيدك على مدار العام',540,322,27,'#e9d5a9',800,'700');
+  brandStamp(c,tools.logo,760,73,244,96,{background:'#fffdf4',border:C.goldLight,padding:12,radius:18});
 }
 function datePlaque(c,x,top,label,number,month){
   c.save();c.shadowColor='rgba(32,71,51,.07)';c.shadowBlur=10;c.shadowOffsetY=4;
