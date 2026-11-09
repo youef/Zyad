@@ -4,7 +4,7 @@ const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
 const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v4';
 window.zyadAdmin={getConfig:()=>config,changed:()=>changed(),tab:name=>tab(name),refresh:()=>{syncFields();buildCounters();syncTemplate();changed();}};
-let config=null,published=null,token='',sha='',timer=0;
+let config=null,published=null,timer=0;
 dateField.value=saToday();
 const syncFields=()=>document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});
 const setStatus=(msg,good=true)=>{pubStatus.textContent=msg;pubStatus.style.color=good?'#126847':'#b05245';};
@@ -170,45 +170,23 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
   tab($(".tab.active").dataset.tab);
   $('#export-json').addEventListener('click',()=>downloadFile('zyad-config.json',new Blob([JSON.stringify(config,null,2)],{type:'application/json;charset=utf-8'})));
   $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();redrawSavedDesigns();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
-  $('#connect-github').addEventListener('click',async()=>{const supplied=$('#github-token').value.trim();if(!supplied){setStatus('أدخل رمز الوصول أولًا.',false);return;}token=supplied;const button=$('#connect-github');button.disabled=true;try{const [repoInfo,file]=await Promise.all([api('https://api.github.com/repos/'+REPO),getFile()]);sha=file.sha;if(repoInfo.permissions?.push===false){setStatus('يمكن قراءة الملف، لكن GitHub لا يمنح حسابك صلاحية الكتابة في '+REPO+'. راجع صلاحيات المستودع والرمز (Contents: Read and write).',false);}else{setStatus('نجح فحص قراءة المستودع. للتحقق من الكتابة فعليًا اضغط «حفظ ونشر للزوار»؛ تأكد من منح الرمز Contents: Read and write على '+REPO+'.');}}catch(e){token='';setStatus('فشل فحص الرمز: '+e.message,false);}finally{button.disabled=false;}});
   $('#publish-config').addEventListener('click',publish);
-  $('#quick-save').addEventListener('click',()=>{tab('publish');if($('#github-token').value.trim())publish();else {setStatus('أدخل رمز GitHub بصلاحية الكتابة لحفظ التعديلات للجميع.',false);$('#github-token').focus();}});
+  $('#quick-save').addEventListener('click',()=>{tab('publish');void publish();});
 }
-function base64utf8(s){const bytes=new TextEncoder().encode(s);let value='';const step=0x8000;for(let i=0;i<bytes.length;i+=step)value+=String.fromCharCode(...bytes.subarray(i,i+step));return btoa(value);}
-function githubProblem(response,details={}){
-  const message=String(details?.message||'');
-  const remaining=response.headers.get('x-ratelimit-remaining');
-  const resetSeconds=Number(response.headers.get('x-ratelimit-reset'));
-  const retryAfter=Number(response.headers.get('retry-after'));
-  const rateLimited=response.status===429||(response.status===403&&(remaining==='0'||/rate.?limit|abuse detection/i.test(message)));
-  if(rateLimited){
-    const reset=Number.isFinite(resetSeconds)&&resetSeconds>0?' حاول مجددًا بعد '+new Date(resetSeconds*1000).toLocaleString('ar-SA',{timeZone:'Asia/Riyadh',hour:'2-digit',minute:'2-digit',day:'numeric',month:'long'})+'.':'';
-    const delay=Number.isFinite(retryAfter)&&retryAfter>0?' انتظر '+Math.ceil(retryAfter/60)+' دقيقة على الأقل.':'';
-    return new Error('تجاوز حد طلبات GitHub (HTTP '+response.status+').'+reset+delay+' لا تعاود الضغط المتكرر على النشر.');
-  }
-  if(response.status===401)return new Error('رمز GitHub غير صالح أو انتهت صلاحيته (401). أنشئ رمزًا جديدًا من إعدادات GitHub.');
-  if(response.status===403)return new Error('رفض GitHub الإذن (403). راجع صلاحية Contents: Read and write للمستودع '+REPO+'، وصاحب الرمز، وأي موافقة معلقة على صلاحياته.'+(message?' تفاصيل GitHub: '+message:''));
-  if(response.status===404)return new Error('تعذر الوصول إلى المستودع أو الملف (404). تأكد من اختيار '+REPO+' عند إنشاء رمز الوصول، وأنه يملك صلاحية Contents.');
-  if(response.status===409)return new Error('تغير الملف على GitHub أثناء التعديل (409). صدّر مسودتك، وأعد تحميل الصفحة لمراجعة آخر التغييرات.');
-  if(response.status===422)return new Error('رفض GitHub محتوى التعديل (422). راجع الملف أو صلاحية الرمز. '+message);
-  return new Error('فشل طلب GitHub (HTTP '+response.status+'). '+(message||'حاول مرة أخرى لاحقًا.'));
+
+let saving=false;
+async function publish(){
+ if(!config||saving)return;
+ saving=true;
+ const button=$('#publish-config');button.disabled=true;
+ const label=button.textContent;button.textContent='جارٍ الحفظ...';
+ setStatus('جارٍ التحقق من جلسة المدير وحفظ الإعدادات...');
+ try{
+  const result=await window.zyadAdminClient.request('publish',{method:'POST',body:JSON.stringify({config,base:published})});
+  published=cloneConfig(config);localStorage.removeItem(DRAFT_KEY);
+  draftStatus.textContent='تم الحفظ على GitHub بنجاح';
+  setStatus('نجح النشر في main. ستُحدّث GitHub Actions الموقع والبطاقات.'+(result.commit?' · '+result.commit.slice(0,7):''));
+ }catch(error){setStatus('تعذر النشر: '+error.message,false);}
+ finally{saving=false;button.disabled=false;button.textContent=label;}
 }
-async function api(url,method='GET',body=null){
-  let response;
-  try{
-    response=await fetch(url,{method,headers:{'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Authorization':'Bearer '+token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined,cache:'no-store'});
-  }catch(error){
-    throw new Error('تعذر الاتصال بواجهة GitHub. تحقق من الإنترنت أو إعدادات منع التتبع، ثم حاول مرة أخرى.');
-  }
-  const data=await response.json().catch(()=>({}));
-  if(!response.ok)throw githubProblem(response,data);
-  return data;
-}
-function getFile(){return api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH+'?ref=main');}
-async function publish(){if(!config||$('#publish-config').disabled)return;token=$('#github-token').value.trim();if(!token){tab('publish');setStatus('للنشر أدخل رمز GitHub أولًا. لا تحتاجه للمعاينة أو تنزيل البطاقة.',false);return;}const button=$('#publish-config');button.disabled=true;button.textContent='جارٍ الحفظ...';setStatus('جارٍ التحقق من الملف وحفظ الإعدادات...');try{
-  const remote=await getFile();const latest=JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(remote.content.replace(/\s/g,'')),c=>c.charCodeAt(0))));if(JSON.stringify(latest)!==JSON.stringify(published))throw Error('تغيرت الإعدادات المنشورة منذ فتح اللوحة. صدّر مسودتك ثم أعد تحميل الصفحة قبل النشر لمنع استبدال تغييرات أخرى.');sha=remote.sha;
-  const body={message:'Update daily card content and design from admin panel',content:base64utf8(JSON.stringify(config,null,2)+'\n'),sha,branch:'main'};
-  await api('https://api.github.com/repos/'+REPO+'/contents/'+CONFIG_PATH,'PUT',body);
-  published=cloneConfig(config);localStorage.removeItem(DRAFT_KEY);draftStatus.textContent='تم حفظ نسخة الإدارة على GitHub';setStatus('نجح حفظ التغييرات في main. سيُعاد إنشاء البطاقة ونشر الموقع بواسطة GitHub Actions. راقب سجل Actions للتأكد من اكتمال النشر.');
-}catch(e){setStatus('تعذر النشر: '+e.message,false);}finally{button.disabled=false;button.textContent='حفظ ونشر للزوار';}}
-window.__adminReady=(async function init(){try{const r=await fetch('../data/config.json?ts='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('تعذر قراءة الإعدادات');published=await r.json();const draft=localStorage.getItem(DRAFT_KEY);const source=draft?JSON.parse(draft):cloneConfig(published);config={...cloneConfig(published),...source,design:{...published.design,...(source.design||{})},theme:{...published.theme,...(source.theme||{})},savedDesigns:Array.isArray(source.savedDesigns)?source.savedDesigns:published.savedDesigns||[]};syncFields();buildCounters();syncTemplate();setupForm();await renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});syncPreview();draftStatus.textContent=draft?'مسودة محلية مستعادة • غير منشورة':'جاهز للتعديل';}catch(e){console.error(e);draftStatus.textContent='فشل تحميل لوحة الإدارة: '+e.message;}})();
+window.__adminReady=(async function init(){try{const response=await window.zyadAdminClient.request('config');published=response.config;const draft=localStorage.getItem(DRAFT_KEY);const source=draft?JSON.parse(draft):cloneConfig(published);config={...cloneConfig(published),...source,design:{...published.design,...(source.design||{})},theme:{...published.theme,...(source.theme||{})},savedDesigns:Array.isArray(source.savedDesigns)?source.savedDesigns:published.savedDesigns||[]};syncFields();buildCounters();syncTemplate();setupForm();await renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});syncPreview();draftStatus.textContent=draft?'مسودة محلية مستعادة • غير منشورة':'جاهز للتعديل';}catch(e){console.error(e);draftStatus.textContent='فشل تحميل لوحة الإدارة: '+e.message;}})();
