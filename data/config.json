@@ -3,7 +3,7 @@
   "brand": {
     "name": "بطاقتي اليومية",
     "subtitle": "تقويم ومواعيد تهمّك",
-    "logo": ""
+    "logo": "assets/branding/logo-transparent.png"
   },
   "settings": {
     "timezone": "Asia/Riyadh",
