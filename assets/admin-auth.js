@@ -6,7 +6,10 @@ async function request(action,opt={}){
  const headers={...(opt.body?{'Content-Type':'application/json'}:{}),...(token?{Authorization:'Bearer '+token}:{})};
  let response;
  try{response=await fetch(BASE+'?action='+encodeURIComponent(action),{...opt,headers,cache:'no-store',mode:'cors'});}catch{throw Error('تعذر الاتصال بخادم الإدارة.');}
- const result=await response.json().catch(()=>({}));
+ const type=response.headers.get('content-type')||'';
+ if(!type.includes('application/json'))throw Error('خادم Vercel لم يعرض واجهة الإدارة البرمجية /api/zyad. تأكد أن مجلد api منشور وأن Root Directory هو جذر المشروع.');
+ const result=await response.json().catch(()=>null);
+ if(!result||typeof result.ok!=='boolean')throw Error('رد خادم الإدارة غير صالح. أعد نشر أحدث نسخة من فرع main في Vercel.');
  if(!response.ok){if(response.status===401&&action!=='login'){token='';sessionStorage.removeItem(KEY);}throw Error(result.error||('فشل الطلب '+response.status));}
  return result;
 }
@@ -38,11 +41,16 @@ form.onsubmit=async e=>{
  }catch(err){notice(err.message);}
  finally{submit.disabled=false;submit.textContent='دخول لوحة الإدارة';}
 };
-(async()=>{
+async function checkBackend(){
  try{
   const info=await request('status');
-  if(!info.ready){notice('خادم الإدارة لم يكتمل إعداده. لا يمكن الدخول أو النشر حتى تُحفظ بيانات المدير في إعدادات Vercel.');submit.disabled=true;}
+  if(!info.ready)notice('الخادم متصل ولكن بيانات المصادقة غير مكتملة. تأكد من ZYAD_ADMIN_PASSWORD (8 أحرف فأكثر)، ومن ZYAD_SESSION_SECRET (32 حرفًا فأكثر) أو ZYAD_GITHUB_TOKEN في Vercel، ثم أعد النشر.');
   else if(token){try{await unlock();}catch{token='';sessionStorage.removeItem(KEY);notice('انتهت الجلسة، سجّل دخولك مجددًا.');}}
-  else notice('بيانات مدير المنصة مطلوبة.',true);
- }catch(err){submit.disabled=true;notice(err.message);}
-})();
+  else if(!info.publishReady)notice('تسجيل الدخول متاح. النشر يحتاج متغير ZYAD_GITHUB_TOKEN على الخادم.',true);
+  else notice('الخادم جاهز. أدخل حساب المدير لتسجيل الدخول.',true);
+ }catch(err){notice(err.message);}
+ // Do not permanently disable login based on a transient status check.
+ // A retry via the login button will show the exact server response.
+}
+void checkBackend();
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!started&&!submit.disabled)void checkBackend();});
