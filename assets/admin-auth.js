@@ -1,4 +1,4 @@
-const BASE='https://zyad-admin-api-yousef8-15e4.vercel.app/api/zyad';
+const BASE='https://zyad-five.vercel.app/api/zyad';
 const KEY='zyad-secure-admin-session-v1',form=document.querySelector('#zyad-login-form'),status=document.querySelector('#zyad-auth-status'),submit=document.querySelector('#zyad-login-button');
 let token=sessionStorage.getItem(KEY)||'',started=false;
 function notice(msg,good=false){status.textContent=msg;status.style.color=good?'#14805d':'#b54743';}
