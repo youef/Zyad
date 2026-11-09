@@ -31,3 +31,14 @@
   .admin-page .brand-icon:has(img){width:59px;height:49px;padding:5px}
   .admin-page .brand strong{font-size:14px}
 }
+
+/* Mobile home retains the brand when the desktop sidebar is hidden. */
+.smart-app .app-header-logo{display:none}
+@media(max-width:800px){
+  .smart-app .app-header{gap:11px;min-width:0}
+  .smart-app .app-header-logo{display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;background:#fffaf0;border:1px solid #cdb47d;border-radius:15px;padding:5px;overflow:hidden}
+  .smart-app .app-header-logo img{width:100%;height:100%;object-fit:contain}
+  .smart-app .app-header>div:not(.header-actions){min-width:0;flex:1}
+  .smart-app .app-header h1{font-size:clamp(19px,5.4vw,25px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .smart-app .header-actions{gap:5px;flex-shrink:0}
+}
