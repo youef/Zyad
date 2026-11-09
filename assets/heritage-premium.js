@@ -47,7 +47,7 @@ function centeredLines(c,src,maxWidth,size,maxLines){
   if(line)lines.push(line);
   if(lines.length>maxLines){
     const clipped=lines.slice(0,maxLines);clipped[maxLines-1]=lines.slice(maxLines-1).join(' ');
-    while(c.measureText(clipped[maxLines-1]+'…')>maxWidth&&clipped[maxLines-1].length>3)
+    while(c.measureText(clipped[maxLines-1]+'…').width>maxWidth&&clipped[maxLines-1].length>3)
       clipped[maxLines-1]=clipped[maxLines-1].slice(0,-1);
     clipped[maxLines-1]=clipped[maxLines-1].trim()+'…';return clipped;
   }
