@@ -83,7 +83,26 @@ try{
   const admin=await browser.newPage({viewport:{width:1365,height:950}});
   const runtimeErrors=[];
   admin.on('pageerror',e=>runtimeErrors.push(e.message));
-  await admin.goto('http://127.0.0.1:'+server.address().port+'/admin/',{waitUntil:'networkidle',timeout:90000});
+  // The real administration is login-protected. Use an isolated mock session
+  // solely for this headless CI screenshot, never a production credential.
+  await admin.route('**/api/zyad?action=*',async route=>{
+    const action=new URL(route.request().url()).searchParams.get('action');
+    const payload=action==='status'?{ok:true,ready:true}
+      :action==='login'?{ok:true,token:'ci-render-session'}
+      :action==='config'?{ok:true,config}
+      :{ok:true};
+    await route.fulfill({status:200,contentType:'application/json',headers:{
+      'Access-Control-Allow-Origin':'*',
+      'Access-Control-Allow-Methods':'GET, POST, OPTIONS',
+      'Access-Control-Allow-Headers':'Authorization, Content-Type'
+    },body:JSON.stringify(payload)});
+  });
+  await admin.goto('http://127.0.0.1:'+server.address().port+'/admin/',{waitUntil:'domcontentloaded',timeout:90000});
+  await admin.locator('#zyad-login-form [name="username"]').fill('ci-render');
+  await admin.locator('#zyad-login-form [name="password"]').fill('ci-render-test');
+  await admin.locator('#zyad-login-button').click();
+  await admin.waitForFunction(n=>Boolean(window.zyadAdmin?.getConfig())&&
+    document.querySelectorAll('.template-choice').length===n,templateIds.length,{timeout:20000});
   await admin.locator('[data-tab="theme"]').click();
   const first=admin.locator('#poster');
   const colorAt=()=>first.evaluate(c=>{
