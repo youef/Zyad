@@ -12,7 +12,7 @@ export function validateDesign(d){
  const kinds=['text','image','shape','decoration','logo','gregorian','hijri','countdown','qr','watermark'];
  for(const l of d.layers){if(!kinds.includes(l.type)||!Number.isFinite(l.x)||!Number.isFinite(l.y)||l.x<0||l.x>1||l.y<0||l.y>1||!Number.isFinite(l.size??30)||(l.size??30)<8||(l.size??30)>300)throw Error('طبقة غير صالحة');if(l.text&&String(l.text).length>2000)throw Error('النص طويل جدًا');if(l.src&&!validImage(l.src))throw Error('مصدر صورة غير آمن');if(l.type==='qr'){const u=new URL(l.text);if(!['https:','http:'].includes(u.protocol))throw Error('رابط QR غير صالح');}}
  if(d.background?.asset&&!validImage(d.background.asset))throw Error('خلفية غير صالحة');
- if(d.advertising?.image&&(!/^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(d.advertising.image)||d.advertising.image.length>750000))throw Error('ملف الإعلان غير صالح');
+ if(d.advertising?.image&&(!/^(?:data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+|assets\/advertising\/[\w.-]+\.(?:png|jpe?g|webp))$/.test(d.advertising.image)||d.advertising.image.length>750000))throw Error('ملف الإعلان غير صالح');
  return structuredClone(d);
 }
 export async function saveDesign(d){d.updatedAt=new Date().toISOString();await put(d);return d;}
