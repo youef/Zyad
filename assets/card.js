@@ -1,5 +1,5 @@
 import {renderPremium} from './design.js?v=20261104r4';
-import {drawCalendarAdvertisement,loadBanner,hasBanner} from './advertising.js?v=img1';
+import {drawCalendarAdvertisement,bannerForPoster} from './advertising.js?v=working24';
 import {renderHeritage} from './heritage-premium.js?v=20261109v2';
 import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js';
@@ -176,7 +176,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg)$/i.test(imageSrc);
   const definition=presetInfo(config.design?.preset),art=options.preview?definition.calendar?.background:definition.calendar?.original;
   const qrImage=async()=>{if(config.settings?.showQr===false)return null;if(config.card?.qrUrl){const u=new URL(config.card.qrUrl);if(!['http:','https:'].includes(u.protocol))throw Error('رابط QR غير صالح');const cv=document.createElement('canvas');await globalThis.ZyadQR.toCanvas(cv,u.href,{width:320,margin:1,errorCorrectionLevel:'M'});return cv;}return fetchImage(root+'qr.png');};
-  const [logo, qr, background, banner]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,qrImage(),art?fetchImage(new URL('../'+art,import.meta.url).href):null,hasBanner(config)?loadBanner(config.advertising.image):null]);
+  const [logo, qr, background, banner]=await Promise.all([safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,qrImage(),art?fetchImage(new URL('../'+art,import.meta.url).href):null,bannerForPoster(config)]);
   if(art&&!background)throw Error('تعذر تحميل خلفية القالب. تحقق من الاتصال وأعد المحاولة.');
   const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;

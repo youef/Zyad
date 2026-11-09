@@ -1,12 +1,27 @@
 /* One banner image for Saudi Calendar posters. All uploads are stored as
    compact data: URLs in the published configuration; no external image host. */
 export const BANNER_SIZE=Object.freeze({width:2000,height:400,ratio:5});
-export const DEFAULT_AD=Object.freeze({enabled:true,image:'',fit:'contain',kind:'image'});
+export const DEFAULT_BANNER='assets/advertising/default.svg';
+export const DEFAULT_AD=Object.freeze({enabled:true,image:DEFAULT_BANNER,fit:'contain',kind:'image'});
 const SAFE=/^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/i;
-const PATH=/^assets\/advertising\/[\w.-]+\.(?:png|jpe?g|webp)$/i;
+const PATH=/^assets\/advertising\/[\w.-]+\.(?:png|jpe?g|webp|svg)$/i;
 export const validBannerSource=src=>typeof src==='string'&&src.length<=750000&&(SAFE.test(src)||PATH.test(src));
 const images=new Map();
-export function hasBanner(cfg){return cfg?.advertising?.enabled!==false&&validBannerSource(cfg?.advertising?.image);}
+export function bannerPath(config){
+ if(config?.advertising?.enabled===false)return null;
+ const choice=config?.advertising?.image;
+ return validBannerSource(choice)?choice:DEFAULT_BANNER;
+}
+export function hasBanner(config){return !!bannerPath(config);}
+export async function bannerForPoster(config){
+ const path=bannerPath(config);if(!path)return null;
+ try{return await loadBanner(path);}
+ catch(error){
+  if(path===DEFAULT_BANNER)throw error;
+  console.warn('تعذر تحميل الإعلان المخصص، سيتم عرض الإعلان الافتراضي.',error);
+  return loadBanner(DEFAULT_BANNER);
+ }
+}
 export async function loadBanner(src){
  if(!validBannerSource(src))return null;
  if(images.has(src))return images.get(src);
@@ -19,15 +34,25 @@ export async function loadBanner(src){
 }
 let publicConfigPromise;
 export async function publicBannerSource(){
- if(!publicConfigPromise)publicConfigPromise=fetch(new URL('../data/config.json',import.meta.url),{cache:'no-store'}).then(r=>{
-   if(!r.ok)throw Error('تعذر قراءة إعداد الإعلان');return r.json();
- }).then(cfg=>cfg.advertising?.enabled!==false?cfg.advertising?.image||'':'').catch(()=> '');
+ if(!publicConfigPromise){
+  publicConfigPromise=fetch(new URL('../data/config.json',import.meta.url),{cache:'no-store'})
+   .then(r=>{if(!r.ok)throw Error('تعذر قراءة إعداد الإعلان');return r.json();})
+   .then(cfg=>bannerPath(cfg))
+   .catch(()=>DEFAULT_BANNER);
+ }
  return publicConfigPromise;
 }
 export async function bannerForDesign(design){
  if(design.advertising?.enabled===false)return null;
  const own=design.advertising?.image;
- return loadBanner(validBannerSource(own)?own:await publicBannerSource());
+ const path=validBannerSource(own)?own:await publicBannerSource();
+ if(!path)return null;
+ try{return await loadBanner(path);}
+ catch(error){
+  if(path===DEFAULT_BANNER)throw error;
+  console.warn('تعذر تحميل الإعلان المخصص، سيتم استخدام الافتراضي.',error);
+  return loadBanner(DEFAULT_BANNER);
+ }
 }
 export async function prepareBanner(file){
  if(!file||!['image/png','image/jpeg','image/webp'].includes(file.type)||file.size>8*1024*1024)

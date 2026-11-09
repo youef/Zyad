@@ -1,5 +1,5 @@
 import {fontStack,loadTypeface} from './typography.js';
-import {drawFreeformAdvertisement,bannerForDesign} from './advertising.js?v=img1';
+import {drawFreeformAdvertisement,bannerForDesign} from './advertising.js?v=working24';
 import {drawHangingLogo} from './brand-art.js';
 import {validImage} from './storage.js';
 const cache=new Map();
