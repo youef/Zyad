@@ -1,0 +1,84 @@
+/* Final mobile-first composition: fixes the exact Safari screenshot regressions. */
+body.native-ui.smart-app .app-header>div:not(.header-actions){min-width:0;flex:1}
+body.native-ui.smart-app .app-header .eyebrow{font-size:11px;line-height:1.35;white-space:normal}
+body.native-ui.smart-app .app-header h1{font-size:clamp(21px,2.1vw,29px);line-height:1.26;white-space:normal;overflow:visible;text-overflow:clip;margin-top:1px}
+body.native-ui.smart-app .date-summary{display:flex;align-items:center;justify-content:space-between;gap:12px;min-width:0;flex:1}
+body.native-ui.smart-app .date-headline{min-width:0;display:flex;flex-direction:column;gap:2px}
+body.native-ui.smart-app .date-headline #today-hijri{font-size:16px;font-weight:800;line-height:1.45;overflow-wrap:anywhere}
+body.native-ui.smart-app .date-headline #today-gregorian{font-size:12px;font-weight:500;color:var(--ios-muted)}
+body.native-ui.smart-app .date-links{display:flex;align-items:center;gap:8px;flex-shrink:0}
+body.native-ui.smart-app .today-card-link{display:inline-flex;align-items:center;gap:5px;white-space:nowrap;font-size:12px;color:var(--ios-accent)}
+body.native-ui.smart-app .today-card-link [data-icon]{width:17px;height:17px}
+body.native-ui.smart-app .date-summary #today{background:var(--ios-tint);color:var(--ios-accent);border:0;border-radius:10px;min-height:39px;padding:6px 10px;font-size:12px;font-weight:800}
+body.native-ui.smart-app .date-controls{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:8px;align-items:stretch;min-width:0}
+body.native-ui.smart-app .date-controls button{display:grid;place-items:center;min-width:44px;width:44px;height:48px;min-height:48px;background:var(--ios-subtle);border:0;border-radius:12px}
+body.native-ui.smart-app .date-controls .date-picker-field{display:block;min-width:0;width:100%;margin:0}
+body.native-ui.smart-app .date-controls .date-picker-field input[type=date]{display:block;min-width:0!important;max-width:100%;width:100%!important;height:48px;min-height:48px;padding:7px 10px;border:0;text-align:center;text-align-last:center;direction:ltr;box-sizing:border-box;font-size:16px;font-weight:700;appearance:auto;-webkit-appearance:auto}
+body.native-ui.smart-app .date-controls .date-picker-field input::-webkit-date-and-time-value{text-align:center;min-width:0}
+body.native-ui.smart-app .date-controls .date-picker-field input::-webkit-datetime-edit{padding:0;max-width:100%;min-width:0}
+body.native-ui.smart-app .ios-home-intro h2{font-weight:820;letter-spacing:0;line-height:1.35}
+body.native-ui.smart-app .ios-home-intro p{max-width:630px}
+body.native-ui.smart-app .home-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.native-ui.smart-app .home-stats .stat-card{min-width:0;min-height:85px}
+body.native-ui.smart-app .day-workspace{align-items:start}
+body.native-ui.smart-app .app-panel{min-width:0}
+body.native-ui.smart-app .card-mode{min-height:42px}
+body.native-ui.smart-app .action-buttons button{display:inline-flex;gap:8px;align-items:center;justify-content:center}
+body.native-ui.smart-app .ios-insight[open] .daily-tile{background:var(--ios-subtle);box-shadow:none}
+body.native-ui.smart-app .app-footer{line-height:1.8}
+body.native-ui #toast{position:fixed;z-index:85;bottom:calc(88px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);max-width:min(90vw,360px);width:max-content;padding:11px 17px;background:#1d3730;color:#fff;border-radius:14px;font-size:13px;line-height:1.65;text-align:center;box-shadow:0 5px 22px rgba(0,0,0,.14)}
+body.native-ui:not(.smart-app) .studio-ads-panel{border-top:1px solid var(--ios-hair);padding:17px 0}
+body.native-ui:not(.smart-app) .studio-ads-panel summary{font-size:15px;font-weight:750;margin-bottom:12px;cursor:pointer}
+body.native-ui:not(.smart-app) .studio-ad-note{font-size:12px;color:var(--ios-muted);line-height:1.8}
+body.native-ui:not(.smart-app) .studio-ads-panel input[type=checkbox]{width:20px;min-height:20px}
+body.native-ui .admin-ad-section{padding:18px 0;border-top:1px solid var(--ios-hair);margin:17px 0}
+body.native-ui .admin-ad-section h2{font-size:18px;font-weight:800}
+body.native-ui .admin-ad-section .panel-description{font-size:12px;line-height:1.8}
+@media(max-width:800px){
+ body.native-ui.smart-app .app-workspace{padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(112px + env(safe-area-inset-bottom,0px))}
+ body.native-ui.smart-app .app-header{display:grid;grid-template-columns:58px minmax(0,1fr) 44px;align-items:center;gap:10px;min-height:64px;margin-bottom:16px}
+ body.native-ui.smart-app .app-header-logo{display:grid!important;width:58px!important;height:55px!important;flex:none!important}
+ body.native-ui.smart-app .app-header>div:not(.header-actions){min-width:0}
+ body.native-ui.smart-app .app-header h1{font-size:clamp(20px,5.4vw,24px);max-width:100%;white-space:normal;line-height:1.28}
+ body.native-ui.smart-app .header-actions{display:flex;justify-content:flex-end;align-items:center}
+ body.native-ui.smart-app .header-actions>*{min-width:44px;width:44px;min-height:44px;height:44px}
+ body.native-ui.smart-app .header-actions [data-theme-toggle],
+ body.native-ui.smart-app .header-actions .profile-badge{display:none}
+ body.native-ui.smart-app .app-date-strip{display:flex;flex-direction:column;align-items:stretch;gap:15px;padding:15px;border-radius:19px}
+ body.native-ui.smart-app .app-date-strip .date-summary{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;width:100%;align-items:center}
+ body.native-ui.smart-app .date-headline #today-hijri{font-size:clamp(14px,4vw,17px);max-width:100%}
+ body.native-ui.smart-app .date-headline #today-gregorian{font-size:11px}
+ body.native-ui.smart-app .date-links{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+ body.native-ui.smart-app .today-card-link{font-size:11px;min-height:27px}
+ body.native-ui.smart-app .date-summary #today{min-height:34px;font-size:11px;padding:5px 11px}
+ body.native-ui.smart-app .date-controls{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;width:100%;gap:8px;min-width:0;max-width:100%}
+ body.native-ui.smart-app .date-controls .date-picker-field{min-width:0;overflow:hidden;border-radius:12px}
+ body.native-ui.smart-app .date-controls input[type=date]{font-size:clamp(13px,4.1vw,16px);max-width:100%;min-width:0!important}
+ body.native-ui.smart-app .ios-home-intro{margin:19px 2px 11px}
+ body.native-ui.smart-app .ios-home-intro h2{font-size:22px;margin:3px 0 4px;line-height:1.4}
+ body.native-ui.smart-app .ios-home-intro p{font-size:12px;margin:0}
+ body.native-ui.smart-app .ios-next-spotlight{min-height:122px;border-radius:18px;padding:13px;gap:12px}
+ body.native-ui.smart-app .ios-spotlight-count{width:90px;min-width:90px;min-height:92px;padding:6px;border-radius:14px}
+ body.native-ui.smart-app .ios-spotlight-count strong{font-size:38px}
+ body.native-ui.smart-app .ios-spotlight-count small{font-size:10px}
+ body.native-ui.smart-app .ios-spotlight-content strong{font-size:17px}
+ body.native-ui.smart-app .ios-spotlight-kicker,body.native-ui.smart-app .ios-spotlight-content small{font-size:11px}
+ body.native-ui.smart-app .home-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin:10px 0 14px}
+ body.native-ui.smart-app .home-stats .stat-card{min-height:82px;padding:13px 11px;gap:8px}
+ body.native-ui.smart-app .stat-card small{font-size:11px}
+ body.native-ui.smart-app .stat-card strong{font-size:22px}
+ body.native-ui.smart-app .app-panel{padding:16px;border-radius:18px}
+ body.native-ui.smart-app .agenda-panel .panel-title h2,body.native-ui.smart-app .card-panel .panel-title h2{font-size:19px}
+ body.native-ui.smart-app .agenda-filters button{font-size:11px}
+ body.native-ui.smart-app .app-tabs{background:color-mix(in srgb,var(--ios-surface) 96%,transparent);box-shadow:none}
+ body.native-ui.smart-app .native-tab-link .tab-label{font-size:10px}
+ body.native-ui #toast{font-size:12px;padding:9px 14px;max-width:calc(100vw - 36px)}
+}
+@media(max-width:360px){
+ body.native-ui.smart-app .app-header{grid-template-columns:48px minmax(0,1fr) 42px;gap:8px}
+ body.native-ui.smart-app .app-header-logo{width:48px!important;height:46px!important}
+ body.native-ui.smart-app .app-header h1{font-size:20px}
+ body.native-ui.smart-app .date-links{gap:0}
+ body.native-ui.smart-app .date-headline #today-hijri{font-size:14px}
+ body.native-ui.smart-app .date-controls{gap:5px}
+}
