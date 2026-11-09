@@ -10,7 +10,7 @@ body.admin-page .site-header{position:sticky;top:0;z-index:20;background:rgba(25
 body.admin-page .site-header .topbar{min-height:76px;align-items:center}
 body.admin-page .site-header .brand{display:flex;align-items:center;gap:12px;text-decoration:none}
 body.admin-page .site-header .brand-icon{width:52px;height:52px;border-radius:14px;background:#f4f7f5;display:grid;place-items:center;overflow:hidden}
-body.admin-page .site-header .brand-icon img{height:44px!important;width:48px!important;object-fit:contain;mix-blend-mode:multiply}
+body.admin-page .site-header .brand-icon img{height:44px!important;width:48px!important;object-fit:contain;mix-blend-mode:normal}
 body.admin-page .site-header strong{color:#213d33;font-weight:800}
 body.admin-page .site-header small{font-size:12px;color:#697a74}
 body.admin-page .site-header nav{display:flex;align-items:center;gap:10px}
@@ -73,7 +73,7 @@ body.admin-page:not(.zyad-locked) #zyad-auth-screen{display:none!important}
 body.admin-page .zyad-auth-screen{min-height:100dvh;display:grid;place-items:center;padding:30px 18px 60px;background:radial-gradient(circle at 80% 5%,#e6f3eb,transparent 38%),#f5f6f6}
 body.admin-page .auth-card{width:min(430px,100%);background:#fff;border:1px solid #e9edea;box-shadow:0 24px 70px rgba(24,49,37,.10);border-radius:30px;padding:36px 33px}
 body.admin-page .auth-logo{width:76px;height:76px;border-radius:22px;display:grid;place-items:center;background:#f3f8f5;margin:0 auto 17px}
-body.admin-page .auth-logo img{width:69px;height:69px;object-fit:contain;mix-blend-mode:multiply}
+body.admin-page .auth-logo img{width:69px;height:69px;object-fit:contain;mix-blend-mode:normal}
 body.admin-page .auth-kicker{display:block;text-align:center;color:#167b58;font-size:12px;font-weight:800;margin:8px 0}
 body.admin-page .auth-card h1{text-align:center;font-size:28px;color:#17372a;font-weight:850;margin:7px 0}
 body.admin-page .auth-description{text-align:center;color:#82928a;font-size:13px;line-height:1.9;margin:0 0 24px}
