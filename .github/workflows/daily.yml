@@ -51,6 +51,8 @@ jobs:
         run: |
           npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
+      - name: Generate branded app icons
+        run: node scripts/prepare-brand-icons.mjs
       - name: Check dates and counters
         run: npm test
       - name: Check studio in Chromium
@@ -68,7 +70,7 @@ jobs:
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add images data/history.json data/generation-log.json assets/qr.png
+          git add images data/history.json data/generation-log.json assets/qr.png assets/app-180.png assets/app-192.png assets/app-512.png
           if ! git diff --cached --quiet; then
             git commit -m "Generate daily calendar card"
             git push origin HEAD:main
