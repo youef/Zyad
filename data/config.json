@@ -256,5 +256,13 @@
     "defaultView": "today-app",
     "defaultFilter": "all",
     "showInspiration": true
+  },
+  "advertising": {
+    "enabled": true,
+    "label": "إعلان",
+    "title": "الخدمات العامة",
+    "phone": "0538243481",
+    "whatsapp": "0558930532",
+    "snapchat": "z32.y"
   }
 }

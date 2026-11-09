@@ -1,4 +1,5 @@
 import {renderPremium} from './design.js?v=20261104r4';
+import {drawCalendarAdvertisement} from './advertising.js?v=ad1';
 import {renderHeritage} from './heritage-premium.js?v=20261109v2';
 import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js';
@@ -181,13 +182,11 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);
-  if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
-  if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);return canvas;}
-  if((config.design?.preset||'royal')==='heritage'){
-    renderHeritage(ctx,config,iso,{logo,qr,remaining,hijriDate,hijriPanel,weekday});
-  }else{
-    renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate});
-  }
+  if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
+  else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
+  else if((config.design?.preset||'royal')==='heritage'){renderHeritage(ctx,config,iso,{logo,qr,remaining,hijriDate,hijriPanel,weekday});}
+  else {renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate});}
+  drawCalendarAdvertisement(ctx,config,qr);
   return canvas;
 }
 export function downloadFile(name,blob){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}

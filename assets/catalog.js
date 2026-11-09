@@ -56,5 +56,5 @@ for(const [i,t]of templates.entries()){
 export function createDesign(id=templates[0].id,date=new Date().toISOString().slice(0,10)){
  const t=structuredClone(templateById(id));
  const count=t.layers.find(l=>l.type==='countdown');if(count)count.target=new Date(Date.parse(date+'T12:00:00Z')+30*86400000).toISOString().slice(0,10);
- return {...t,id:crypto.randomUUID(),templateId:t.id,name:t.name,dimensions:[1080,1920],date,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),status:'draft',version:2};
+ return {...t,id:crypto.randomUUID(),templateId:t.id,name:t.name,dimensions:[1080,1920],date,advertising:{enabled:true,label:'إعلان',title:'الخدمات العامة',phone:'0538243481',whatsapp:'0558930532',snapchat:'z32.y'},createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),status:'draft',version:2};
 }

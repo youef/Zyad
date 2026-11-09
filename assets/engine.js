@@ -1,4 +1,5 @@
 import {fontStack,loadTypeface} from './typography.js';
+import {drawFreeformAdvertisement} from './advertising.js?v=ad1';
 import {validImage} from './storage.js';
 const cache=new Map();
 const font='"Cairo",Tahoma,Arial,sans-serif';
@@ -39,6 +40,7 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
   }
   bounds.push(box);c.restore();
  }
+ drawFreeformAdvertisement(c,d);
  if(guides){c.save();c.strokeStyle='#ffffff88';c.setLineDash([12,12]);c.lineWidth=2;for(const y of [.12,.88]){c.beginPath();c.moveTo(0,y*h);c.lineTo(w,y*h);c.stroke();}c.restore();}
  const b=bounds.find(b=>b.id===selection);if(b){c.save();c.strokeStyle='#42b696';c.lineWidth=3;c.strokeRect(b.x,b.y,b.w,b.h);c.fillStyle='#fff';c.fillRect(b.x+b.w-9,b.y+b.h-9,18,18);c.restore();}
  return bounds;
