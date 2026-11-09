@@ -22,6 +22,7 @@ async function unlock(){
   await window.__adminReady;
   await import('../assets/admin-plus.js?v=secure-20261109');
   await import('../assets/admin-settings.js?v=secure-20261109');
+  await import('../assets/admin-dashboard.js?v=secure-20261109');
  }catch(err){console.error(err);document.querySelector('#draft-status').textContent='فشل تشغيل الإدارة: '+err.message;}
 }
 document.querySelector('#zyad-logout').onclick=window.zyadAdminClient.logout;
