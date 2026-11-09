@@ -1,9 +1,9 @@
 {
   "version": 4,
   "brand": {
-    "name": "رزنامة السعودية",
-    "subtitle": "SAUDI CALENDAR · المواعيد السعودية",
-    "logo": "assets/branding/logo-transparent.png"
+    "name": "بطاقتي اليومية",
+    "subtitle": "تقويم ومواعيد تهمّك",
+    "logo": ""
   },
   "settings": {
     "timezone": "Asia/Riyadh",
@@ -13,26 +13,24 @@
     "showContact": true,
     "showQr": true,
     "archiveDays": 0,
-    "plannerMonths": 12,
-    "showTemplateTitle": false
+    "plannerMonths": 12
   },
   "card": {
-    "quote": "أعظم الناس غرورًا من اغترّ بالدنيا وعاجلها، فآثرها على الآخرة ورضي بها بديلًا من الآخرة.",
-    "attribution": "حكمة اليوم",
-    "promo": "اشترك معنا مجانًا",
-    "phone": "0558930532",
-    "social": "z32.y",
-    "qrUrl": "https://wa.me/966558930532",
-    "footer": "امسح رمز QR للاشتراك عبر واتساب",
-    "disclaimer": "المواعيد والأرقام تقديرية، وتُراجع مع الجهات الرسمية",
-    "servicePhone": "0538243481"
+    "quote": "قال يحيى بن معاذ رحمه الله: كم من مستغفر ممقوت وساكت مرحوم، ثم قال: هذا استغفر الله وقلبه فاجر، وهذا سكت وقلبه ذاكر.",
+    "attribution": "من أقوال السلف",
+    "promo": "للاشتراك ومتابعة البطاقة اليومية",
+    "phone": "",
+    "social": "",
+    "qrUrl": "https://youef.github.io/Zyad/",
+    "footer": "جميع المواعيد قابلة للتعديل من لوحة الإدارة",
+    "disclaimer": "المواعيد الهجرية والتقديرية تُراجع مع الجهات الرسمية"
   },
   "theme": {
     "green": "#064b43",
-    "greenLight": "#34725c",
-    "gold": "#c69a42",
-    "cream": "#faf5e8",
-    "ink": "#073f38"
+    "greenLight": "#37765e",
+    "gold": "#c99a42",
+    "cream": "#f8f5ea",
+    "ink": "#103f38"
   },
   "counters": [
     {
@@ -235,12 +233,12 @@
   "design": {
     "preset": "heritage",
     "pattern": true,
-    "patternStrength": 0.09,
+    "patternStrength": 0.07,
     "highlightNext": true,
     "showUnit": true,
     "density": "comfortable",
-    "autoRotate": false,
-    "fontFamily": "cairo",
+    "autoRotate": true,
+    "fontFamily": "tajawal",
     "showIcons": true,
     "showEventDates": true
   },
@@ -268,5 +266,6 @@
     "image": "",
     "kind": "image",
     "fit": "contain"
-  }
+  },
+  "smartRules": []
 }
