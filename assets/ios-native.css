@@ -1,0 +1,291 @@
+/* Saudi Calendar — iOS-forward design system.
+   System typography, calm grouped surfaces, native touch targets and safe areas.
+   Printed card art deliberately remains unchanged. */
+:root {--ios-green:#116b50;--ios-green-tint:#e7f2ed;--ios-bg:#f5f5f7;--ios-surface:#ffffff;--ios-soft:#f0f1f4;--ios-label:#19222b;--ios-secondary:#707987;--ios-divider:rgba(60,60,67,.12);--ios-shadow:0 3px 16px rgba(16,30,26,.045);--ios-pill:15px;--ios-card:20px;--ios-ease:cubic-bezier(.2,.72,.28,1)}
+:root[data-theme=dark]{--ios-bg:#101714;--ios-surface:#1d2722;--ios-soft:#2a3630;--ios-label:#f1f5f2;--ios-secondary:#b0bdb4;--ios-divider:rgba(218,228,218,.14);--ios-green:#73cfaa;--ios-green-tint:#253d31;--ios-shadow:0 3px 16px rgba(0,0,0,.12)}
+html{scroll-padding-top:92px;-webkit-text-size-adjust:100%}
+body.native-ui{--paper:var(--ios-bg);--surface:var(--ios-surface);--ink:var(--ios-label);--muted:var(--ios-secondary);--line:var(--ios-divider);--soft:var(--ios-soft);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Arabic","Noto Sans Arabic",Cairo,Tahoma,sans-serif;background:var(--ios-bg);color:var(--ios-label);font-size:14px;line-height:1.55;-webkit-tap-highlight-color:transparent}
+body.native-ui.smart-app{--app-bg:var(--ios-bg);--panel:var(--ios-surface);--text:var(--ios-label);--muted:var(--ios-secondary);--border:var(--ios-divider);font-family:inherit;background:var(--ios-bg);color:var(--ios-label)}
+body.native-ui :is(button,input,textarea,select){font:inherit;letter-spacing:normal}
+body.native-ui :is(button,.button,a){-webkit-touch-callout:none;touch-action:manipulation}
+body.native-ui button,body.native-ui .button{min-height:44px;border-radius:13px;transition:background-color .2s var(--ios-ease),opacity .2s var(--ios-ease),transform .2s var(--ios-ease)}
+body.native-ui :is(button,.button):active:not(:disabled){transform:scale(.985);opacity:.86}
+body.native-ui :is(button,.button,a,input,select,textarea):focus-visible{outline:3px solid var(--ios-green);outline-offset:3px}
+body.native-ui :is(input:not([type=checkbox]):not([type=radio]):not([type=range]),textarea,select){background:var(--ios-soft);border:1px solid transparent;border-radius:12px;color:var(--ios-label);min-height:46px;padding:10px 13px;font-size:16px}
+body.native-ui :is(input,textarea,select)::placeholder{color:var(--ios-secondary);opacity:.85}
+body.native-ui .eyebrow{font-size:11px;color:var(--ios-secondary);font-weight:650;letter-spacing:0}
+body.native-ui :is(.btn.primary,.button.primary,button.primary){background:#116b50;color:#fff;border-color:transparent;font-weight:750}
+:root[data-theme=dark] body.native-ui :is(.btn.primary,.button.primary,button.primary){background:#207454;color:#fff}
+body.native-ui :is(.btn.secondary,.button:not(.primary),button.secondary){border:1px solid transparent;background:var(--ios-soft);color:var(--ios-label)}
+body.native-ui :is(.app-panel,.daily-tile,.stat-card,.public-template-card,.settings-panel){border:0;background:var(--ios-surface);box-shadow:var(--ios-shadow)}
+body.native-ui .brand-icon:has(img),body.native-ui .brand-mark:has(img){border:1px solid var(--ios-divider)!important;box-shadow:none!important;background:var(--ios-surface)!important;border-radius:13px!important}
+body.native-ui .brand-icon img,body.native-ui .brand-mark img{object-fit:contain}
+
+/* Desktop — familiar sidebar and calm content hierarchy. */
+body.native-ui.smart-app .app-sidebar{background:var(--ios-surface);border-inline-start:1px solid var(--ios-divider);border-left:0;padding:27px 17px;width:235px}
+body.native-ui.smart-app .app-sidebar .brand{gap:11px;padding:5px}
+body.native-ui.smart-app .app-sidebar .brand strong{font-size:16px;font-weight:800}
+body.native-ui.smart-app .app-sidebar .brand small{font-size:10px;color:var(--ios-secondary)}
+body.native-ui.smart-app .sidebar-caption{color:var(--ios-secondary);font-size:10px;margin:34px 12px 12px}
+body.native-ui.smart-app .side-links{gap:5px}
+body.native-ui.smart-app .side-links a{min-height:46px;border-radius:12px;padding:10px 13px;font-size:17px;gap:13px;color:var(--ios-secondary);font-weight:600}
+body.native-ui.smart-app .side-links a span{font-size:13px}
+body.native-ui.smart-app .side-links a.active{background:var(--ios-green-tint);color:var(--ios-green)}
+body.native-ui.smart-app .side-links a small{background:var(--ios-soft);color:var(--ios-secondary)}
+body.native-ui.smart-app .app-workspace{margin-inline-start:235px;margin-right:235px;max-width:none;padding:29px clamp(20px,3.5vw,56px) 16px}
+body.native-ui.smart-app .app-header{background:transparent;border:0;margin:0 0 22px;gap:12px;padding:0;min-height:66px}
+body.native-ui.smart-app .app-header .eyebrow{font-size:12px}
+body.native-ui.smart-app .app-header h1{font-size:clamp(29px,2.7vw,37px);font-weight:850;letter-spacing:-.8px;line-height:1.4;margin:1px 0 0}
+body.native-ui.smart-app .header-actions{display:flex;gap:9px}
+body.native-ui.smart-app .header-actions>*{width:44px;height:44px;min-height:44px;border-radius:50%;border:0;background:var(--ios-surface);color:var(--ios-label);box-shadow:none;font-size:17px}
+body.native-ui.smart-app .header-actions .profile-badge{background:var(--ios-green-tint);color:var(--ios-green);margin:0}
+body.native-ui.smart-app .app-date-strip{border:0;background:var(--ios-surface);border-radius:18px;padding:15px 19px;gap:14px;min-width:0}
+body.native-ui.smart-app .app-date-strip>div:first-child{display:flex;align-items:center;flex-wrap:wrap;gap:7px 15px}
+body.native-ui.smart-app #today-hijri{font-size:13px;font-weight:750;color:var(--ios-label)}
+body.native-ui.smart-app .app-date-strip strong{font-size:12px;color:var(--ios-secondary)}
+body.native-ui.smart-app .today-card-link{font-size:12px;color:var(--ios-green);font-weight:750}
+body.native-ui.smart-app .date-controls{gap:7px}
+body.native-ui.smart-app .date-controls :is(button,input){min-height:42px;height:42px;font-size:13px;border:0;border-radius:11px;background:var(--ios-soft);color:var(--ios-label)}
+body.native-ui.smart-app .date-controls button{min-width:42px;padding:5px 10px}
+body.native-ui.smart-app .date-controls #today{min-width:54px;font-weight:750}
+body.native-ui.smart-app .date-controls input{width:145px;padding:7px 10px}
+body.native-ui.smart-app .home-stats{gap:12px;margin:20px 0}
+body.native-ui.smart-app .stat-card{border-radius:17px;padding:16px;gap:11px}
+body.native-ui.smart-app .stat-icon{width:43px;height:43px;border-radius:12px;color:var(--ios-green);background:var(--ios-green-tint)}
+body.native-ui.smart-app .stat-card small{font-size:11px;color:var(--ios-secondary);line-height:1.6}
+body.native-ui.smart-app .stat-card strong{font-size:24px;font-weight:850;line-height:1.25}
+body.native-ui.smart-app .stat-card em{font-size:10px;color:var(--ios-secondary)}
+body.native-ui.smart-app .day-workspace{grid-template-columns:minmax(280px,1.15fr) minmax(305px,.93fr) minmax(230px,.73fr);gap:16px;align-items:start}
+body.native-ui.smart-app .app-panel{border-radius:var(--ios-card);padding:21px}
+body.native-ui.smart-app .panel-title{margin-bottom:16px;gap:10px}
+body.native-ui.smart-app .panel-title h2{font-size:19px;font-weight:850;margin:2px 0 0}
+body.native-ui.smart-app .panel-title>button{border:0;background:var(--ios-soft);width:44px;min-height:44px;height:44px;border-radius:13px;color:var(--ios-green);font-size:22px}
+body.native-ui.smart-app .agenda-filters{display:flex;background:var(--ios-soft);border:0;border-radius:12px;padding:4px;gap:3px;margin:0 0 15px}
+body.native-ui.smart-app .agenda-filters button{min-width:0;min-height:38px;padding:7px 4px;border:0;border-radius:9px;background:transparent;color:var(--ios-secondary);font-size:11px;flex:1;font-weight:700}
+body.native-ui.smart-app .agenda-filters button.active{background:var(--ios-surface);color:var(--ios-label);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+body.native-ui.smart-app .agenda-search{background:var(--ios-soft);border-radius:12px;padding:8px 12px;margin-bottom:8px;min-height:45px}
+body.native-ui.smart-app .agenda-search input{font-size:15px;min-height:27px;padding:0;border:0;background:transparent}
+body.native-ui.smart-app .agenda-search span{font-size:22px;color:var(--ios-secondary)}
+body.native-ui.smart-app .event-row{gap:11px;min-height:78px;padding:12px 0;border-bottom:1px solid var(--ios-divider)}
+body.native-ui.smart-app .event-row:last-child{border-bottom:0}
+body.native-ui.smart-app .event-symbol{width:43px;height:43px;border-radius:13px}
+body.native-ui.smart-app .event-main{color:var(--ios-label)}
+body.native-ui.smart-app .event-main strong{font-size:14px;font-weight:800}
+body.native-ui.smart-app .event-main small{font-size:11px;color:var(--ios-secondary)}
+body.native-ui.smart-app .event-count{font-size:23px;min-width:43px;color:var(--ios-green)}
+body.native-ui.smart-app .event-count small{font-size:10px;margin:3px 0}
+body.native-ui.smart-app .event-favorite{min-height:44px;min-width:37px;font-size:19px}
+body.native-ui.smart-app .all-events-link{min-height:44px;display:grid;place-items:center;font-size:13px;font-weight:750;color:var(--ios-green);padding:8px 0}
+body.native-ui.smart-app .schedule-notice{font-size:10px;line-height:1.7}
+body.native-ui.smart-app .quality-tag{border:0;border-radius:8px;background:var(--ios-soft);color:var(--ios-secondary);font-size:11px;padding:4px 8px;font-weight:700}
+body.native-ui.smart-app .card-mode{font-size:12px;margin-bottom:15px;align-items:center;gap:10px}
+body.native-ui.smart-app .card-mode button{border:0;background:transparent;color:var(--ios-green);font-size:12px;font-weight:750;padding:7px 0;min-height:44px}
+body.native-ui.smart-app .card-mode a{color:var(--ios-secondary);font-size:12px}
+body.native-ui.smart-app .poster-shell{border:0;border-radius:17px;box-shadow:none;background:var(--ios-soft);overflow:hidden}
+body.native-ui.smart-app .quick-card-actions{display:flex;gap:5px;background:var(--ios-soft);border-radius:12px;padding:4px;margin:14px 0}
+body.native-ui.smart-app .quick-card-actions button{border:0;border-radius:9px;flex:1;min-height:40px;padding:5px 4px;background:transparent;color:var(--ios-secondary);font-size:12px;font-weight:700}
+body.native-ui.smart-app .quick-card-actions button.active{background:var(--ios-surface);color:var(--ios-green);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+body.native-ui.smart-app .action-buttons{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+body.native-ui.smart-app .action-buttons .btn{min-height:48px;padding:10px 9px;font-size:13px;box-shadow:none;border:0;border-radius:13px;font-weight:750}
+body.native-ui.smart-app .action-buttons .btn.primary{background:#116b50;color:#fff}
+body.native-ui.smart-app .action-buttons .btn.secondary{background:var(--ios-soft);color:var(--ios-label)}
+body.native-ui.smart-app #page-status{font-size:11px;line-height:1.8;color:var(--ios-secondary)}
+body.native-ui.smart-app .inspiration-intro h2{font:800 23px/1.5 inherit;margin:5px 0}
+body.native-ui.smart-app .inspiration-intro p{font-size:12px;line-height:1.8;margin:0 0 14px}
+body.native-ui.smart-app .daily-tile{border:0;border-radius:17px;margin-bottom:12px;padding:18px}
+body.native-ui.smart-app .daily-tile.dua-tile{background:var(--ios-surface);border:0}
+body.native-ui.smart-app .daily-tile .daily-label{font-size:11px;color:var(--ios-secondary)}
+body.native-ui.smart-app .daily-tile blockquote{font-family:Amiri,serif;font-size:24px;line-height:1.8;color:var(--ios-label);margin:11px 0}
+body.native-ui.smart-app .daily-tile a,body.native-ui.smart-app .daily-tile small{font-size:11px;line-height:1.8}
+body.native-ui.smart-app .daily-tile button{font-size:12px;color:var(--ios-green);min-height:38px}
+body.native-ui.smart-app .studio-shortcut{border-radius:17px;background:var(--ios-surface);color:var(--ios-label);padding:19px;gap:8px;margin-top:13px}
+body.native-ui.smart-app .studio-shortcut>span{color:var(--ios-green);font-size:23px}
+body.native-ui.smart-app .studio-shortcut strong{font-size:15px}
+body.native-ui.smart-app .studio-shortcut small{font-size:12px;color:var(--ios-secondary)}
+body.native-ui.smart-app .studio-shortcut b{font-size:12px;color:var(--ios-green)}
+body.native-ui.smart-app .freeform-link{font-size:12px;padding:16px;color:var(--ios-green)}
+body.native-ui.smart-app .heritage-contact-panel{border:0;border-radius:17px;background:var(--ios-soft);box-shadow:none;padding:16px;margin-top:19px;color:var(--ios-label)}
+body.native-ui.smart-app .heritage-contact-panel::before{display:none}
+body.native-ui.smart-app .heritage-contact-heading{border-bottom:1px solid var(--ios-divider);padding-bottom:12px}
+body.native-ui.smart-app .heritage-contact-heading h3{font-size:15px;color:var(--ios-label)}
+body.native-ui.smart-app .heritage-kicker{font-size:11px;color:var(--ios-secondary)}
+body.native-ui.smart-app .heritage-flower{background:var(--ios-green-tint);color:var(--ios-green);border:0;font-size:21px;width:40px;height:40px;border-radius:12px;flex-basis:40px}
+body.native-ui.smart-app .heritage-contact-actions{gap:1px;padding-top:7px}
+body.native-ui.smart-app .heritage-cta{min-height:61px;border:0;border-radius:0;background:transparent;color:var(--ios-label);box-shadow:none;transform:none;padding:10px 5px}
+body.native-ui.smart-app .heritage-cta+.heritage-cta{border-top:1px solid var(--ios-divider)}
+body.native-ui.smart-app .heritage-cta strong{font-size:13px}
+body.native-ui.smart-app .heritage-cta small{font-size:12px;color:var(--ios-secondary)}
+body.native-ui.smart-app .heritage-cta-symbol{font-size:20px;width:35px;height:35px;border-radius:10px;background:var(--ios-surface);color:var(--ios-green)}
+body.native-ui.smart-app .heritage-cta>span:last-child{color:var(--ios-secondary)}
+body.native-ui.smart-app .heritage-qr-note{font-size:11px;color:var(--ios-secondary);line-height:1.7}
+body.native-ui.smart-app .section-head h2{font-size:28px;font-weight:850;color:var(--ios-label)}
+body.native-ui.smart-app .section-head p,body.native-ui.smart-app .calendar-library-note{font-size:13px;color:var(--ios-secondary)}
+body.native-ui.smart-app .calendar-library-note{background:var(--ios-surface);border:0;border-radius:18px;padding:17px;gap:13px}
+body.native-ui.smart-app .public-template-card{border:0;border-radius:17px;overflow:hidden;box-shadow:var(--ios-shadow)}
+body.native-ui.smart-app .public-template-select{border:0;border-radius:0;background:var(--ios-surface)}
+body.native-ui.smart-app .public-template-select strong{font-size:13px;font-weight:800}
+body.native-ui.smart-app .public-template-select small{font-size:10px}
+body.native-ui.smart-app .public-template-download{min-height:44px;font-size:12px;font-weight:750;color:var(--ios-green);background:var(--ios-surface);border:0}
+body.native-ui.smart-app .app-footer{font-size:11px;color:var(--ios-secondary)}
+body.native-ui.smart-app .app-footer a{color:var(--ios-green)}
+
+/* Personal-event dialog — native-feeling bottom sheet on mobile. */
+body.native-ui dialog.personal-form{max-width:520px;width:min(90vw,520px);border:0;border-radius:24px;padding:24px;background:var(--ios-surface);color:var(--ios-label);box-shadow:0 20px 75px rgba(0,0,0,.19)}
+body.native-ui dialog.personal-form::backdrop,body.native-ui dialog::backdrop{background:rgba(9,18,14,.4);backdrop-filter:blur(5px)}
+body.native-ui .personal-form form{gap:13px}
+body.native-ui .personal-form h2{font-size:23px;font-weight:850}
+body.native-ui .personal-form label{font-size:13px;font-weight:700}
+body.native-ui .personal-form input{font-size:16px;border:0;border-radius:12px;background:var(--ios-soft);min-height:48px;padding:10px}
+body.native-ui .personal-form .button-row{gap:9px}
+body.native-ui .personal-form .btn{min-height:49px;font-size:14px}
+body.native-ui .sheet-grip{display:none}
+
+/* Native grouped editing, settings and gallery pages. */
+body.native-ui:not(.smart-app) .app-header{height:auto;min-height:78px;position:sticky;top:0;z-index:22;background:color-mix(in srgb,var(--ios-surface) 88%,transparent);backdrop-filter:saturate(1.5) blur(18px);-webkit-backdrop-filter:saturate(1.5) blur(18px);border-bottom:1px solid var(--ios-divider);padding:12px max(18px,calc((100vw - 1360px)/2))}
+body.native-ui:not(.smart-app) .wordmark{font-size:16px;font-weight:800;min-width:0}
+body.native-ui:not(.smart-app) .wordmark small{letter-spacing:0;font-size:10px;font-weight:500}
+body.native-ui:not(.smart-app) .page-wrap{max-width:1160px;margin:30px auto 125px}
+body.native-ui:not(.smart-app) .page-title{margin-bottom:25px;align-items:end;gap:14px}
+body.native-ui:not(.smart-app) .page-title h1{font-size:clamp(29px,3.2vw,40px);letter-spacing:-.7px;font-weight:850;line-height:1.35;margin:5px 0}
+body.native-ui:not(.smart-app) .page-title p{font-size:13px;line-height:1.8}
+body.native-ui:not(.smart-app) .filter-row{gap:8px;margin:19px 0}
+body.native-ui:not(.smart-app) .filter-row button{min-height:38px;border:0;border-radius:12px;background:var(--ios-soft);font-size:12px;padding:8px 14px}
+body.native-ui:not(.smart-app) .filter-row button.active{color:var(--ios-green);background:var(--ios-green-tint)}
+body.native-ui:not(.smart-app) .design-grid{gap:18px}
+body.native-ui:not(.smart-app) .design-card{background:var(--ios-surface);border-radius:18px;padding:10px;box-shadow:var(--ios-shadow)}
+body.native-ui:not(.smart-app) .design-card .art{border-radius:12px;box-shadow:none}
+body.native-ui:not(.smart-app) .design-card img{transition:none}
+body.native-ui:not(.smart-app) .design-card h3{font-size:14px;font-weight:800}
+body.native-ui:not(.smart-app) .design-card p{font-size:11px;line-height:1.6}
+body.native-ui:not(.smart-app) .design-card .button-row{gap:6px}
+body.native-ui:not(.smart-app) .design-card .button-row button,body.native-ui:not(.smart-app) .design-card .button-row a{min-height:39px;border:0;border-radius:10px;background:var(--ios-soft);color:var(--ios-label);font-size:11px;font-weight:650}
+body.native-ui:not(.smart-app) .favorite-button{background:var(--ios-surface)!important;color:var(--ios-green);border:0}
+body.native-ui:not(.smart-app) .settings-panel{border:0;border-radius:20px;padding:24px;box-shadow:var(--ios-shadow);max-width:720px}
+body.native-ui:not(.smart-app) .settings-panel h2{font-size:16px;line-height:1.5;margin:25px 0 10px}
+body.native-ui:not(.smart-app) .settings-panel p{color:var(--ios-secondary);font-size:13px;line-height:1.9}
+body.native-ui:not(.smart-app) .settings-panel :is(button,.button){min-height:48px;margin:4px 0 8px}
+body.native-ui:not(.smart-app) .studio-layout{min-height:calc(100dvh - 82px);background:var(--ios-bg)}
+body.native-ui:not(.smart-app) .tool-panel{border:0;background:var(--ios-surface);padding:23px;max-height:calc(100dvh - 82px)}
+body.native-ui:not(.smart-app) .panel-top h1{font-size:23px;font-weight:850}
+body.native-ui:not(.smart-app) .panel-top p{font-size:13px}
+body.native-ui:not(.smart-app) .panel-section{border-top:1px solid var(--ios-divider)}
+body.native-ui:not(.smart-app) .panel-section summary{font-size:14px}
+body.native-ui:not(.smart-app) .tool-grid{gap:8px}
+body.native-ui:not(.smart-app) .tool-grid button,body.native-ui:not(.smart-app) .upload-tool{min-height:69px;border-radius:13px;background:var(--ios-soft)}
+body.native-ui:not(.smart-app) .tool-grid span{font-size:11px}
+body.native-ui:not(.smart-app) .workspace{background:var(--ios-bg);background-image:none;padding:18px}
+body.native-ui:not(.smart-app) .canvas-stage{background:var(--ios-soft);border-radius:20px;min-height:520px}
+body.native-ui:not(.smart-app) .canvas-stage canvas{box-shadow:0 5px 24px rgba(0,0,0,.085)}
+body.native-ui:not(.smart-app) .workspace-toolbar{font-size:12px;gap:8px}
+body.native-ui:not(.smart-app) .export-panel{border:0;background:var(--ios-surface)}
+body.native-ui:not(.smart-app) .export-panel h2{font-size:23px;font-weight:800}
+body.native-ui:not(.smart-app) .export-panel p{font-size:13px}
+body.native-ui:not(.smart-app) .export-panel :is(.full,button){min-height:44px;font-size:12px}
+body.native-ui:not(.smart-app) dialog{border:0;background:var(--ios-surface);color:var(--ios-label);border-radius:23px;box-shadow:0 15px 70px rgba(0,0,0,.2)}
+body.native-ui:not(.smart-app) #toast{background:var(--ios-label);color:var(--ios-surface);border-radius:14px;font-size:13px}
+
+/* Shared five-tab native bottom bar, with a stable hit target for every item. */
+body.native-ui .app-tabs,body.native-ui .app-nav{display:none}
+body.native-ui .native-tab-link{display:flex;align-items:center;flex-direction:column;justify-content:center;gap:4px;min-width:0;min-height:54px;padding:5px 1px;text-align:center;border-radius:9px;color:var(--ios-secondary);text-decoration:none;position:relative}
+body.native-ui .native-tab-link svg{width:23px;height:23px;display:block;stroke:currentColor;fill:none;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;margin:0}
+body.native-ui .native-tab-link .tab-label{font-size:10px;line-height:1.35;font-weight:650;white-space:nowrap}
+body.native-ui .native-tab-link.active,body.native-ui .native-tab-link[aria-current=page]{color:var(--ios-green)}
+body.native-ui .native-tab-link:focus-visible{outline-offset:-2px}
+body.native-ui .native-tab-link:active{background:var(--ios-soft)}
+body.native-ui .native-tab-link:nth-child(3){top:auto!important;transform:none!important;color:var(--ios-secondary)!important;background:transparent!important;box-shadow:none!important}
+body.native-ui .native-tab-link:nth-child(3).active,body.native-ui .native-tab-link:nth-child(3)[aria-current=page]{color:var(--ios-green)!important}
+body.native-ui .native-tab-link:nth-child(3) svg{box-sizing:border-box;padding:0;width:23px;height:23px;background:none;color:inherit;border-radius:0;box-shadow:none}
+@media(max-width:1200px){
+ body.native-ui.smart-app .day-workspace{grid-template-columns:minmax(290px,1.1fr) minmax(305px,.9fr)}
+ body.native-ui.smart-app .inspiration-panel{grid-column:1/-1}
+}
+@media(max-width:800px){
+ html{scroll-padding-top:110px}
+ body.native-ui.smart-app .app-sidebar{display:none}
+ body.native-ui.smart-app .app-workspace{margin:0;padding:calc(10px + env(safe-area-inset-top,0px)) 16px calc(113px + env(safe-area-inset-bottom,0px));max-width:none;overflow:clip}
+ body.native-ui.smart-app .app-header{min-height:62px;margin-bottom:13px;padding:0;gap:10px}
+ body.native-ui.smart-app .app-header-logo{width:51px;height:51px;flex:0 0 51px;padding:5px;border-radius:13px;background:var(--ios-surface);border:1px solid var(--ios-divider)}
+ body.native-ui.smart-app .app-header-logo img{object-fit:contain}
+ body.native-ui.smart-app .app-header h1{font-size:clamp(25px,7vw,33px);white-space:nowrap;text-overflow:ellipsis;overflow:hidden;letter-spacing:-.5px}
+ body.native-ui.smart-app .app-header .eyebrow{font-size:11px}
+ body.native-ui.smart-app .header-actions{gap:5px}
+ body.native-ui.smart-app .header-actions>*{height:42px;min-height:42px;width:42px;font-size:16px}
+ body.native-ui.smart-app .app-date-strip{padding:15px;border-radius:17px;display:flex;flex-direction:column;align-items:stretch;gap:13px}
+ body.native-ui.smart-app .app-date-strip>div:first-child{gap:8px 12px;justify-content:space-between}
+ body.native-ui.smart-app .date-controls{width:100%;display:flex;justify-content:space-between;gap:7px}
+ body.native-ui.smart-app .date-controls label{flex:1;min-width:0;margin:0}
+ body.native-ui.smart-app .date-controls input{width:100%;min-width:0;font-size:14px}
+ body.native-ui.smart-app .date-controls button{width:44px;min-width:44px;font-size:14px}
+ body.native-ui.smart-app .date-controls #today{width:56px;min-width:56px}
+ body.native-ui.smart-app .home-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:15px 0}
+ body.native-ui.smart-app .stat-card{display:grid;align-content:center;justify-items:start;gap:5px;padding:12px 10px;min-height:91px;border-radius:15px}
+ body.native-ui.smart-app .stat-icon{display:none}
+ body.native-ui.smart-app .stat-card small{font-size:10px;white-space:normal;line-height:1.45}
+ body.native-ui.smart-app .stat-card strong{font-size:clamp(18px,5.5vw,24px);line-height:1.25}
+ body.native-ui.smart-app .day-workspace{grid-template-columns:1fr;gap:14px}
+ body.native-ui.smart-app .inspiration-panel{grid-column:auto;display:grid;grid-template-columns:1fr;gap:0}
+ body.native-ui.smart-app .inspiration-panel #daily-inspiration{grid-column:auto;grid-row:auto;display:grid;gap:0}
+ body.native-ui.smart-app .app-panel{padding:17px;border-radius:18px}
+ body.native-ui.smart-app .panel-title h2{font-size:20px}
+ body.native-ui.smart-app .agenda-filters button{font-size:10px;min-height:39px}
+ body.native-ui.smart-app .event-main strong{font-size:14px}
+ body.native-ui.smart-app .event-main small{font-size:11px}
+ body.native-ui.smart-app .event-count{font-size:24px}
+ body.native-ui.smart-app .card-panel .poster-shell{max-width:400px;margin:auto;border-radius:13px}
+ body.native-ui.smart-app .action-buttons .btn{font-size:12px;min-height:48px}
+ body.native-ui.smart-app .inspiration-intro h2{font-size:24px}
+ body.native-ui.smart-app .daily-tile blockquote{font-size:25px}
+ body.native-ui.smart-app .section-head{margin-top:15px}
+ body.native-ui.smart-app .section-head h2{font-size:29px}
+ body.native-ui.smart-app .calendar-library-note{display:block}
+ body.native-ui.smart-app .calendar-library-note label{min-width:0;margin-top:14px}
+ body.native-ui.smart-app .public-template-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ body.native-ui.smart-app .app-footer{padding:18px 0 6px}
+ body.native-ui .app-tabs,body.native-ui .app-nav{position:fixed;inset-inline:0;bottom:0;left:0;right:0;transform:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;justify-content:stretch;gap:0;width:100%;max-width:none;min-height:calc(66px + env(safe-area-inset-bottom,0px));padding:7px max(7px,env(safe-area-inset-right,0px)) calc(7px + env(safe-area-inset-bottom,0px)) max(7px,env(safe-area-inset-left,0px));background:color-mix(in srgb,var(--ios-surface) 87%,transparent);backdrop-filter:saturate(1.6) blur(24px);-webkit-backdrop-filter:saturate(1.6) blur(24px);box-shadow:none;border:0;border-top:1px solid var(--ios-divider);border-radius:0;z-index:45}
+ body.native-ui .app-tabs .native-tab-link,body.native-ui .app-nav .native-tab-link{display:flex;min-width:0;min-height:53px;gap:3px;padding:3px 0;color:var(--ios-secondary);font-size:10px;background:transparent}
+ body.native-ui .app-tabs .native-tab-link.active,body.native-ui .app-nav .native-tab-link[aria-current=page]{color:var(--ios-green)}
+ body.native-ui:not(.smart-app) .app-header{padding:calc(9px + env(safe-area-inset-top,0px)) 15px 9px;min-height:68px;flex-wrap:wrap;gap:8px;align-items:center}
+ body.native-ui:not(.smart-app) .wordmark{font-size:14px;min-width:0}
+ body.native-ui:not(.smart-app) .wordmark small{font-size:9px}
+ body.native-ui:not(.smart-app) .header-actions{gap:6px}
+ body.native-ui:not(.smart-app) .header-actions .button,body.native-ui:not(.smart-app) .header-actions button{font-size:12px;padding:8px 10px;min-height:40px}
+ body.native-ui:not(.smart-app) .page-wrap{width:calc(100% - 30px);margin:23px auto calc(110px + env(safe-area-inset-bottom,0px))}
+ body.native-ui:not(.smart-app) .page-title{display:block;margin-bottom:19px}
+ body.native-ui:not(.smart-app) .page-title h1{font-size:31px;margin:6px 0}
+ body.native-ui:not(.smart-app) .page-title p{font-size:13px;line-height:1.85}
+ body.native-ui:not(.smart-app) .page-title>.button{margin-top:10px}
+ body.native-ui:not(.smart-app) .design-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+ body.native-ui:not(.smart-app) .design-card{padding:8px;border-radius:15px}
+ body.native-ui:not(.smart-app) .design-card .button-row{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+ body.native-ui:not(.smart-app) .design-card .button-row button,body.native-ui:not(.smart-app) .design-card .button-row a{font-size:11px;padding:6px;white-space:normal}
+ body.native-ui:not(.smart-app) .design-card h3{font-size:14px}
+ body.native-ui:not(.smart-app) .design-card p{font-size:10px}
+ body.native-ui:not(.smart-app) .settings-panel{padding:18px;border-radius:17px}
+ body.native-ui:not(.smart-app) .studio-layout,body.native-ui:not(.smart-app) .calendar-editor-layout{display:flex;flex-direction:column;padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))}
+ body.native-ui:not(.smart-app) .workspace{order:0;padding:12px}
+ body.native-ui:not(.smart-app) .canvas-stage{height:min(65dvh,545px);min-height:390px;padding:15px;overflow:auto}
+ body.native-ui:not(.smart-app) .canvas-stage canvas{max-width:100%;max-height:100%;width:auto;height:100%;object-fit:contain}
+ body.native-ui:not(.smart-app) .tool-panel{order:1;max-height:none;padding:19px 17px;margin:12px;border-radius:17px;overflow:visible}
+ body.native-ui:not(.smart-app) .export-panel{order:2;display:block;padding:19px 17px;margin:12px;border-radius:17px}
+ body.native-ui:not(.smart-app) .panel-top{display:block}
+ body.native-ui:not(.smart-app) .tool-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+ body.native-ui:not(.smart-app) .tool-grid button,body.native-ui:not(.smart-app) .upload-tool{font-size:18px;min-height:62px}
+ body.native-ui:not(.smart-app) .tool-grid span{font-size:10px}
+ body.native-ui:not(.smart-app) .workspace-toolbar{flex-wrap:wrap}
+ body.native-ui:not(.smart-app) .app-header .header-caption{display:none}
+ body.native-ui:not(.smart-app) .app-header .wordmark{flex:1}
+ body.native-ui:not(.smart-app) .app-header .brand-mark:has(img){width:55px;height:45px}
+ body.native-ui:not(.smart-app) .app-header>a.button{font-size:11px;padding:7px 10px;min-height:39px}
+ body.native-ui:not(.smart-app) .app-header .header-actions{display:flex;flex-wrap:wrap}
+ body.native-ui .personal-form{position:fixed!important;inset:auto 0 0 0!important;width:100%!important;max-width:none!important;max-height:min(90dvh,840px);overflow-y:auto;margin:0!important;border-radius:24px 24px 0 0!important;padding:13px 20px calc(24px + env(safe-area-inset-bottom,0px))!important;overscroll-behavior:contain}
+ body.native-ui .personal-form .sheet-grip{display:block;margin:0 auto 18px;width:38px;height:5px;border-radius:20px;background:var(--ios-divider);touch-action:pan-y}
+ body.native-ui .personal-form h2{font-size:23px}
+}
+@media(max-width:365px){
+ body.native-ui.smart-app .app-workspace{padding-inline:11px}
+ body.native-ui.smart-app .app-header-logo{width:42px;height:42px;flex-basis:42px}
+ body.native-ui.smart-app .header-actions>*{width:38px;height:38px;min-height:38px}
+ body.native-ui.smart-app .app-header h1{font-size:22px}
+ body.native-ui .native-tab-link .tab-label{font-size:9px}
+}
+@media(prefers-reduced-motion:reduce){body.native-ui *,body.native-ui *::before,body.native-ui *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
