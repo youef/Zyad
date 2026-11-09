@@ -1,44 +1,13 @@
-/* Official Saudi Calendar visual identity, shared across public and editing pages. */
-.brand-icon:has(img), .brand-mark:has(img){
-  background:linear-gradient(145deg,#fffdf5,#f7eddb)!important;
-  color:#084438;
-  border:1px solid #d6ba7d;
-  border-radius:14px;
-  padding:6px;
-  overflow:hidden;
-  flex-shrink:0;
-  box-shadow:0 3px 10px rgba(17,70,52,.09);
-  display:grid;
-  place-items:center;
-}
-.brand-icon img,.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;object-position:center;max-width:100%;max-height:100%}
-.app-sidebar .brand-icon:has(img){width:63px;height:58px;border-radius:16px}
-.app-sidebar .brand{align-items:center;min-width:0}
-.app-sidebar .brand strong{font-size:15px;line-height:1.55}
-.app-sidebar .brand small{font-size:9px;line-height:1.6}
-.wordmark .brand-mark:has(img){width:84px;height:59px;border-radius:15px}
-.wordmark{min-width:0}
-.wordmark span{min-width:0;line-height:1.5}
-.wordmark small{white-space:normal}
-.admin-page .brand-icon:has(img){width:76px;height:59px}
-.admin-page .brand{min-width:0;align-items:center}
-.admin-page .brand strong{font-size:18px}
-@media(max-width:760px){
-  .app-sidebar .brand-icon:has(img){width:58px;height:53px}
-  .wordmark .brand-mark:has(img){width:60px;height:48px;padding:5px}
-  .wordmark span{font-size:13px}
-  .wordmark small{font-size:8px}
-  .admin-page .brand-icon:has(img){width:59px;height:49px;padding:5px}
-  .admin-page .brand strong{font-size:14px}
-}
-
-/* Mobile home retains the brand when the desktop sidebar is hidden. */
+/* Original mark shown directly, with transparency and no white enclosure. */
+.brand-icon:has(img),.brand-mark:has(img){background:none!important;border:0!important;box-shadow:none!important;padding:0!important;overflow:visible;display:grid;place-items:center;flex-shrink:0}
+.brand-icon img,.brand-mark img{display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.app-sidebar .brand-icon:has(img){width:90px;height:57px}
+.wordmark .brand-mark:has(img){width:82px;height:52px}
+.admin-page .brand-icon:has(img){width:80px;height:56px}
 .smart-app .app-header-logo{display:none}
-@media(max-width:800px){
-  .smart-app .app-header{gap:11px;min-width:0}
-  .smart-app .app-header-logo{display:grid;place-items:center;width:52px;height:52px;flex:0 0 52px;background:#fffaf0;border:1px solid #cdb47d;border-radius:15px;padding:5px;overflow:hidden}
-  .smart-app .app-header-logo img{width:100%;height:100%;object-fit:contain}
-  .smart-app .app-header>div:not(.header-actions){min-width:0;flex:1}
-  .smart-app .app-header h1{font-size:clamp(19px,5.4vw,25px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .smart-app .header-actions{gap:5px;flex-shrink:0}
-}
+@media(max-width:800px){.smart-app .app-header-logo{display:grid;place-items:center;width:67px;height:54px;flex:0 0 67px;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;overflow:visible!important}
+.smart-app .app-header-logo img{width:100%;height:100%;object-fit:contain}
+.smart-app .app-header>div:not(.header-actions){min-width:0;flex:1}
+.smart-app .header-actions{gap:5px;flex-shrink:0}
+.wordmark .brand-mark:has(img){width:62px;height:47px}
+.admin-page .brand-icon:has(img){width:65px;height:48px}}

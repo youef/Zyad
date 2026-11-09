@@ -31,8 +31,7 @@ export const templates=specs.map(([id,name,category,title,subtitle,bg,ink,layout
  background:{color:bg,asset:`assets/backgrounds/${id}.webp`},layout,
  safeAreas:{top:.12,bottom:.12,sides:.08},defaultValues:{title,subtitle},assets:[`assets/backgrounds/${id}.png`],
  layers:[
-  {id:'brand-panel',type:'shape',shape:'rect',x:.85,y:.105,width:.22,height:.102,color:'#fffdf5',opacity:.94},
-  {id:'brand-logo',type:'logo',src:'assets/branding/logo.png',fit:'contain',x:.85,y:.105,width:.19,height:.083,size:24},
+  {id:'brand-logo',type:'logo',src:'assets/branding/logo-transparent.png',fit:'contain',x:.85,y:.105,width:.19,height:.083,size:24},
   {id:'tag',type:'text',text:'رزنامة السعودية',x:.5,y:.19,size:27,color:ink,weight:500,width:.8},
   {id:'title',type:'text',text:title,x:layout==='editorial'?.64:.5,y:layout==='top'?.32:.4,size:94,color:ink,weight:800,width:layout==='editorial'?.58:.8,align:layout==='editorial'?'right':'center'},
   {id:'subtitle',type:'text',text:subtitle,x:.5,y:.53,size:35,color:ink,weight:500,width:.78},

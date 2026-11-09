@@ -289,3 +289,11 @@ body.native-ui .native-tab-link:nth-child(3) svg{box-sizing:border-box;padding:0
  body.native-ui .native-tab-link .tab-label{font-size:9px}
 }
 @media(prefers-reduced-motion:reduce){body.native-ui *,body.native-ui *::before,body.native-ui *::after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+/* Official mark is always transparent, never a white sticker. */
+body.native-ui .brand-icon:has(img),body.native-ui .brand-mark:has(img){border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
+body.native-ui.smart-app .app-header-logo{border:0!important;background:transparent!important;box-shadow:none!important;padding:0!important;border-radius:0!important}
+body.native-ui .brand-icon img,body.native-ui .brand-mark img,body.native-ui .app-header-logo img{object-fit:contain}
+@media(max-width:800px){body.native-ui.smart-app .app-header-logo{width:66px;height:50px;flex:0 0 66px}
+body.native-ui.smart-app .app-header h1{font-size:clamp(23px,6.4vw,31px)}
+body.native-ui:not(.smart-app) .app-header .brand-mark:has(img){width:60px;height:45px}}
