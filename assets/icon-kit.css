@@ -1,0 +1,10 @@
+/* Coherent scalable icon system (Lucide-style outline geometry). */
+[data-icon]{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;vertical-align:middle;flex:0 0 auto}
+.ui-icon{width:1.4em;height:1.4em;display:block;stroke:currentColor;stroke-width:1.85;stroke-linecap:round;stroke-linejoin:round;fill:none;flex:none}
+body.native-ui .header-actions>* [data-icon],body.native-ui .date-controls [data-icon]{width:21px;height:21px}
+body.native-ui .native-tab-link [data-icon]{width:23px;height:23px}
+body.native-ui .native-tab-link .ui-icon{width:23px;height:23px}
+body.native-ui .side-links [data-icon]{width:21px;height:21px}
+body.native-ui .action-buttons .ui-icon{width:19px;height:19px}
+body.native-ui .heritage-cta-symbol .ui-icon{width:21px;height:21px}
+body.native-ui .header-actions a,body.native-ui .header-actions button{font-size:18px}
