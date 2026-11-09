@@ -186,7 +186,10 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if((config.design?.preset||'royal')==='heritage'){renderHeritage(ctx,config,iso,{logo,qr,remaining,hijriDate,hijriPanel,weekday});}
   else {renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate});}
-  drawCalendarAdvertisement(ctx,config,qr);
+  const adKind=definition.calendar
+    ?(definition.calendar.layout==='list'?'list':'calendar')
+    :(config.design?.preset==='heritage'?'heritage':'premium');
+  drawCalendarAdvertisement(ctx,config,qr,{kind:adKind});
   return canvas;
 }
 export function downloadFile(name,blob){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}

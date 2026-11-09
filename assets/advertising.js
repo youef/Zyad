@@ -42,7 +42,7 @@ function drawLine(ctx,text,x,y,maxWidth,size){
   ctx.save();
   ctx.direction='rtl';ctx.textAlign='center';ctx.textBaseline='middle';
   let fontSize=size;
-  do{ctx.font=\`700 \${fontSize}px "Cairo",Tahoma,Arial,sans-serif\`;
+  do{ctx.font='700 '+fontSize+'px "Cairo",Tahoma,Arial,sans-serif';
     if(ctx.measureText(text).width<=maxWidth||fontSize<=14)break;
     fontSize-=1;
   }while(fontSize>14);
