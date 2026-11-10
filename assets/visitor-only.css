@@ -36,3 +36,6 @@ body.visitor-only .visitor-favorites-description[hidden]{display:none!important}
 body.visitor-only .agenda-filters button{min-width:60px}
 @media(max-width:800px){body.visitor-only .public-template-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:12px!important}body.visitor-only.smart-app .app-workspace{padding-bottom:calc(110px + env(safe-area-inset-bottom,0px))!important}body.visitor-only .public-template-card{padding:7px!important}body.visitor-only .public-template-select strong{font-size:12px!important}}
 @media(max-width:375px){body.visitor-only .visitor-template-actions{gap:4px}body.visitor-only .visitor-template-actions .visitor-template-fav{width:38px;min-width:38px}body.visitor-only .visitor-template-actions .public-template-download{font-size:10px!important}}
+
+body.visitor-only .visitor-gallery-empty{grid-column:1/-1;text-align:center;padding:42px 18px;background:var(--ios-surface);border:1px dashed var(--ios-hair);border-radius:18px;color:var(--ios-muted);font-weight:700;line-height:1.9}
+body.visitor-only .visitor-gallery-empty[hidden]{display:none!important}
