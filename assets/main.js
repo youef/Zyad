@@ -1,5 +1,5 @@
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
-import {mountPlanner} from './planner.js?v=pay2';
+import {mountPlanner} from './planner.js?v=calendar20261110';
 import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=glass20261110';
 import {dailyTemplate} from './daily.js';
 import {get,validateDesign} from './storage.js';
