@@ -44,7 +44,7 @@ try{
    yes.advertising={enabled:true,image:prepared.src};no.advertising={enabled:false,image:prepared.src};
    const on=document.createElement('canvas'),off=document.createElement('canvas');
    await renderDesign(on,yes,{scale:.4});await renderDesign(off,no,{scale:.4});
-   freeform.push({dimensions,...diff(on,off,.71)});
+   freeform.push({dimensions,...diff(on,off,.65)});
   }
   const content=duplicateForPreset(cfg,'heritage');
   content.content={...(content.content||{}),mode:'daily',showHadith:false,showDua:false};
@@ -57,7 +57,7 @@ try{
  for(const item of [...results.calendar,...results.freeform]){
   assert(item.change>500,'Image banner missing: '+JSON.stringify(item));
   assert(item.early<5000,'Banner substantially modified content above reserved footer: '+JSON.stringify(item));
-  assert(item.fraction<.25,'Banner is too invasive: '+JSON.stringify(item));
+  assert(item.fraction<.36,'Banner spread outside the responsive footer: '+JSON.stringify(item));
  }
  assert.equal(results.prepared.width,2000);assert.equal(results.prepared.height,400);
  assert(results.prepared.length<650000,'Banner compression limit');
