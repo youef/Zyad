@@ -167,5 +167,5 @@ export function renderHeritage(c,cfg,iso,tools){
   countdown(c,cfg,iso,tools.remaining);
   // A quiet breathing space between counters and subscription information.
   // The single text-only sponsor line is inserted here by advertising.js.
-  social(c,cfg,tools.qr);
+  // The shared renderer owns all footer content; do not draw a duplicate.
 }
