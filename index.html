@@ -32,17 +32,29 @@
 <aside class="inspiration-panel"><details class="ios-insight"><summary><span><small>رسالة اليوم</small><strong>لحظة إلهام وطمأنينة</strong></span><span class="ios-insight-toggle" aria-hidden="true">⌄</span></summary><div class="inspiration-intro"><p>حديث ودعاء يتجددان مع تاريخ البطاقة.</p></div><div id="daily-inspiration"></div></details></aside>
 </div></section>
 <section id="template-gallery" data-app-view hidden class="premium-gallery">
-<div class="gallery-hero">
- <div class="gallery-hero-copy"><span class="gallery-kicker">مكتبة رزنامة السعودية</span><h2>بطاقتك، بذوقك.</h2><p>استكشف تصاميم بطاقات التقويم والمناسبات، واختر ما يناسب يومك. جميع التصاميم جاهزة للمشاهدة والحفظ.</p></div>
- <div class="gallery-hero-numbers"><strong id="gallery-total-count">42</strong><span>تصميم متنوع</span></div>
-</div>
-<div class="gallery-toolbar">
- <label class="gallery-search-field" for="calendar-search"><span data-icon="search"></span><input id="calendar-search" type="search" placeholder="ابحث عن تصميم أو لون أو مناسبة…" autocomplete="off" aria-label="بحث في التصاميم"></label>
- <div class="gallery-toolbar-bottom"><div class="gallery-summary"><strong id="gallery-visible-count">42 تصميمًا</strong><span>اختر القالب، ثم احفظ الصورة</span></div><label class="gallery-sort-label">ترتيب <select id="gallery-sort" aria-label="ترتيب التصاميم"><option value="default">الأصلية</option><option value="name">حسب الاسم</option><option value="favorites">المفضلة أولًا</option></select></label></div>
- <div class="gallery-category-wrap"><div id="gallery-categories" class="gallery-categories" role="group" aria-label="تصنيف التصاميم"></div></div>
-</div>
-<div id="visitor-favorites-description" class="visitor-favorites-description" hidden>تصاميمك المفضلة محفوظة على هذا الجهاز دون تسجيل. يمكنك حفظ صورها بأي وقت.</div>
-<div id="public-template-grid" class="public-template-grid" aria-label="معرض قوالب البطاقات"></div>
+  <header class="gallery-head">
+    <div class="gallery-head-copy">
+      <span class="gallery-kicker">مكتبة التصاميم</span>
+      <h2>اختر بطاقتك</h2>
+      <p>تصفح التصاميم، اختر المفضل لديك، واحفظه مباشرة دون حساب.</p>
+    </div>
+    <span class="gallery-total-pill"><strong id="gallery-total-count">—</strong><small>تصميم</small></span>
+  </header>
+  <section class="gallery-selected" aria-label="التصميم المختار">
+    <div class="gallery-selected-icon"><span data-icon="image"></span></div>
+    <div class="gallery-selected-copy"><small>التصميم المختار حاليًا</small><strong id="gallery-selected-name">بطاقة اليوم</strong><span id="gallery-selected-category">جاهز للعرض والحفظ</span></div>
+    <a class="gallery-selected-view" href="#poster-section">عرض البطاقة <span aria-hidden="true">←</span></a>
+  </section>
+  <div class="gallery-controls">
+    <label class="gallery-search-field" for="calendar-search"><span data-icon="search"></span><input id="calendar-search" type="search" placeholder="ابحث باسم التصميم أو المناسبة" autocomplete="off" aria-label="ابحث في التصاميم"></label>
+    <div class="gallery-category-wrap"><div id="gallery-categories" class="gallery-categories" role="group" aria-label="فئات التصاميم"></div></div>
+    <div class="gallery-toolbar-bottom">
+      <div class="gallery-summary"><strong id="gallery-visible-count">التصاميم المتاحة</strong><span>اضغط على البطاقة لاختيارها</span></div>
+      <label class="gallery-sort-label">ترتيب <select id="gallery-sort" aria-label="ترتيب التصاميم"><option value="default">الافتراضي</option><option value="name">حسب الاسم</option><option value="favorites">المفضلة أولاً</option></select></label>
+    </div>
+  </div>
+  <div id="visitor-favorites-description" class="visitor-favorites-description" hidden>المفضلة محفوظة على هذا الجهاز. اضغط القلب لإضافة أو إزالة أي تصميم.</div>
+  <div id="public-template-grid" class="public-template-grid" aria-label="قوالب البطاقات"></div>
 </section>
 <section id="smart-planner" data-app-view hidden class="smart-planner" aria-label="التقويم الذكي للأحداث القادمة"></section>
 <section id="archive" data-app-view hidden class="archive-section"><div class="section-head"><div><span class="eyebrow">أرشيف الأيام</span><h2>البطاقات المنشورة</h2></div><p>صورة كل يوم محفوظة للرجوع إليها.</p></div><div id="archive-grid" class="archive-grid"></div></section>
