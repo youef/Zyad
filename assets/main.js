@@ -155,7 +155,7 @@ function renderGallery(){
   if(preset.id===activePreset)item.classList.add('active');
   const select=document.createElement('button');select.type='button';select.className='public-template-select';
   select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
-  const img=document.createElement('img');img.src='images/templates/'+preset.id+'.webp';img.loading='lazy';img.decoding='async';img.hidden=true;img.alt='بطاقة قالب '+preset.name;
+  const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.hidden=true;img.alt='بطاقة قالب '+preset.name;img.src='images/templates/'+preset.id+'.webp';
   img.addEventListener('error',()=>{img.hidden=true;});
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">رزنامة السعودية</span><span class="visitor-preview-date">بطاقة اليوم</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
   img.addEventListener('load',()=>{img.hidden=false;fallback.hidden=true;item.dataset.previewState='ready';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
