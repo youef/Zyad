@@ -109,72 +109,116 @@ function bannerInside(c,img,x,y,w,h,r=12){
  c.imageSmoothingEnabled=true;c.imageSmoothingQuality='high';
  c.drawImage(img,x+(w-bw)/2,y+(h-bh)/2,bw,bh);c.restore();
 }
+/* Compact RTL, three-zone footer: RIGHT = subscription, CENTER = stacked
+ * WhatsApp / Snapchat, LEFT = a readable QR. Every position is canvas-space. */
+export function followLayout(region,{showQr=true}={}){
+ const {x,y,w,h}=region,unit=Math.min(1.35,w/952,h/126);
+ const pad=14*unit,gap=13*unit,qrSize=showQr?Math.min(h-28*unit,106*unit):0;
+ const qrZone=showQr?Math.max(qrSize+18*unit,w*.145):0;
+ const titleZone=Math.min(w*.315,Math.max(w*.265,284*unit));
+ const centerWidth=w-pad*2-qrZone-titleZone-(showQr?gap*2:gap);
+ const qr={x:x+pad+5*unit,y:y+(h-qrSize)/2-6*unit,size:qrSize};
+ const middle={x:x+pad+qrZone+(showQr?gap:0),y:y+10*unit,w:centerWidth,h:h-20*unit};
+ const title={x:middle.x+middle.w+gap,y:y+9*unit,w:titleZone,h:h-18*unit};
+ return {qr,middle,title,unit};
+}
+function titleLines(c,phrase,maxWidth,initialSize,limit=2){
+ const words=String(phrase||'').trim().split(/\s+/).filter(Boolean);if(!words.length)return {lines:[],size:initialSize};
+ let size=initialSize,lines=[];
+ do{
+  c.font='800 '+size+'px '+(c.zyadFont||'"Cairo",Tahoma,Arial,sans-serif');
+  lines=[];let current='';
+  for(const word of words){
+   const candidate=current?current+' '+word:word;
+   if(current&&c.measureText(candidate).width>maxWidth){lines.push(current);current=word;}
+   else current=candidate;
+  }if(current)lines.push(current);
+  if(lines.length<=limit&&lines.every(s=>c.measureText(s).width<=maxWidth))break;
+  size-=1;
+ }while(size>12);
+ if(lines.length>limit){lines=lines.slice(0,limit);lines[limit-1]+='…';}
+ return {lines,size};
+}
 function followBlock(c,cfg,qr,r,kind){
  const f=resolveFollow(cfg);if(!f.enabled)return;
- const {x,y,w,h}=r,p=palette(cfg,f,kind),unit=Math.min(w/956,h/163);
+ const {x,y,w,h}=r,p=palette(cfg,f,kind),layout=followLayout(r,{showQr:Boolean(f.showQr&&qr)});
+ const {qr:q,middle,title,unit}=layout;
  c.save();
- rect(c,x,y,w,h,f.radius*unit,p.bg,p.border,Math.max(1.2,unit*2));
- const padding=13*unit;
- const showQR=Boolean(f.showQr&&qr);
- const qrSize=showQR?Math.min(h-48*unit,116*unit):0;
- const qrX=x+15*unit,qrY=y+10*unit;
- if(showQR){
-  rect(c,qrX-3*unit,qrY-3*unit,qrSize+6*unit,qrSize+6*unit,10*unit,'#ffffff');
-  c.imageSmoothingEnabled=false;c.drawImage(qr,qrX,qrY,qrSize,qrSize);c.imageSmoothingEnabled=true;
-  if(f.qrCaption)line(c,f.qrCaption,qrX+qrSize/2,y+h-13*unit,10*unit,p.accent,qrSize+17*unit,650);
+ rect(c,x,y,w,h,f.radius*unit,p.bg,p.border,Math.max(1.1,1.4*unit));
+ // QR on the far LEFT, with its own quiet zone for reliable scanning.
+ if(q.size>0){
+   rect(c,q.x-4*unit,q.y-4*unit,q.size+8*unit,q.size+8*unit,7*unit,'#ffffff');
+   c.imageSmoothingEnabled=false;c.drawImage(qr,q.x,q.y,q.size,q.size);c.imageSmoothingEnabled=true;
+   if(f.qrCaption)line(c,f.qrCaption,q.x+q.size/2,y+h-9*unit,10*unit,p.accent,q.size+16*unit,650);
  }
- const contentX=x+(showQR?qrSize+43*unit:25*unit),contentW=w-(showQR?qrSize+68*unit:50*unit);
- const right=contentX+contentW,mid=contentX+contentW/2;
- if(f.showTitle){
-  line(c,f.title,mid,y+32*unit,26*unit,p.fg,contentW-12*unit,850);
-  if(f.subtitle&&h>=115*unit)line(c,f.subtitle,mid,y+58*unit,13*unit,p.accent,contentW-12*unit,600);
- }
+ // The CENTER has two low-profile rows, not two large side-by-side boxes.
  const channels=[];
  if(f.showWhatsapp&&f.whatsapp)channels.push([f.whatsappLabel,f.whatsapp]);
  if(f.showSnapchat&&f.snapchat)channels.push([f.snapchatLabel,f.snapchat]);
- const buttonTop=y+(f.showTitle?77:18)*unit;
- const availableHeight=Math.max(40*unit,y+h-buttonTop-12*unit);
  if(channels.length){
-  const gap=12*unit,bw=(contentW-gap*(channels.length-1))/channels.length;
-  channels.forEach(([label,value],i)=>{
-   const bx=contentX+i*(bw+gap),bh=Math.min(availableHeight,71*unit);
-   rect(c,bx,buttonTop,bw,bh,12*unit,p.chip,p.border,1*unit);
-   line(c,label,bx+bw/2,buttonTop+Math.min(19*unit,bh*.30),15*unit,p.accent,bw-10*unit,750);
-   line(c,value,bx+bw/2,buttonTop+bh*.72,24*unit,p.fg,bw-10*unit,850,'center','ltr');
-  });
- }else if(!showQR){
-  line(c,f.subtitle||'تابع بطاقاتنا اليومية',mid,buttonTop+18*unit,18*unit,p.fg,contentW-12*unit);
+   const rowGap=6*unit,rowHeight=Math.min(43*unit,(middle.h-rowGap*(channels.length-1))/channels.length);
+   const used=channels.length*rowHeight+(channels.length-1)*rowGap;
+   const top=middle.y+(middle.h-used)/2;
+   channels.forEach(([label,value],i)=>{
+      const ry=top+i*(rowHeight+rowGap),cy=ry+rowHeight/2;
+      rect(c,middle.x,ry,middle.w,rowHeight,10*unit,p.chip,p.border,1*unit);
+      const labelMax=Math.min(middle.w*.31,148*unit);
+      line(c,label,middle.x+middle.w-10*unit,cy,14*unit,p.accent,labelMax,780,'right');
+      line(c,value,middle.x+12*unit,cy,20*unit,p.fg,middle.w-labelMax-38*unit,850,'left','ltr');
+   });
+ }
+ // The RIGHT title is at most two lines, with optional small subheading.
+ if(f.showTitle&&f.title){
+   const max=title.w-18*unit,setting=titleLines(c,f.title,max,22*unit,2),rows=setting.lines;
+   const lineHeight=Math.max(20*unit,setting.size*1.33);
+   const hasSubtitle=Boolean(f.subtitle),headingH=rows.length*lineHeight;
+   const anchorY=title.y+(title.h-headingH-(hasSubtitle?19*unit:0))/2+lineHeight/2;
+   rows.forEach((row,i)=>line(c,row,title.x+title.w-5*unit,anchorY+i*lineHeight,setting.size,p.fg,max,850,'right'));
+   if(hasSubtitle)line(c,f.subtitle,title.x+title.w-5*unit,anchorY+headingH-1*unit,
+     10*unit,p.accent,max,600,'right');
+ }else if(f.subtitle){
+   line(c,f.subtitle,title.x+title.w-5*unit,title.y+title.h/2,15*unit,p.fg,title.w-15*unit,700,'right');
  }
  c.restore();
 }
 export function footerGeometry(dimensions,kind='calendar'){
- const [w,h]=dimensions;
- if(w===1080&&h===1920)return {x:39,y:1532,w:1002,h:371,ad:{x:119,y:1544,w:842,h:168},follow:{x:64,y:1720,w:952,h:161},noteY:1903};
- const landscape=w/h>1.4;
- const footerH=h*(landscape?.30:h<=1350?.255:.192);
- const y=h-footerH,outerX=w*.033,outerW=w*.934;
- const margin=Math.min(16,h*.012),bannerH=Math.min(footerH*.48,outerW*.83/5);
- const adW=bannerH*5,adX=(w-adW)/2;
- const followY=y+margin+bannerH+Math.max(8,h*.009),followH=h-followY-Math.max(10,h*.012);
- return {x:outerX,y,w:outerW,h:footerH,ad:{x:adX,y:y+margin,w:adW,h:bannerH},
-  follow:{x:outerX+w*.015,y:followY,w:outerW-w*.03,h:followH},noteY:null};
+ const [w,h]=dimensions,landscape=w/h>1.4;
+ // Lift the ad+follow group up, preserving air between follow and fine print.
+ const ratio=w===1080&&h===1920?1:Math.max(.63,Math.min(1,h/1920));
+ const noteY=h-Math.max(26,Math.round(h*.025));
+ const gapAfterFollow=Math.max(31,Math.round(h*.032));
+ const followHeight=landscape?112:Math.max(108,Math.min(126,Math.round(h*.083)));
+ const followY=noteY-gapAfterFollow-followHeight;
+ const adHeight=landscape?145:Math.max(102,Math.min(154,Math.round(h*.09)));
+ const adY=followY-Math.max(12,Math.round(12*ratio))-adHeight;
+ const outerW=landscape?Math.min(w*.83,1400):w*.93;
+ const outerX=(w-outerW)/2;
+ const followW=landscape?Math.min(outerW-42,1240):outerW-50*ratio;
+ const followX=(w-followW)/2;
+ const adW=Math.min(adHeight*5,outerW*.94);
+ return {
+   x:outerX,y:adY,w:outerW,h:h-adY,
+   ad:{x:(w-adW)/2,y:adY,w:adW,h:adHeight},
+   follow:{x:followX,y:followY,w:followW,h:followHeight},
+   noteY
+ };
 }
 export function drawCombinedFooter(c,cfg,banner,qr,{kind='calendar',dimensions=[1080,1920]}={}){
  const f=resolveFollow(cfg),hasBanner=cfg.advertising?.enabled!==false&&!!banner;
+ if(!hasBanner&&!f.enabled)return footerGeometry(dimensions,kind);
  const g=footerGeometry(dimensions,kind),p=palette(cfg,f,kind);
+ const [w,h]=dimensions;
  c.save();
- const bottom=g.y+g.h;
- // Keep the two blocks independent; hiding one must not leave its empty slot.
- const start=hasBanner&&f.enabled?g.y:hasBanner?g.follow.y-23:
-   dimensions[0]===1080&&dimensions[1]===1920?1640:g.follow.y-28;
- rect(c,g.x,start,g.w,bottom-start,Math.min(f.radius+6,26),
-   p.dark?'rgba(2,41,33,.96)':'rgba(255,253,247,.98)',p.border,1.5);
- if(hasBanner){
-   const place=f.enabled?g.ad:{...g.ad,y:g.follow.y-8};
-   bannerInside(c,banner,place.x,place.y,place.w,place.h,12);
- }
+ // Integrate into the ORIGINAL card, not a separate external panel. Paint only
+ // the native footer zone to mask legacy text / QR underneath.
+ const top=hasBanner?g.ad.y-3:Math.max(g.follow.y-10,g.ad.y);
+ rect(c,g.x,top,g.w,h-top-8,Math.min(f.radius+6,24),
+   p.dark?'rgba(2,41,33,.96)':'rgba(255,253,247,.98)',p.border,1.35);
+ if(hasBanner)bannerInside(c,banner,g.ad.x,g.ad.y,g.ad.w,g.ad.h,11);
  if(f.enabled)followBlock(c,cfg,qr,g.follow,kind);
- if(g.noteY)line(c,cfg.card?.disclaimer||'المواعيد تقديرية؛ راجع الجهة الرسمية',dimensions[0]/2,g.noteY,15,p.fg,dimensions[0]*.88,500);
+ // Kept OUTSIDE the compact bar with generous vertical breathing room.
+ line(c,cfg.card?.disclaimer||'المواعيد تقديرية؛ راجع الجهة الرسمية',
+   w/2,g.noteY,Math.min(15,14*Math.min(w/1080,1.15)),p.fg,w*.88,500);
  c.restore();
  return g;
 }
