@@ -1,0 +1,159 @@
+/* Zyad visitor glass navigation | 2026-11-10
+   A floating, pill-shaped glass dock and inverse selected controls.
+   Scoped to visitor-only; admin and design tooling remain unchanged. */
+body.visitor-only{
+ --dock-ink:var(--ios-text,#162d27);
+ --dock-active-bg:#074d3e;
+ --dock-active-ink:#fff;
+ --dock-glass:rgba(248,252,249,.72);
+ --dock-stroke:rgba(255,255,255,.65);
+ --dock-tint:rgba(8,100,75,.07);
+}
+:root[data-theme="dark"] body.visitor-only{
+ --dock-ink:#eff8f2;
+ --dock-active-bg:#adeccf;
+ --dock-active-ink:#073a2d;
+ --dock-glass:rgba(21,40,34,.73);
+ --dock-stroke:rgba(234,255,243,.2);
+ --dock-tint:rgba(186,238,211,.08);
+}
+@media(max-width:800px){
+ body.visitor-only .app-tabs.visitor-tabs{
+  position:fixed!important;
+  inset:auto 12px calc(10px + env(safe-area-inset-bottom,0px)) 12px!important;
+  width:calc(100% - 24px)!important;
+  max-width:540px!important;
+  margin:0 auto!important;
+  min-height:65px!important;
+  height:auto!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  align-items:stretch!important;
+  gap:4px!important;
+  padding:7px!important;
+  border:1px solid var(--dock-stroke)!important;
+  border-radius:999px!important;
+  background:var(--dock-glass)!important;
+  box-shadow:0 10px 34px rgba(7,42,31,.14),inset 0 1px 0 rgba(255,255,255,.45)!important;
+  -webkit-backdrop-filter:blur(23px) saturate(1.7)!important;
+  backdrop-filter:blur(23px) saturate(1.7)!important;
+  overflow:hidden!important;
+  isolation:isolate;
+  z-index:60;
+ }
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:center!important;
+  min-height:53px!important;
+  height:53px!important;
+  min-width:0!important;
+  width:100%!important;
+  border:1px solid transparent!important;
+  border-radius:999px!important;
+  padding:5px 1px!important;
+  gap:3px!important;
+  background:transparent!important;
+  color:var(--dock-ink)!important;
+  transition:background-color .18s ease,color .18s ease,box-shadow .18s ease!important;
+  transform:none!important;
+  box-shadow:none!important;
+ }
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link svg{
+  color:inherit!important;
+  width:21px!important;
+  height:21px!important;
+  stroke:currentColor!important;
+ }
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link .tab-label{
+  color:inherit!important;
+  font-size:10px!important;
+  font-weight:750!important;
+  white-space:nowrap;
+ }
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link:is(.active,[aria-current="page"]){
+  background:var(--dock-active-bg)!important;
+  color:var(--dock-active-ink)!important;
+  border-color:transparent!important;
+  box-shadow:0 3px 10px rgba(0,0,0,.13)!important;
+ }
+ body.visitor-only.smart-app .app-workspace{
+  padding-bottom:calc(120px + env(safe-area-inset-bottom,0px))!important;
+ }
+}
+@media(min-width:801px){
+ body.visitor-only .app-sidebar{
+  background:var(--dock-glass)!important;
+  -webkit-backdrop-filter:blur(20px) saturate(1.5);
+  backdrop-filter:blur(20px) saturate(1.5);
+ }
+ body.visitor-only .app-sidebar .side-links a{
+  border-radius:999px!important;
+  border:1px solid transparent!important;
+ }
+ body.visitor-only .app-sidebar .side-links a.active{
+  background:var(--dock-active-bg)!important;
+  color:var(--dock-active-ink)!important;
+ }
+}
+/* Inverse selection is consistent in both light and dark themes. */
+body.visitor-only :is(.agenda-filters button,.planner-month,.planner-reset,.planner-day,.planner-filters select,.planner-range select,.visitor-template-fav,.public-template-download){
+ border-radius:999px!important;
+}
+body.visitor-only :is(.agenda-filters button,.planner-reset,.planner-filters select,.planner-range select){
+ background:var(--dock-glass)!important;
+ border:1px solid var(--dock-stroke)!important;
+ -webkit-backdrop-filter:blur(12px) saturate(1.5);
+ backdrop-filter:blur(12px) saturate(1.5);
+ color:var(--dock-ink)!important;
+ box-shadow:0 2px 7px rgba(4,35,25,.035);
+}
+body.visitor-only :is(.agenda-filters button.active,.planner-month.active,.planner-day.chosen,.planner-day.today,.visitor-template-fav[aria-pressed="true"]){
+ background:var(--dock-active-bg)!important;
+ color:var(--dock-active-ink)!important;
+ border-color:transparent!important;
+}
+body.visitor-only .planner-month.active :is(strong,small),
+body.visitor-only .planner-day:is(.today,.chosen){color:var(--dock-active-ink)!important}
+body.visitor-only .planner-day.chosen{box-shadow:0 0 0 2px var(--dock-glass)!important}
+body.visitor-only .planner-month:not(.active){
+ background:var(--dock-glass)!important;
+ border:1px solid var(--dock-stroke)!important;
+ -webkit-backdrop-filter:blur(13px);
+ backdrop-filter:blur(13px);
+ border-radius:21px!important;
+}
+body.visitor-only .planner-range,
+body.visitor-only .calendar-library-note,
+body.visitor-only .planner-calendar,
+body.visitor-only .planner-results{
+ border:1px solid var(--dock-stroke)!important;
+ border-radius:24px!important;
+ background:var(--dock-glass)!important;
+ -webkit-backdrop-filter:blur(15px) saturate(1.3);
+ backdrop-filter:blur(15px) saturate(1.3);
+}
+body.visitor-only .planner-field :is(input,select),
+body.visitor-only .agenda-search input,
+body.visitor-only #calendar-search{
+ border-radius:999px!important;
+}
+body.visitor-only :is(.planner-range select,.planner-field select){
+ appearance:auto;
+ -webkit-appearance:menulist;
+ color-scheme:normal;
+}
+body.visitor-only .public-template-card.active{
+ border-color:var(--dock-active-bg)!important;
+ box-shadow:0 0 0 2px var(--dock-active-bg)!important;
+}
+body.visitor-only .visitor-template-fav[aria-pressed="true"]{
+ box-shadow:0 3px 10px rgba(0,0,0,.09);
+}
+@media(prefers-reduced-transparency:reduce){
+ body.visitor-only{--dock-glass:var(--ios-surface,#fff)}
+}
+@media(prefers-reduced-motion:reduce){
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link{transition:none!important}
+}
