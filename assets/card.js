@@ -1,4 +1,4 @@
-import {nextPaymentDate} from './payment-schedule.js?v=1';
+import {nextPaymentDate} from './payment-schedule.js?v=pay1';
 import {renderPremium} from './design.js?v=footer3';
 import {bannerForPoster} from './advertising.js?v=working24';
 import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=follow2';
