@@ -26,11 +26,11 @@
     "disclaimer": "صُنعت بكل حب، لتبقى ذكرى جميلة. 🤍"
   },
   "theme": {
-    "green": "#064b43",
-    "greenLight": "#37765e",
-    "gold": "#c99a42",
-    "cream": "#f8f5ea",
-    "ink": "#103f38"
+    "green": "#234b48",
+    "greenLight": "#96bba9",
+    "gold": "#b99255",
+    "cream": "#234b48",
+    "ink": "#f4e7ce"
   },
   "counters": [
     {
@@ -237,9 +237,9 @@
     "highlightNext": true,
     "showUnit": true,
     "density": "comfortable",
-    "preset": "heritage",
+    "preset": "salary",
     "autoRotate": true,
-    "fontFamily": "tajawal",
+    "fontFamily": "amiri",
     "showIcons": true,
     "showEventDates": true
   },
@@ -295,7 +295,14 @@
   "smartRules": [
     {
       "id": "3de34d6e-cad9-4586-9f76-a19729214207",
-      "weekday": "any",
+      "weekday": "5",
+      "templateId": "friday",
+      "priority": 1,
+      "enabled": true
+    },
+    {
+      "id": "4362859b-3700-4e91-a63a-84641cca7d63",
+      "weekday": "1",
       "templateId": "royal",
       "priority": 1,
       "enabled": true
