@@ -116,12 +116,12 @@ function followBlock(c,cfg,qr,r,kind){
  rect(c,x,y,w,h,f.radius*unit,p.bg,p.border,Math.max(1.2,unit*2));
  const padding=13*unit;
  const showQR=Boolean(f.showQr&&qr);
- const qrSize=showQR?Math.min(h-24*unit,124*unit):0;
- const qrX=x+15*unit,qrY=y+(h-qrSize)/2;
+ const qrSize=showQR?Math.min(h-48*unit,116*unit):0;
+ const qrX=x+15*unit,qrY=y+10*unit;
  if(showQR){
   rect(c,qrX-3*unit,qrY-3*unit,qrSize+6*unit,qrSize+6*unit,10*unit,'#ffffff');
   c.imageSmoothingEnabled=false;c.drawImage(qr,qrX,qrY,qrSize,qrSize);c.imageSmoothingEnabled=true;
-  if(f.qrCaption)line(c,f.qrCaption,qrX+qrSize/2,y+h-10*unit,11*unit,p.accent,qrSize+15*unit,650);
+  if(f.qrCaption)line(c,f.qrCaption,qrX+qrSize/2,y+h-13*unit,10*unit,p.accent,qrSize+17*unit,650);
  }
  const contentX=x+(showQR?qrSize+43*unit:25*unit),contentW=w-(showQR?qrSize+68*unit:50*unit);
  const right=contentX+contentW,mid=contentX+contentW/2;

@@ -124,7 +124,7 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  const items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),timed=items.filter(i=>i.mode!=='manual'),values=timed.map(i=>tools.remaining(i,iso)),nearest=values.length?Math.min(...values):null,next=timed.find(i=>tools.remaining(i,iso)===nearest);
  const titleY=quoteY+quoteH+48; text(c,'المواعيد والعدّادات',1001,titleY,31,p.ink,620,'right');
  if(next&&cfg.design?.highlightNext!==false)text(c,'الأقرب: '+next.label,78,titleY,19,p.ink,350,'left',500);
- const start=titleY+42,end=1642,cols=s.columns,rows=Math.max(1,Math.ceil(items.length/cols)),gap=s.grid==='ledger'?10:14,tw=(952-(cols-1)*gap)/cols,th=Math.min(cfg.design?.density==='compact'?143:186,(end-start-(rows-1)*gap)/rows);
+ const start=titleY+42,end=1508,cols=s.columns,rows=Math.max(1,Math.ceil(items.length/cols)),gap=s.grid==='ledger'?10:14,tw=(952-(cols-1)*gap)/cols,th=Math.min(cfg.design?.density==='compact'?143:186,(end-start-(rows-1)*gap)/rows);
  items.forEach((item,i)=>tile(c,item,tools.remaining(item,iso),{x:64+(cols-1-i%cols)*(tw+gap),y:start+Math.floor(i/cols)*(th+gap),w:tw,h:th},p,s,nearest,cfg));
  if(!items.length)text(c,'لا توجد مواعيد مضافة',540,start+160,40,p.ink);
  // Footer remains complete in every layout, including branding and a genuinely scannable QR.
