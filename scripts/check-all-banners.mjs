@@ -13,9 +13,9 @@ try{
  await page.waitForFunction(()=>window.__posterReady,{timeout:30000});
  const result=await page.evaluate(async()=>{
   const [{CARD_PRESETS,duplicateForPreset},{templates,createDesign},{renderPoster},{renderDesign},
-         {bannerForPoster,bannerForDesign,loadBanner,DEFAULT_BANNER}]=await Promise.all([
+         {bannerForPoster,bannerForDesign,loadBanner,DEFAULT_BANNER},{footerGeometry}]=await Promise.all([
     import('/assets/templates.js'),import('/assets/catalog.js'),import('/assets/card.js'),
-    import('/assets/engine.js'),import('/assets/advertising.js')
+    import('/assets/engine.js'),import('/assets/advertising.js'),import('/assets/follow-panel.js')
   ]);
   const cfg=await(await fetch('/data/config.json',{cache:'no-store'})).json();
   const source=await fetch('/'+DEFAULT_BANNER,{cache:'no-store'});
@@ -24,12 +24,12 @@ try{
   const legacy=await bannerForPoster({advertising:{enabled:true,image:''}});
   const freeLegacy=await bannerForDesign({advertising:{enabled:true,image:''}});
   const disabled=await bannerForPoster({advertising:{enabled:false,image:''}});
-  const compare=(a,b)=>{
+  const compare=(a,b,dimensions=[1080,1920])=>{
    if(a.width!==b.width||a.height!==b.height)throw Error('Mismatched canvas sizes');
    const p=a.getContext('2d').getImageData(0,0,a.width,a.height).data;
    const q=b.getContext('2d').getImageData(0,0,b.width,b.height).data;
    let bannerArea=0,topArea=0;
-   const cutoff=Math.floor(a.height*.70);
+   const cutoff=Math.max(0,Math.floor(a.height*(footerGeometry(dimensions).ad.y/dimensions[1]-.002)));
    for(let y=0;y<a.height;y++)for(let x=0;x<a.width;x++){
     const i=(y*a.width+x)*4;
     if(Math.abs(p[i]-q[i])+Math.abs(p[i+1]-q[i+1])+Math.abs(p[i+2]-q[i+2])>55){
@@ -61,7 +61,7 @@ try{
    a.advertising={enabled:true,image:''};b.advertising={enabled:false,image:''};
    const ca=document.createElement('canvas'),cb=document.createElement('canvas');
    await renderDesign(ca,a,{scale:.25});await renderDesign(cb,b,{scale:.25});
-   formats.push({size,...compare(ca,cb)});
+   formats.push({size,...compare(ca,cb,size)});
   }
   return {calendar,freeform,formats,defaultBanner:DEFAULT_BANNER,
    sourceType:source.headers.get('content-type'),nativeSize:[image.naturalWidth,image.naturalHeight],
