@@ -21,9 +21,9 @@ try {
   cfg.follow={...published.follow,qrUrl:'https://example.com/subscribe',title:'متابعة البطاقات',whatsapp:'0558930532',snapchat:'z32.y'};
   const out={};
   const canvas=document.createElement('canvas');
-  await renderPoster(canvas,cfg,'2026-11-10',{preview:true,scale:.5});
+  await renderPoster(canvas,cfg,'2026-11-10');
   const region=document.createElement('canvas');region.width=140;region.height=140;
-  region.getContext('2d').drawImage(canvas,73*.5,1722*.5,140*.5,140*.5,0,0,140,140);
+  region.getContext('2d').drawImage(canvas,73,1722,140,140,0,0,140,140);
   out.qr=[...region.getContext('2d').getImageData(0,0,140,140).data];
   const spy=document.createElement('canvas'),ct=spy.getContext('2d'),original=ct.fillText,strings=[];
   ct.fillText=function(t,...args){strings.push(String(t));return original.call(this,t,...args);};
