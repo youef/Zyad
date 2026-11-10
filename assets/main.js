@@ -121,12 +121,12 @@ function renderGallery(){
    const card=queue.shift();
    if(!card?.isConnected||card.hidden||card.dataset.previewState==='ready')continue;
    const image=card.querySelector('img');
-   if(image.complete&&image.naturalWidth){card.dataset.previewState='ready';continue;}
+   if(image.complete&&image.naturalWidth){image.classList.add('is-loaded');card.dataset.previewState='ready';continue;}
    try{
     const art=card.querySelector('.public-template-art');
     await renderPoster(art,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35});
     if(revision!==galleryRevision)break;
-    art.hidden=false;image.hidden=true;card.querySelector('.public-template-fallback').hidden=true;
+    art.hidden=false;image.classList.remove('is-loaded');image.classList.add('is-error');card.querySelector('.public-template-fallback').hidden=true;
     card.querySelector('.preview-date').textContent='معاينة البطاقة';
     card.dataset.previewState='ready';
    }catch(error){
@@ -145,7 +145,7 @@ function renderGallery(){
    if(card.dataset.previewState==='ready')continue;
    const image=card.querySelector('img');
    if(image.complete&&!image.naturalWidth){queue.push(card);void processQueue();}
-   else if(image.complete&&image.naturalWidth){card.dataset.previewState='ready';}
+   else if(image.complete&&image.naturalWidth){image.classList.add('is-loaded');card.dataset.previewState='ready';}
    else{
     image.addEventListener('error',()=>{if(revision===galleryRevision){queue.push(card);void processQueue();}},{once:true});
    }
@@ -156,10 +156,10 @@ function renderGallery(){
   if(preset.id===activePreset)item.classList.add('active');
   const select=document.createElement('button');select.type='button';select.className='public-template-select';
   select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
-  const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.hidden=true;img.alt='بطاقة قالب '+preset.name;
-  img.addEventListener('error',()=>{img.hidden=true;previewDate.textContent='معاينة توضيحية';});
+  const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='gallery-template-image';img.alt='بطاقة قالب '+preset.name;
+  img.addEventListener('error',()=>{img.classList.remove('is-loaded');img.classList.add('is-error');previewDate.textContent='جارٍ تجهيز معاينة البطاقة';});
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">رزنامة السعودية</span><span class="visitor-preview-date">بطاقة اليوم</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
-  img.addEventListener('load',()=>{img.hidden=false;fallback.hidden=true;item.dataset.previewState='ready';previewDate.textContent='جاهز للعرض';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
+  img.addEventListener('load',()=>{img.classList.add('is-loaded');img.classList.remove('is-error');fallback.hidden=true;item.dataset.previewState='ready';previewDate.textContent='جاهز للعرض';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
   const badge=document.createElement('span');badge.className='gallery-card-badge';badge.textContent=preset.category||'تصميم';
   const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
   const heading=document.createElement('strong');heading.textContent=preset.name;
