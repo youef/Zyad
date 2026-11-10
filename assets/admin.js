@@ -1,4 +1,4 @@
-import {PAYMENT_RULE_LABELS,paymentRule,nextPaymentDate} from './payment-schedule.js?v=1';
+import {PAYMENT_RULE_LABELS,paymentRule,nextPaymentDate} from './payment-schedule.js?v=pay2';
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {prepareBanner,compactBanner} from './advertising.js?v=banner25';
 import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=follow1';
