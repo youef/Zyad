@@ -12,10 +12,10 @@ let gallerySearch='';
 const favKey='zyad-visitor-template-favorites';
 const readFavorites=()=>{try{return JSON.parse(localStorage.getItem(favKey)||'[]').filter(validPreset)}catch{return []}};
 const isFavorite=id=>readFavorites().includes(id);
-function favoriteTemplate(id){const set=new Set(readFavorites());if(set.has(id))set.delete(id);else set.add(id);try{localStorage.setItem(favKey,JSON.stringify([...set]));}catch{}renderGallery();document.dispatchEvent(new CustomEvent('zyad-favorites-updated'));say(set.has(id)?'أُضيف التصميم إلى المفضلة':'أُزيل التصميم من المفضلة');}
+function favoriteTemplate(id){const set=new Set(readFavorites());if(set.has(id))set.delete(id);else set.add(id);try{localStorage.setItem(favKey,JSON.stringify([...set]));}catch{}document.querySelectorAll('.public-template-card').forEach(card=>{const button=card.querySelector('.visitor-template-fav');if(!button)return;const saved=set.has(card.dataset.preset);button.textContent=saved?'♥':'♡';button.setAttribute('aria-pressed',String(saved));button.setAttribute('aria-label',saved?'إزالة من المفضلة':'إضافة إلى المفضلة');});filterCalendarGallery();document.dispatchEvent(new CustomEvent('zyad-favorites-updated'));say(set.has(id)?'أُضيف التصميم إلى المفضلة':'أُزيل التصميم من المفضلة');}
 window.addEventListener('hashchange',()=>{filterCalendarGallery();});
 
-function filterCalendarGallery(){document.querySelectorAll('.public-template-card').forEach(card=>{const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);card.hidden=Boolean((location.hash==='#favorites'&&!isFavorite(p.id))||(gallerySearch&&!`${p.name} ${p.description} ${p.category}`.includes(gallerySearch)));});}
+function filterCalendarGallery(){document.querySelectorAll('.public-template-card').forEach(card=>{const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);card.hidden=Boolean((location.hash==='#favorites'&&!isFavorite(p.id))||(gallerySearch&&!`${p.name} ${p.description} ${p.category}`.includes(gallerySearch)));});const empty=document.getElementById('visitor-gallery-empty');if(empty){empty.hidden=[...document.querySelectorAll('.public-template-card')].some(card=>!card.hidden);empty.textContent=location.hash==='#favorites'?'لم تضف تصاميم إلى المفضلة بعد. اختر القلب من معرض التصاميم.':'لا توجد تصاميم مطابقة للبحث.';}}
 $('#calendar-search').addEventListener('input',e=>{gallerySearch=e.target.value.trim();filterCalendarGallery();});
 const params=new URLSearchParams(location.search);
 const selected=params.get('date');dateInput.value=/^\d{4}-\d{2}-\d{2}$/.test(selected||'')?selected:saToday();
@@ -68,7 +68,7 @@ function renderGallery(){
   download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ التوليد...';try{await exportPreset(preset.id);}catch(e){say('فشل التوليد: '+e.message);}finally{download.disabled=false;download.textContent='تنزيل هذا التصميم';}};
   actions.append(download,favorite);item.append(select,actions);grid.append(item);galleryObserver.observe(item);
  }
- filterCalendarGallery();
+ const empty=document.createElement('p');empty.id='visitor-gallery-empty';empty.className='visitor-gallery-empty';empty.hidden=true;grid.append(empty);filterCalendarGallery();
 }
 async function refresh(){
  if(!config)return;const id=++renderId;syncQuickDays();say('جارٍ توليد البطاقة...');
