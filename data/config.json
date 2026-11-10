@@ -193,9 +193,9 @@
     },
     {
       "id": "winter",
-      "label": "الشتاء",
+      "label": "إجازة منتصف العام الدراسي",
       "mode": "date",
-      "date": "2026-12-21",
+      "date": "2027-01-08",
       "repeat": "yearly",
       "enabled": true,
       "category": "فصول",
@@ -206,15 +206,16 @@
     },
     {
       "id": "autumn",
-      "label": "الخريف",
-      "mode": "manual",
+      "label": "إجازة الخريف",
+      "mode": "date",
       "value": 0,
       "enabled": true,
       "category": "فصول",
       "summary": "رقم يدوي خاص بالخريف.",
       "details": "الرقم الثابت لا يظهر ضمن التخطيط الشهري.",
       "location": "",
-      "notes": "عدّل نوع الموعد لتحويله إلى حدث تاريخي."
+      "notes": "عدّل نوع الموعد لتحويله إلى حدث تاريخي.",
+      "date": "2026-11-20"
     },
     {
       "id": "spring",
