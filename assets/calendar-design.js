@@ -113,7 +113,7 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  // Align the paper panel's bottom edge with the bottom of the advertisement.
  // The transparent subscription strip remains outside the paper panel.
  const ad=footerGeometry([W,H],'calendar').ad;
- const paperBottom=Math.round(ad.y+ad.h);
+ const paperBottom=Math.round(ad.y+ad.h+14);
  box(c,33,103,1014,paperBottom-103,28,field);
  header(c,cfg,iso,tools,p,s);
  const visible=hasCardMessage(cfg),quoteY=s.headerHeight+30,quoteH=visible?(cfg.daily?294:244):0;
