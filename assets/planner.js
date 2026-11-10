@@ -151,7 +151,7 @@ export function mountPlanner(config,selected=saToday()){
     const h=elem('div','planner-hero-copy');attach(h,elem('span','eyebrow','رزنامة السعودية · المواعيد'),elem('h2','','تقويمك، كل المواعيد'),elem('p','','تابع المناسبات والاستحقاقات في تقويم واضح، واعرف ما ينتظرك يومًا بيوم.'));
     const stats=elem('div','planner-stat-row');
     for(const [title,id] of [['الموعد القادم','planner-next-title'],['الوقت المتبقي','planner-next-time'],['إجمالي المواعيد','planner-total']]){
-      const wrap=elem('div','planner-stat');attach(wrap,elem('small','',title),elem('strong','',title==='مجموع المواعيد'?'0':'—'));wrap.querySelector('strong').id=id;stats.append(wrap);
+      const wrap=elem('div','planner-stat');attach(wrap,elem('small','',title),elem('strong','',title==='إجمالي المواعيد'?'0':'—'));wrap.querySelector('strong').id=id;stats.append(wrap);
     }
     attach(heading,h,stats);
     const range=elem('label','planner-range','الفترة المعروضة');
