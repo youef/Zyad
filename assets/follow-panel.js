@@ -144,7 +144,7 @@ function followBlock(c,cfg,qr,r,kind){
  const {x,y,w,h}=r,p=palette(cfg,f,kind),layout=followLayout(r,{showQr:Boolean(f.showQr&&qr)});
  const {qr:q,middle,title,unit}=layout;
  c.save();
- rect(c,x,y,w,h,f.radius*unit,p.bg,p.border,Math.max(1.1,1.4*unit));
+ // Transparent outer panel: keep the original template visible beneath it.
  // QR on the far LEFT, with its own quiet zone for reliable scanning.
  if(q.size>0){
    rect(c,q.x-4*unit,q.y-4*unit,q.size+8*unit,q.size+8*unit,7*unit,'#ffffff');
@@ -161,7 +161,7 @@ function followBlock(c,cfg,qr,r,kind){
    const top=middle.y+(middle.h-used)/2;
    channels.forEach(([label,value],i)=>{
       const ry=top+i*(rowHeight+rowGap),cy=ry+rowHeight/2;
-      rect(c,middle.x,ry,middle.w,rowHeight,10*unit,p.chip,p.border,1*unit);
+      rect(c,middle.x,ry,middle.w,rowHeight,10*unit,null,p.border,1*unit);
       const labelMax=Math.min(middle.w*.31,148*unit);
       line(c,label,middle.x+middle.w-10*unit,cy,14*unit,p.accent,labelMax,780,'right');
       line(c,value,middle.x+12*unit,cy,20*unit,p.fg,middle.w-labelMax-38*unit,850,'left','ltr');
@@ -206,38 +206,17 @@ export function footerGeometry(dimensions,kind='calendar'){
   noteY
  };
 }
-function existingPaperColor(c,x,y){
- // Pick up the template's existing paper, not an unrelated white box.
- // Sampling the open right-hand gutter avoids the text and table cells.
- try{
-  const d=c.getImageData(Math.round(x),Math.round(y),1,1).data;
-  if(d[3]>245)return `rgb(${d[0]},${d[1]},${d[2]})`;
- }catch{}
- return '#f3f5ef';
-}
 export function drawCombinedFooter(c,cfg,banner,qr,{kind='calendar',dimensions=[1080,1920]}={}){
  const f=resolveFollow(cfg),hasBanner=cfg.advertising?.enabled!==false&&!!banner;
- const g=footerGeometry(dimensions,kind);
- if(!hasBanner&&!f.enabled)return g;
- const [w,h]=dimensions;
+ const g=footerGeometry(dimensions,kind),[w,h]=dimensions;
  c.save();
- const top=hasBanner?g.ad.y-9:g.follow.y-13;
- const paper=existingPaperColor(c,g.x+15,Math.max(38,top-23));
- // Cover only the former footer content. No extra outer rounded rectangle:
- // the poster's native frame stays visible, with a continuous paper surface.
- c.fillStyle=paper;
- c.fillRect(g.x,top,g.w,h-top-Math.max(10,h*.012));
- // A fine divider gives the advertisement a clear start, without making it
- // look like a second card pasted over the main calendar.
- c.strokeStyle='rgba(111,119,99,.21)';
- c.lineWidth=Math.max(1,w/1080);
- c.beginPath();c.moveTo(g.x+12,top+1);c.lineTo(g.x+g.w-12,top+1);c.stroke();
+ // No background fill or border: preserve the underlying artwork and patterns.
  if(hasBanner)bannerInside(c,banner,g.ad.x,g.ad.y,g.ad.w,g.ad.h,Math.min(12,g.ad.h*.1));
  if(f.enabled)followBlock(c,cfg,qr,g.follow,kind);
- const p=palette(cfg,f,kind);
+ // One common disclaimer for every poster variant (legacy renderers omit theirs).
+ const ink=cfg.theme?.ink||'#173f35';
  line(c,cfg.card?.disclaimer||'المواعيد تقديرية؛ راجع الجهة الرسمية',
-   w/2,g.noteY,Math.max(10,Math.min(15,w*.013)),p.dark?'#ffffff':'#2b4b42',
-   g.follow.w*.9,500);
+   w/2,g.noteY,Math.max(10,Math.min(15,w*.013)),ink,g.follow.w*.9,500);
  c.restore();
  return g;
 }
