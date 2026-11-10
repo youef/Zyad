@@ -155,7 +155,7 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
       changed();
     });official.append(extra);fields.append(official);
     const hint=document.createElement('small');hint.className='tip';
-    hint.textContent='الموعد القادم الفعلي: '+(nextPaymentDate(item,dateField.value)||'غير محدد')+' · الاستثناء مرتبط بالشهر '+ym;
+    hint.textContent='التاريخ المتوقع بعد تعديل الجمعة/السبت: '+(nextPaymentDate(item,dateField.value)||'غير محدد')+' · أي تاريخ رسمي مختلف يمكن تسجيله للشهر '+ym;
     fields.append(hint);
   }
   if(item.mode==='date'){
@@ -189,7 +189,7 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
   document.querySelector('#follow-reset')?.addEventListener('click',()=>{
     config.follow=cloneConfig(FOLLOW_DEFAULTS);syncFields();changed();
   });
-  $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,enabled:true,category:'حدث',summary:'',details:'',notes:'',location:'',link:''});buildCounters();changed();});
+  $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,paymentRule:'previous_thursday_next_sunday',enabled:true,category:'حدث',summary:'',details:'',notes:'',location:'',link:''});buildCounters();changed();});
   $('#admin-banner-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;const status=$('#admin-banner-state');status.textContent='جارٍ تهيئة الإعلان بالمقاس 2000 × 400…';try{const result=await prepareBanner(file);config.advertising||={enabled:true};config.advertising.image=result.src;config.advertising.enabled=true;syncFields();changed();status.textContent='تم تجهيز الإعلان '+result.width+'×'+result.height+' • احفظ وانشر ليظهر للجميع';}catch(err){status.textContent=err.message;}finally{e.target.value='';}});
   $('#admin-banner-clear').addEventListener('click',()=>{config.advertising||={enabled:true};config.advertising.image='';syncFields();changed();});
   $('#clear-logo').addEventListener('click',()=>{config.brand.logo='';$('#logo-file').value='';changed();});
