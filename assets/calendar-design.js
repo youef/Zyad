@@ -3,6 +3,7 @@ import {drawHangingLogo} from './brand-art.js';
 import {hasCardMessage} from './daily.js';
 import {hasBanner} from './advertising.js?v=img1';
 import {drawDailyPanel} from './daily-panel.js';
+import {footerGeometry} from './follow-panel.js?v=follow2';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};
 function box(c,x,y,w,h,r,fill,stroke,lw=1){c.beginPath();c.roundRect(x,y,w,h,Math.min(r,w/2,h/2));if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}}
@@ -108,7 +109,12 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  if(tools.background)imageCover(c,tools.background);
  else {const grad=c.createLinearGradient(0,0,1080,1920);grad.addColorStop(0,p.cream);grad.addColorStop(1,rgba(p.green,.15));c.fillStyle=grad;c.fillRect(0,0,W,H);if(cfg.design?.pattern!==false)for(let yy=20;yy<H;yy+=120)for(let xx=20;xx<W;xx+=120)poly(c,xx,yy,26,26,8,null,rgba(p.gold,.11));}
  // A quiet translucent reading field preserves contrast without covering the artwork edges.
- const field=dark?rgba(p.cream,.79):rgba(p.cream,.87);box(c,33,103,1014,1538,28,field);
+ const field=dark?rgba(p.cream,.79):rgba(p.cream,.87);
+ // Align the paper panel's bottom edge with the bottom of the advertisement.
+ // The transparent subscription strip remains outside the paper panel.
+ const ad=footerGeometry([W,H],'calendar').ad;
+ const paperBottom=Math.round(ad.y+ad.h);
+ box(c,33,103,1014,paperBottom-103,28,field);
  header(c,cfg,iso,tools,p,s);
  const visible=hasCardMessage(cfg),quoteY=s.headerHeight+30,quoteH=visible?(cfg.daily?294:244):0;
  const quoteFill=dark?rgba('#081e20',.68):rgba('#fffef8',.94);
