@@ -1,0 +1,85 @@
+/* Saudi Calendar / Zyad — Unified premium interface, 2026-11 */
+:root{--zy-forest:#084e42;--zy-forest-deep:#07392f;--zy-mint:#dcf5e9;--zy-gold:#b99355;--zy-cream:#f7f8f5;--zy-rim:rgba(25,63,52,.11);--zy-radius:22px}
+:root[data-theme="dark"]{--zy-forest:#80d8b4;--zy-forest-deep:#153c32;--zy-mint:#274b3d;--zy-cream:#101815;--zy-rim:rgba(223,244,232,.14)}
+html{scroll-behavior:smooth}
+body.native-ui{--ios-accent:var(--zy-forest);--ios-bg:var(--zy-cream);--ios-tint:var(--zy-mint);--ios-radius:var(--zy-radius);--ios-shadow:0 12px 35px rgba(15,49,38,.045);background:var(--zy-cream);font-feature-settings:"kern";letter-spacing:0}
+body.native-ui :is(.app-header,.site-header){border-color:var(--zy-rim)}
+body.native-ui :is(.app-panel,.stat-card,.daily-tile,.design-card,.tool-panel,.settings-panel,.admin-preview,.editor-panel,.ios-insight){border:1px solid var(--zy-rim);border-radius:var(--zy-radius);box-shadow:var(--ios-shadow)}
+body.native-ui :is(.app-panel,.tool-panel,.settings-panel,.editor-panel){overflow:visible}
+body.native-ui :is(h1,h2,h3){letter-spacing:-.035em}
+body.native-ui :is(button,.button,.btn,a){-webkit-tap-highlight-color:transparent}
+body.native-ui :is(.btn.primary,.button.primary,button.primary){background:var(--zy-forest-deep)!important;color:#fff!important;box-shadow:0 7px 20px rgba(6,68,48,.14)}
+body.native-ui :is(.btn.primary,.button.primary,button.primary):hover{filter:brightness(1.12)}
+body.native-ui :is(button,a):focus-visible{outline:3px solid var(--zy-gold);outline-offset:3px}
+body.native-ui .eyebrow{color:var(--zy-forest);font-size:11px;font-weight:800}
+body.native-ui .wordmark img,body.native-ui .app-header-logo img{object-fit:contain}
+body.native-ui .page-title h1{font-size:clamp(27px,4vw,43px);line-height:1.25}
+body.native-ui .page-title p{line-height:1.95}
+body.native-ui .app-nav{backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);background:color-mix(in srgb,var(--ios-surface) 90%,transparent);border-top:1px solid var(--zy-rim)}
+body.native-ui .app-nav a.active,body.native-ui .app-tabs a.active{color:var(--zy-forest);font-weight:900}
+body.native-ui .filter-row{gap:9px}
+body.native-ui .filter-row :is(button,a){border-radius:99px;border:1px solid var(--zy-rim);padding-inline:15px}
+body.native-ui .design-grid{gap:18px}
+body.native-ui .app-header{align-items:center}
+body.native-ui .header-actions :is(a,button){flex-shrink:0}
+body.native-ui :is(.tool-grid button,.tool-grid label,.action-buttons button){transition:transform .18s ease,box-shadow .18s ease}
+@media(hover:hover){body.native-ui :is(.tool-grid button,.tool-grid label,.action-buttons button):hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(20,70,49,.1)}}
+body.native-ui.smart-app .app-sidebar{background:var(--ios-surface);border-color:var(--zy-rim);padding-top:30px}
+body.native-ui.smart-app .app-sidebar .brand{padding:12px;border-radius:18px;background:var(--ios-tint);margin:0 -5px}
+body.native-ui.smart-app .side-links{gap:7px}
+body.native-ui.smart-app .side-links a{border-radius:13px;min-height:48px;font-weight:700}
+body.native-ui.smart-app .side-links a.active{background:var(--zy-forest-deep);color:white}
+body.native-ui.smart-app .app-workspace{padding-top:25px}
+body.native-ui.smart-app .app-header{padding-bottom:12px}
+body.native-ui.smart-app .app-date-strip{border:1px solid var(--zy-rim);border-radius:18px;padding:14px 18px;background:var(--ios-surface);margin-bottom:14px}
+body.native-ui.smart-app .ios-home-intro{padding:25px 26px;border-radius:23px;background:linear-gradient(116deg,#073e34,#0c6a53 72%,#15765e);color:#fff;position:relative;overflow:hidden}
+body.native-ui.smart-app .ios-home-intro:before{content:"";position:absolute;width:220px;height:220px;border:1px solid rgba(255,255,255,.14);border-radius:50%;top:-120px;left:-20px;box-shadow:0 0 0 35px rgba(255,255,255,.045),0 0 0 85px rgba(255,255,255,.035);pointer-events:none}
+body.native-ui.smart-app .ios-home-intro :is(h2,p,.ios-overline,.ios-home-view-calendar){color:#fff;position:relative}
+body.native-ui.smart-app .ios-home-intro h2{font-size:clamp(25px,3vw,35px)}
+body.native-ui.smart-app .ios-home-intro p{color:rgba(255,255,255,.82);font-size:13px}
+body.native-ui.smart-app .ios-home-view-calendar{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);padding:10px 16px;border-radius:13px;font-weight:800}
+body.native-ui.smart-app .ios-next-spotlight{border-radius:19px;border:1px solid var(--zy-rim);box-shadow:var(--ios-shadow)}
+body.native-ui.smart-app .home-stats{gap:12px}
+body.native-ui.smart-app .stat-card{border:1px solid var(--zy-rim);padding:17px}
+body.native-ui.smart-app .stat-icon{border-radius:14px;background:var(--ios-tint);color:var(--zy-forest)}
+body.native-ui.smart-app .panel-title{padding-bottom:12px}
+body.native-ui.smart-app .panel-title h2{font-size:clamp(19px,2vw,24px)}
+body.native-ui.smart-app .poster-shell{background:linear-gradient(135deg,#e3e9e1,#f3f0e8);border-radius:18px;padding:12px;overflow:hidden}
+body.native-ui.smart-app #poster{border-radius:10px;display:block;max-width:100%;margin-inline:auto;box-shadow:0 18px 35px rgba(25,50,37,.14)}
+body.native-ui.smart-app .action-buttons{gap:9px}
+body.native-ui.smart-app .action-buttons button{border-radius:13px}
+body.native-ui.smart-app .studio-shortcut{border-radius:20px;background:linear-gradient(145deg,#0b4b3d,#0e7459);color:#fff}
+body.native-ui.smart-app .studio-shortcut :is(strong,small,b){color:#fff}
+body.native-ui.smart-app .agenda-filters{display:flex;flex-wrap:wrap;gap:7px}
+body.native-ui.smart-app .agenda-filters button{border-radius:40px}
+body.native-ui.smart-app .agenda-filters button.active{background:var(--zy-forest-deep);color:#fff}
+body.native-ui .tool-panel .panel-section{border-color:var(--zy-rim)}
+body.native-ui .tool-panel :is(label,summary){font-weight:700}
+body.native-ui .studio-layout,body.native-ui .calendar-editor-layout{gap:20px}
+body.native-ui .tool-grid{gap:9px}
+body.native-ui .tool-grid :is(button,label){border-radius:14px}
+body.native-ui .admin-page .tab-list{gap:7px}
+body.native-ui.admin-page .tab-list .tab{border-radius:12px}
+body.native-ui.admin-page .tab-list .tab.active{background:var(--zy-forest-deep);color:white}
+body.native-ui.admin-page .zyad-auth-screen .auth-card{border-radius:26px;box-shadow:0 25px 75px rgba(6,42,33,.11)}
+body.native-ui.admin-page .zyad-auth-screen{background:radial-gradient(circle at 15% 10%,#d8eade,transparent 40%),var(--zy-cream)}
+body.native-ui.admin-page .auth-card h1{font-size:clamp(25px,4vw,35px)}
+@media(min-width:1000px){body.native-ui.smart-app .app-workspace{max-width:1580px;margin-left:auto;margin-right:245px;padding-inline:clamp(22px,3vw,48px)}body.native-ui .page-wrap{max-width:1300px}}
+@media(max-width:800px){
+ body.native-ui.smart-app .app-workspace{padding-inline:15px!important;padding-top:14px}
+ body.native-ui.smart-app .app-header{gap:8px;margin-bottom:11px}
+ body.native-ui.smart-app .app-header h1{font-size:21px}
+ body.native-ui.smart-app .app-date-strip{padding:13px;border-radius:17px}
+ body.native-ui.smart-app .ios-home-intro{padding:21px 18px;border-radius:20px}
+ body.native-ui.smart-app .ios-home-intro h2{font-size:25px}
+ body.native-ui.smart-app .home-stats{gap:9px}
+ body.native-ui.smart-app .stat-card{padding:12px;border-radius:16px}
+ body.native-ui.smart-app .app-panel{border-radius:18px}
+ body.native-ui .page-wrap{padding-inline:16px}
+ body.native-ui .page-title{gap:13px}
+ body.native-ui .app-nav{padding-bottom:max(5px,env(safe-area-inset-bottom))}
+ body.native-ui .studio-layout,body.native-ui .calendar-editor-layout{gap:13px}
+ body.native-ui.admin-page .admin-layout{padding-inline:12px}
+}
+@media(max-width:390px){body.native-ui.smart-app .header-actions{gap:4px}body.native-ui.smart-app .app-date-strip{padding:10px}body.native-ui.smart-app .ios-home-intro h2{font-size:22px}}
+@media(prefers-reduced-motion:reduce){body.native-ui *,body.native-ui *:before,body.native-ui *:after{animation:none!important;transition:none!important}}
