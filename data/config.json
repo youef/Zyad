@@ -26,11 +26,11 @@
     "disclaimer": "صُنعت بكل حب، لتبقى ذكرى جميلة. 🤍"
   },
   "theme": {
-    "green": "#064b43",
-    "greenLight": "#37765e",
-    "gold": "#c99a42",
-    "cream": "#f8f5ea",
-    "ink": "#103f38"
+    "green": "#527d73",
+    "greenLight": "#527d73",
+    "gold": "#b99858",
+    "cream": "#f0f5ec",
+    "ink": "#527d73"
   },
   "counters": [
     {
@@ -232,14 +232,14 @@
     }
   ],
   "design": {
-    "preset": "heritage",
     "pattern": true,
     "patternStrength": "0",
     "highlightNext": true,
     "showUnit": true,
-    "density": "compact",
+    "density": "comfortable",
+    "preset": "week-journal",
     "autoRotate": true,
-    "fontFamily": "tajawal",
+    "fontFamily": "cairo",
     "showIcons": true,
     "showEventDates": true
   },
