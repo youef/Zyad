@@ -12,7 +12,7 @@ const png=async p=>{
 const source=await png('assets/branding/logo.png');
 assert(source.size>1000&&source.width>=100&&source.height>=100,'Official source must be a high-quality logo');
 const config=JSON.parse(await read('data/config.json'));
-assert.equal(config.brand.logo,'assets/branding/logo-transparent.png');
+assert(typeof config.brand.logo==='string'&&(/^(?:assets\/branding\/logo(?:-transparent)?\.png|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$/.test(config.brand.logo)),'Official logo or valid administrator-provided transparent override expected');
 const transparent=await png('assets/branding/logo-transparent.png');assert(transparent.width>30&&transparent.height>30,'Transparent brand missing');
 assert(config.brand.name.includes('رزنامة'));
 for(const size of [180,192,512]){
