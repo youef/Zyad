@@ -307,5 +307,25 @@
       "priority": 1,
       "enabled": true
     }
-  ]
+  ],
+  "follow": {
+    "enabled": true,
+    "title": "للاشتراك والمتابعة بالبطاقة اليومية",
+    "subtitle": "تابع جديد البطاقات يوميًا",
+    "showTitle": true,
+    "showQr": true,
+    "qrCaption": "امسح للمتابعة",
+    "qrUrl": "",
+    "showWhatsapp": true,
+    "whatsappLabel": "واتساب",
+    "whatsapp": "0558930532",
+    "showSnapchat": true,
+    "snapchatLabel": "سناب شات",
+    "snapchat": "z32.y",
+    "colorMode": "auto",
+    "backgroundColor": "#073f34",
+    "textColor": "#ffffff",
+    "accentColor": "#e9c77c",
+    "radius": 20
+  }
 }

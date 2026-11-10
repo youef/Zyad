@@ -97,6 +97,17 @@ function validateConfig(v) {
   if (!v.card || typeof v.card !== 'object' || !v.theme || typeof v.theme !== 'object') return false;
   if (!Array.isArray(v.counters) || v.counters.length > 30) return false;
   if (v.savedDesigns && (!Array.isArray(v.savedDesigns)||v.savedDesigns.length>30)) return false;
+  if (v.follow) {
+    const f=v.follow;if(typeof f!=='object'||Array.isArray(f))return false;
+    for(const [key,max] of Object.entries({title:90,subtitle:100,qrCaption:34,whatsappLabel:30,whatsapp:30,snapchatLabel:30,snapchat:40,qrUrl:350})){
+      if(f[key]!=null&&(typeof f[key]!=='string'||f[key].length>max))return false;
+    }
+    for(const key of ['enabled','showQr','showWhatsapp','showSnapchat','showTitle'])if(f[key]!=null&&typeof f[key]!=='boolean')return false;
+    if(f.colorMode&&!['auto','light','dark','custom'].includes(f.colorMode))return false;
+    for(const k of ['backgroundColor','textColor','accentColor'])if(f[k]&&!/^#[0-9a-f]{6}$/i.test(f[k]))return false;
+    if(f.radius!=null&&(!Number.isFinite(Number(f.radius))||Number(f.radius)<8||Number(f.radius)>35))return false;
+    if(f.qrUrl){try{const u=new URL(f.qrUrl);if(!['https:','http:'].includes(u.protocol))return false;}catch{return false;}}
+  }
   return true;
 }
 

@@ -33,7 +33,49 @@
 <small id="admin-banner-state" role="status">لم تُرفع صورة حتى الآن</small>
 </div>
 <label class="check"><input type="checkbox" data-bind="advertising.enabled"> إظهار الصورة في البطاقات</label>
-</section><div class="switches"><label><input type="checkbox" data-bind="settings.showQuote"> إظهار المحتوى النصي</label><label><input type="checkbox" data-bind="content.showHadith"> إظهار الحديث وعنوانه ومصدره</label><label><input type="checkbox" data-bind="content.showDua"> إظهار الدعاء وعنوانه ومصدره</label><label><input type="checkbox" data-bind="settings.showContact"> إظهار التواصل</label><label><input type="checkbox" data-bind="settings.showQr"> إظهار QR</label></div></div>
+</section>
+<section class="admin-follow-section" id="follow-settings" aria-labelledby="follow-heading">
+  <div class="follow-section-head">
+    <div><h2 id="follow-heading">الاشتراك والمتابعة تحت الإعلان</h2>
+    <p>تظهر هذه المساحة داخل جميع البطاقات، أسفل صورة الإعلان، وتتكيف تلقائيًا مع ألوان القالب ومقاس التصميم. أي تغيير يظهر في المعاينة ثم يُنشر عند الضغط على حفظ ونشر.</p></div>
+    <label class="follow-enable"><input type="checkbox" data-bind="follow.enabled"> تفعيل شريط المتابعة</label>
+  </div>
+  <div class="form-grid">
+    <label class="field">عنوان المتابعة<input type="text" data-bind="follow.title" maxlength="90" placeholder="للاشتراك والمتابعة بالبطاقة اليومية"></label>
+    <label class="field">الوصف المختصر<input type="text" data-bind="follow.subtitle" maxlength="100" placeholder="تابع جديد البطاقات يوميًا"></label>
+  </div>
+  <div class="switches"><label><input type="checkbox" data-bind="follow.showTitle"> إظهار العنوان</label>
+    <label><input type="checkbox" data-bind="follow.showWhatsapp"> إظهار واتساب</label>
+    <label><input type="checkbox" data-bind="follow.showSnapchat"> إظهار سناب شات</label>
+    <label><input type="checkbox" data-bind="follow.showQr"> إظهار رمز QR</label></div>
+  <div class="form-grid">
+    <label class="field">عنوان واتساب<input data-bind="follow.whatsappLabel" maxlength="30"></label>
+    <label class="field">رقم واتساب<input data-bind="follow.whatsapp" maxlength="30" inputmode="tel" dir="ltr"></label>
+    <label class="field">عنوان سناب شات<input data-bind="follow.snapchatLabel" maxlength="30"></label>
+    <label class="field">اسم حساب سناب شات<input data-bind="follow.snapchat" maxlength="40" dir="ltr"></label>
+    <label class="field">رابط QR للمتابعة<input data-bind="follow.qrUrl" type="url" maxlength="350" placeholder="https://wa.me/966558930532" dir="ltr"></label>
+    <label class="field">عبارة بجانب رمز QR<input data-bind="follow.qrCaption" maxlength="34"></label>
+  </div>
+  <div class="follow-style-row">
+    <label class="field">ألوان شريط المتابعة
+      <select data-bind="follow.colorMode" id="follow-color-mode">
+        <option value="auto">تلقائية حسب القالب</option><option value="dark">داكنة</option>
+        <option value="light">فاتحة</option><option value="custom">ألوان من اختياري</option>
+      </select></label>
+    <label class="field">استدارة الحواف
+      <input type="range" data-bind="follow.radius" min="8" max="35" step="1"><small>من 8 إلى 35</small></label>
+  </div>
+  <div id="follow-custom-colors" class="form-grid">
+    <label class="field">لون الخلفية<input type="color" data-bind="follow.backgroundColor"></label>
+    <label class="field">لون النص<input type="color" data-bind="follow.textColor"></label>
+    <label class="field">لون العناوين والتأكيد<input type="color" data-bind="follow.accentColor"></label>
+  </div>
+  <div class="follow-admin-tools">
+    <button type="button" class="btn secondary" id="follow-reset">استعادة الإعدادات الأساسية</button>
+    <span role="status" id="follow-settings-status">المعاينة على البطاقة تُحدّث تلقائيًا.</span>
+  </div>
+</section>
+<div class="switches"><label><input type="checkbox" data-bind="settings.showQuote"> إظهار المحتوى النصي</label><label><input type="checkbox" data-bind="content.showHadith"> إظهار الحديث وعنوانه ومصدره</label><label><input type="checkbox" data-bind="content.showDua"> إظهار الدعاء وعنوانه ومصدره</label><label><input type="checkbox" data-bind="settings.showContact"> إظهار التواصل</label><label><input type="checkbox" data-bind="settings.showQr"> إظهار QR</label></div></div>
       <div class="tab-content hidden" data-panel="counters"><p class="panel-description">يمكنك إضافة أي موعد، أو تعديل ترتيبه، أو إخفاؤه. <strong>شهري</strong> يتكرر حسب يوم الشهر، و<strong>تاريخ</strong> يحسب الأيام حتى الموعد، و<strong>يدوي</strong> يعرض الرقم الذي تكتبه.</p><div id="counter-list" class="counter-list"></div><button type="button" class="btn secondary full" id="add-counter">+ إضافة عدّاد جديد</button></div>
       <div class="tab-content hidden" data-panel="theme"><div class="design-intro"><strong>استوديو القوالب الاحترافي</strong><small>اضغط أي قالب لتطبيقه فورًا على البطاقة الفعلية. الصور أدناه معاينات حقيقية مولدة تلقائيًا.</small></div>
 <div class="template-status"><strong id="selected-template-label">القالب النشط</strong><span id="template-preview-state" role="status">جاهز للمعاينة</span></div>

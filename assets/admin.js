@@ -1,5 +1,6 @@
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {prepareBanner,compactBanner} from './advertising.js?v=banner25';
+import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=follow1';
 import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=banner25';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
@@ -8,7 +9,16 @@ window.zyadAdmin={getConfig:()=>config,changed:()=>changed(),tab:name=>tab(name)
 let config=null,published=null,timer=0;
 dateField.value=saToday();
 const syncBanner=()=>{const image=config?.advertising?.image||'',preview=$('#admin-banner-preview'),status=$('#admin-banner-state');if(!preview)return;preview.hidden=!image;if(image)preview.src=image.startsWith('assets/')?'../'+image:image;else preview.removeAttribute('src');status.textContent=image?'صورة الإعلان جاهزة للمعاينة • احفظ وانشر ليشاهدها الجميع':'لم تُرفع صورة حتى الآن';};
-const syncFields=()=>{document.querySelectorAll('[data-bind]').forEach(el=>{const value=currentValue(config,el.dataset.bind);if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';});syncBanner();};
+const syncFollowControls=()=>{
+  const custom=document.querySelector('#follow-custom-colors');
+  if(custom)custom.hidden=config?.follow?.colorMode!=='custom';
+  const status=document.querySelector('#follow-settings-status');
+  if(status)status.textContent='المتابعة '+(config?.follow?.enabled===false?'مخفية':'مفعّلة')+' • التفاصيل تُحفظ عند النشر';
+};
+const syncFields=()=>{document.querySelectorAll('[data-bind]').forEach(el=>{
+  const value=currentValue(config,el.dataset.bind);
+  if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value??'';
+});syncBanner();syncFollowControls();};
 const setStatus=(msg,good=true)=>{pubStatus.textContent=msg;pubStatus.style.color=good?'#126847':'#b05245';};
 const setDirty=()=>{try{localStorage.setItem(DRAFT_KEY,JSON.stringify(config));draftStatus.textContent='مسودة محفوظة في هذا المتصفح • غير منشورة';}catch{draftStatus.textContent='تعديلات غير منشورة';}};
 let previewSeq=0;
@@ -152,7 +162,14 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
   sum.textContent='إدارة تفاصيل الحدث والمعلومات الإضافية';expander.append(sum,more);article.append(expander);
 const toggle=document.createElement('label');toggle.className='counter-toggle';const check=document.createElement('input');check.type='checkbox';check.checked=item.enabled!==false;check.addEventListener('change',()=>{item.enabled=check.checked;changed();});toggle.append(check,document.createTextNode('إظهار في البطاقة'));article.append(toggle);root.append(article);
 });}
-function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener(el.type==='checkbox'?'change':'input',()=>{let val=el.type==='checkbox'?el.checked:el.type==='number'?Number(el.value):el.value;updateDeep(config,el.dataset.bind,val);changed();}));
+function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener(['checkbox','color','range'].includes(el.type)||el.tagName==='SELECT'?'change':'input',()=>{
+    const val=el.type==='checkbox'?el.checked:el.type==='number'||el.type==='range'?Number(el.value):el.value;
+    if(el.dataset.bind==='follow.qrUrl'&&val){try{const u=new URL(val);if(!['https:','http:'].includes(u.protocol))throw Error();}catch{document.querySelector('#follow-settings-status').textContent='أدخل رابط QR صحيحًا يبدأ بـ https://';return;}}
+    updateDeep(config,el.dataset.bind,val);syncFollowControls();changed();
+  }));
+  document.querySelector('#follow-reset')?.addEventListener('click',()=>{
+    config.follow=cloneConfig(FOLLOW_DEFAULTS);syncFields();changed();
+  });
   $('#add-counter').addEventListener('click',()=>{if(config.counters.length>=24){alert('الحد الأقصى 24 عدّادًا للبطاقة الواحدة.');return;}config.counters.push({id:'custom_'+Date.now(),label:'موعد جديد',mode:'monthly',day:1,enabled:true,category:'حدث',summary:'',details:'',notes:'',location:'',link:''});buildCounters();changed();});
   $('#admin-banner-file').addEventListener('change',async e=>{const file=e.target.files?.[0];if(!file)return;const status=$('#admin-banner-state');status.textContent='جارٍ تهيئة الإعلان بالمقاس 2000 × 400…';try{const result=await prepareBanner(file);config.advertising||={enabled:true};config.advertising.image=result.src;config.advertising.enabled=true;syncFields();changed();status.textContent='تم تجهيز الإعلان '+result.width+'×'+result.height+' • احفظ وانشر ليظهر للجميع';}catch(err){status.textContent=err.message;}finally{e.target.value='';}});
   $('#admin-banner-clear').addEventListener('click',()=>{config.advertising||={enabled:true};config.advertising.image='';syncFields();changed();});
@@ -181,6 +198,7 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
 let saving=false;
 async function publish(){
  if(!config||saving)return;
+ validateFollow(config.follow);
  saving=true;
  const button=$('#publish-config');button.disabled=true;
  const label=button.textContent;button.textContent='جارٍ الحفظ...';
@@ -208,4 +226,4 @@ async function publish(){
  }catch(error){setStatus('تعذر النشر: '+error.message,false);}
  finally{saving=false;button.disabled=false;button.textContent=label;}
 }
-window.__adminReady=(async function init(){try{const response=await window.zyadAdminClient.request('config');published=response.config;const draft=localStorage.getItem(DRAFT_KEY);const source=draft?JSON.parse(draft):cloneConfig(published);config={...cloneConfig(published),...source,design:{...published.design,...(source.design||{})},theme:{...published.theme,...(source.theme||{})},savedDesigns:Array.isArray(source.savedDesigns)?source.savedDesigns:published.savedDesigns||[]};syncFields();buildCounters();syncTemplate();setupForm();await renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});syncPreview();draftStatus.textContent=draft?'مسودة محلية مستعادة • غير منشورة':'جاهز للتعديل';}catch(e){console.error(e);draftStatus.textContent='فشل تحميل لوحة الإدارة: '+e.message;}})();
+window.__adminReady=(async function init(){try{const response=await window.zyadAdminClient.request('config');published=response.config;const draft=localStorage.getItem(DRAFT_KEY);const source=draft?JSON.parse(draft):cloneConfig(published);config={...cloneConfig(published),...source,design:{...published.design,...(source.design||{})},theme:{...published.theme,...(source.theme||{})},follow:{...cloneConfig(FOLLOW_DEFAULTS),...(published.follow||{}),...(source.follow||{})},savedDesigns:Array.isArray(source.savedDesigns)?source.savedDesigns:published.savedDesigns||[]};syncFields();buildCounters();syncTemplate();setupForm();await renderPoster(canvas,config,dateField.value,{rootPrefix:'../assets/',basePrefix:'../'});syncPreview();draftStatus.textContent=draft?'مسودة محلية مستعادة • غير منشورة':'جاهز للتعديل';}catch(e){console.error(e);draftStatus.textContent='فشل تحميل لوحة الإدارة: '+e.message;}})();
