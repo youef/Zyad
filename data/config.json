@@ -69,7 +69,8 @@
       "summary": "الموعد الشهري المقدر لمكافأة الجامعة.",
       "details": "يعتمد على اليوم المحفوظ في المشروع، لا على إعلان الجامعة.",
       "location": "الجامعات السعودية",
-      "notes": "راجع الجهة المعنية للتاريخ المؤكد."
+      "notes": "راجع الجهة المعنية للتاريخ المؤكد.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "retirement",
@@ -81,7 +82,8 @@
       "summary": "موعد التقاعد الدوري حسب الإعدادات.",
       "details": "عداد شهري قابل للتغيير.",
       "location": "جهة التقاعد",
-      "notes": "المواعيد تقديرية."
+      "notes": "المواعيد تقديرية.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "social",
@@ -119,7 +121,8 @@
       "summary": "موعد حافز التقريبي.",
       "details": "عداد متكرر شهريًا حسب يوم البرنامج المحدد.",
       "location": "برنامج حافز",
-      "notes": "راجع حساب المستفيد."
+      "notes": "راجع حساب المستفيد.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "rehab",
@@ -131,7 +134,8 @@
       "summary": "موعد التأهيل المقدر.",
       "details": "يمكن تعديل موعد الصرف حسب المعلومات المؤكدة.",
       "location": "جهة البرنامج",
-      "notes": "حسب الاستحقاق."
+      "notes": "حسب الاستحقاق.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "insurance",
@@ -143,7 +147,8 @@
       "summary": "موعد التأمينات حسب الإعدادات.",
       "details": "عداد شهري لخدمات التأمينات.",
       "location": "التأمينات الاجتماعية",
-      "notes": "راجع الجهة المعنية."
+      "notes": "راجع الجهة المعنية.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "housing",
@@ -155,7 +160,8 @@
       "summary": "موعد الدعم السكني.",
       "details": "عداد شهري قابل للتغيير.",
       "location": "برنامج الدعم السكني",
-      "notes": "قد يختلف تاريخ الإيداع."
+      "notes": "قد يختلف تاريخ الإيداع.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "farming",
@@ -167,7 +173,8 @@
       "summary": "موعد الدعم الزراعي.",
       "details": "موعد متكرر حسب الإعدادات.",
       "location": "الجهات المختصة",
-      "notes": "قد يختلف حسب البرنامج."
+      "notes": "قد يختلف حسب البرنامج.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "tamheer",
@@ -179,7 +186,8 @@
       "summary": "موعد تمهير حسب الإعدادات.",
       "details": "عداد شهري لمتابعة الاستحقاق.",
       "location": "برنامج تمهير",
-      "notes": "يرتبط بشروط البرنامج."
+      "notes": "يرتبط بشروط البرنامج.",
+      "paymentRule": "previous_thursday_next_sunday"
     },
     {
       "id": "summer",
