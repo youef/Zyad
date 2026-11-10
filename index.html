@@ -31,7 +31,19 @@
 </section><p id="page-status" class="help-note" role="status">جارٍ تجهيز بطاقة يومك…</p></section>
 <aside class="inspiration-panel"><details class="ios-insight"><summary><span><small>رسالة اليوم</small><strong>لحظة إلهام وطمأنينة</strong></span><span class="ios-insight-toggle" aria-hidden="true">⌄</span></summary><div class="inspiration-intro"><p>حديث ودعاء يتجددان مع تاريخ البطاقة.</p></div><div id="daily-inspiration"></div></details></aside>
 </div></section>
-<section id="template-gallery" data-app-view hidden><div class="section-head"><div><span class="eyebrow">مكتبة التصاميم</span><h2>معرض تصاميم البطاقات</h2></div><p>42 تصميمًا فعليًا؛ التاريخان والمواعيد والمحتوى اليومي في كل بطاقة.</p></div><div class="calendar-library-note"><span>قوائم · أجندات · تصاميم تصويرية · زخارف · 4 خطوط عربية <a class="btn secondary" href="#poster-section">عرض التصميم المختار</a></span><label>ابحث عن تصميم<input id="calendar-search" type="search" placeholder="أجندة، أزرق، تراثي، رمضاني…"></label></div><div id="visitor-favorites-description" class="visitor-favorites-description" hidden>تصاميمك المفضلة محفوظة على هذا الجهاز دون حساب.</div><div id="public-template-grid" class="public-template-grid" aria-label="قوالب البطاقات"></div></section>
+<section id="template-gallery" data-app-view hidden class="premium-gallery">
+<div class="gallery-hero">
+ <div class="gallery-hero-copy"><span class="gallery-kicker">مكتبة رزنامة السعودية</span><h2>بطاقتك، بذوقك.</h2><p>استكشف تصاميم بطاقات التقويم والمناسبات، واختر ما يناسب يومك. جميع التصاميم جاهزة للمشاهدة والحفظ.</p></div>
+ <div class="gallery-hero-numbers"><strong id="gallery-total-count">42</strong><span>تصميم متنوع</span></div>
+</div>
+<div class="gallery-toolbar">
+ <label class="gallery-search-field" for="calendar-search"><span data-icon="search"></span><input id="calendar-search" type="search" placeholder="ابحث عن تصميم أو لون أو مناسبة…" autocomplete="off" aria-label="بحث في التصاميم"></label>
+ <div class="gallery-toolbar-bottom"><div class="gallery-summary"><strong id="gallery-visible-count">42 تصميمًا</strong><span>اختر القالب، ثم احفظ الصورة</span></div><label class="gallery-sort-label">ترتيب <select id="gallery-sort" aria-label="ترتيب التصاميم"><option value="default">الأصلية</option><option value="name">حسب الاسم</option><option value="favorites">المفضلة أولًا</option></select></label></div>
+ <div class="gallery-category-wrap"><div id="gallery-categories" class="gallery-categories" role="group" aria-label="تصنيف التصاميم"></div></div>
+</div>
+<div id="visitor-favorites-description" class="visitor-favorites-description" hidden>تصاميمك المفضلة محفوظة على هذا الجهاز دون تسجيل. يمكنك حفظ صورها بأي وقت.</div>
+<div id="public-template-grid" class="public-template-grid" aria-label="معرض قوالب البطاقات"></div>
+</section>
 <section id="smart-planner" data-app-view hidden class="smart-planner" aria-label="التقويم الذكي للأحداث القادمة"></section>
 <section id="archive" data-app-view hidden class="archive-section"><div class="section-head"><div><span class="eyebrow">أرشيف الأيام</span><h2>البطاقات المنشورة</h2></div><p>صورة كل يوم محفوظة للرجوع إليها.</p></div><div id="archive-grid" class="archive-grid"></div></section>
 </main><footer class="app-footer">© <span id="year"></span> <span id="footer-brand">رزنامة السعودية</span></footer></div>
