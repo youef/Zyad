@@ -39,3 +39,18 @@ body.visitor-only .agenda-filters button{min-width:60px}
 
 body.visitor-only .visitor-gallery-empty{grid-column:1/-1;text-align:center;padding:42px 18px;background:var(--ios-surface);border:1px dashed var(--ios-hair);border-radius:18px;color:var(--ios-muted);font-weight:700;line-height:1.9}
 body.visitor-only .visitor-gallery-empty[hidden]{display:none!important}
+
+/* App-like public interactions. Admin/editor pages are intentionally excluded. */
+html:has(body.visitor-only){overscroll-behavior-y:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body.visitor-only,
+body.visitor-only :not(input):not(textarea):not([contenteditable="true"]){
+ -webkit-user-select:none!important;user-select:none!important;
+ -webkit-touch-callout:none!important;
+}
+body.visitor-only :is(img,svg,canvas,[data-icon],.ui-icon){-webkit-user-drag:none!important;user-drag:none;touch-action:pan-x pan-y}
+body.visitor-only :is(input,textarea,[contenteditable="true"]){
+ -webkit-user-select:text!important;user-select:text!important;
+ -webkit-touch-callout:default!important;
+}
+body.visitor-only :is(button,a,summary){touch-action:manipulation}
+body.visitor-only .public-template-select{touch-action:manipulation}
