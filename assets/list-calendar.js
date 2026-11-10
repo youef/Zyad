@@ -17,5 +17,5 @@ export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme
   if(hasDates){const next=new Date(date);next.setUTCDate(next.getUTCDate()+Number(n));text(c,new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{dateStyle:'medium',timeZone:'Asia/Riyadh'}).format(next)+' · تقديري',labelX,y+rh*.77,18,p.ink,labelWidth,'right',400);}
  }
  if(!items.length)text(c,'لا توجد مواعيد مضافة',540,top+110,39,p.ink,900);
- box(c,40,1718,1000,161,22,'#fff',rgba(p.gold,.6));if(cfg.settings?.showQr!==false&&tools.qr){box(c,54,1722,123,123,9,'#fff');c.imageSmoothingEnabled=false;c.drawImage(tools.qr,61,1729,109,109);c.imageSmoothingEnabled=true;}const cx=cfg.settings?.showQr===false?540:610; if(!hasBanner(cfg))text(c,cfg.card?.promo||'بطاقتك اليومية',cx,1754,27,p.ink,790);if(!hasBanner(cfg)&&cfg.settings?.showContact!==false){const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join('  ·  ');if(contact)text(c,contact,cx,1785,18,p.ink,790);}if(!hasBanner(cfg))text(c,cfg.card?.footer||'كل تفاصيل يومك',cx,1822,19,p.ink,790,'center',500);text(c,cfg.card?.disclaimer||'المواعيد تقديرية وتراجع مع الجهات الرسمية',540,1906,15,p.ink,975,'center',400);
+ // Shared transparent footer is rendered once after this list template.
 }
