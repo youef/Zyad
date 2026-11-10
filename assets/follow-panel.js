@@ -183,42 +183,61 @@ function followBlock(c,cfg,qr,r,kind){
 }
 export function footerGeometry(dimensions,kind='calendar'){
  const [w,h]=dimensions,landscape=w/h>1.4;
- // Lift the ad+follow group up, preserving air between follow and fine print.
- const ratio=w===1080&&h===1920?1:Math.max(.63,Math.min(1,h/1920));
- const noteY=h-Math.max(26,Math.round(h*.025));
- const gapAfterFollow=Math.max(31,Math.round(h*.032));
- const followHeight=landscape?112:Math.max(108,Math.min(126,Math.round(h*.083)));
- const followY=noteY-gapAfterFollow-followHeight;
- const adHeight=landscape?145:Math.max(102,Math.min(154,Math.round(h*.09)));
- const adY=followY-Math.max(12,Math.round(12*ratio))-adHeight;
- const outerW=landscape?Math.min(w*.83,1400):w*.93;
- const outerX=(w-outerW)/2;
- const followW=landscape?Math.min(outerW-42,1240):outerW-50*ratio;
- const followX=(w-followW)/2;
- const adW=Math.min(adHeight*5,outerW*.94);
+ // Everything shares one inset grid: no footer card may extend past the
+ // main poster's inside edge, regardless of export aspect ratio.
+ const inset=Math.max(16,Math.round(w*(landscape?.035:.038)));
+ const outerX=inset,outerW=w-inset*2;
+ const noteY=h-Math.max(25,Math.round(h*.025));
+ const followHeight=landscape?Math.max(74,Math.min(110,h*.16)):
+   Math.max(92,Math.min(126,h*.084));
+ const bottomAir=Math.max(24,Math.min(55,h*.03));
+ const followY=noteY-bottomAir-followHeight;
+ const adHeight=landscape?Math.max(66,Math.min(125,h*.18)):
+   Math.max(86,Math.min(150,h*.083));
+ const between=Math.max(19,Math.min(27,h*.014));
+ const adY=followY-between-adHeight;
+ const followInset=Math.max(10,Math.min(19,w*.016));
+ const followW=outerW-2*followInset;
+ const adW=Math.min(adHeight*5,followW);
  return {
-   x:outerX,y:adY,w:outerW,h:h-adY,
-   ad:{x:(w-adW)/2,y:adY,w:adW,h:adHeight},
-   follow:{x:followX,y:followY,w:followW,h:followHeight},
-   noteY
+  x:outerX,y:adY,w:outerW,h:h-adY,
+  ad:{x:(w-adW)/2,y:adY,w:adW,h:adHeight},
+  follow:{x:(w-followW)/2,y:followY,w:followW,h:followHeight},
+  noteY
  };
+}
+function existingPaperColor(c,x,y){
+ // Pick up the template's existing paper, not an unrelated white box.
+ // Sampling the open right-hand gutter avoids the text and table cells.
+ try{
+  const d=c.getImageData(Math.round(x),Math.round(y),1,1).data;
+  if(d[3]>245)return `rgb(${d[0]},${d[1]},${d[2]})`;
+ }catch{}
+ return '#f3f5ef';
 }
 export function drawCombinedFooter(c,cfg,banner,qr,{kind='calendar',dimensions=[1080,1920]}={}){
  const f=resolveFollow(cfg),hasBanner=cfg.advertising?.enabled!==false&&!!banner;
- if(!hasBanner&&!f.enabled)return footerGeometry(dimensions,kind);
- const g=footerGeometry(dimensions,kind),p=palette(cfg,f,kind);
+ const g=footerGeometry(dimensions,kind);
+ if(!hasBanner&&!f.enabled)return g;
  const [w,h]=dimensions;
  c.save();
- // Integrate into the ORIGINAL card, not a separate external panel. Paint only
- // the native footer zone to mask legacy text / QR underneath.
- const top=hasBanner?g.ad.y-3:Math.max(g.follow.y-10,g.ad.y);
- rect(c,g.x,top,g.w,h-top-8,Math.min(f.radius+6,24),
-   p.dark?'rgba(2,41,33,.96)':'rgba(255,253,247,.98)',p.border,1.35);
- if(hasBanner)bannerInside(c,banner,g.ad.x,g.ad.y,g.ad.w,g.ad.h,11);
+ const top=hasBanner?g.ad.y-9:g.follow.y-13;
+ const paper=existingPaperColor(c,g.x+15,Math.max(38,top-23));
+ // Cover only the former footer content. No extra outer rounded rectangle:
+ // the poster's native frame stays visible, with a continuous paper surface.
+ c.fillStyle=paper;
+ c.fillRect(g.x,top,g.w,h-top-Math.max(10,h*.012));
+ // A fine divider gives the advertisement a clear start, without making it
+ // look like a second card pasted over the main calendar.
+ c.strokeStyle='rgba(111,119,99,.21)';
+ c.lineWidth=Math.max(1,w/1080);
+ c.beginPath();c.moveTo(g.x+12,top+1);c.lineTo(g.x+g.w-12,top+1);c.stroke();
+ if(hasBanner)bannerInside(c,banner,g.ad.x,g.ad.y,g.ad.w,g.ad.h,Math.min(12,g.ad.h*.1));
  if(f.enabled)followBlock(c,cfg,qr,g.follow,kind);
- // Kept OUTSIDE the compact bar with generous vertical breathing room.
+ const p=palette(cfg,f,kind);
  line(c,cfg.card?.disclaimer||'المواعيد تقديرية؛ راجع الجهة الرسمية',
-   w/2,g.noteY,Math.min(15,14*Math.min(w/1080,1.15)),p.fg,w*.88,500);
+   w/2,g.noteY,Math.max(10,Math.min(15,w*.013)),p.dark?'#ffffff':'#2b4b42',
+   g.follow.w*.9,500);
  c.restore();
  return g;
 }
