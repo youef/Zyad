@@ -174,7 +174,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
     safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,
     buildFollowQr(config),art?fetchImage(new URL('../'+art,import.meta.url).href):null,bannerForPoster(config)]);
   if(art&&!background)throw Error('تعذر تحميل خلفية القالب. تحقق من الاتصال وأعد المحاولة.');
-  const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
+  const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):options.displayScale?Math.min(1,Math.max(.5,Number(options.displayScale)||1)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);
