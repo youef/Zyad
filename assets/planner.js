@@ -1,3 +1,4 @@
+import {paymentOccurrences,paymentRule,PAYMENT_RULE_LABELS} from './payment-schedule.js?v=1';
 
 import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=20261104r4';
 
@@ -15,11 +16,7 @@ export function nextEventDates(item,fromIso,months=12){
   if(!item||item.enabled===false||item.mode==='manual'||!real(fromIso))return [];
   const end=monthPlus(monthKey(fromIso),months)+'-01',found=[];
   if(item.mode==='monthly'){
-    for(let k=0;k<months;k++){
-      const ym=monthPlus(monthKey(fromIso),k),[y,m]=ym.split('-').map(Number);
-      const d=Math.min(maxDay(y,m),Math.max(1,Math.floor(Number(item.day)||1))),date=ym+'-'+pad(d);
-      if(date>=fromIso&&date<end)found.push(date);
-    }
+    found.push(...paymentOccurrences(item,fromIso,months));
   }else if(item.mode==='date'&&real(item.date)){
     if(item.repeat==='yearly'){
       const md=item.date.slice(5);
