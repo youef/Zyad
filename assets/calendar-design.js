@@ -3,7 +3,7 @@ import {drawHangingLogo} from './brand-art.js';
 import {hasCardMessage} from './daily.js';
 import {hasBanner} from './advertising.js?v=img1';
 import {drawDailyPanel} from './daily-panel.js';
-import {footerGeometry} from './follow-panel.js?v=follow2';
+import {footerGeometry} from './follow-panel.js?v=glass20261110';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};
 function box(c,x,y,w,h,r,fill,stroke,lw=1){c.beginPath();c.roundRect(x,y,w,h,Math.min(r,w/2,h/2));if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}}
