@@ -110,7 +110,7 @@ async function refresh(){
  if(!config)return;const id=++renderId;syncQuickDays();say('جارٍ توليد البطاقة...');
  try{
   const temp=document.createElement('canvas'),snapshot=JSON.parse(JSON.stringify(config));
-  await renderPoster(temp,snapshot,dateInput.value,{preview:true,scale:.65});
+  await renderPoster(temp,snapshot,dateInput.value,{displayScale:.65});
   if(id!==renderId)return;
   canvas.width=temp.width;canvas.height=temp.height;canvas.getContext('2d').drawImage(temp,0,0);
   mountPlanner(config,dateInput.value);
