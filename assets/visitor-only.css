@@ -1,0 +1,25 @@
+/* Public mode: browsing and reading only. Backend admin security is separate. */
+body.visitor-only #new-personal-event,
+body.visitor-only #daily-style,
+body.visitor-only #edit-calendar,
+body.visitor-only #install-app,
+body.visitor-only #download,
+body.visitor-only #download-4k,
+body.visitor-only #share,
+body.visitor-only .action-buttons,
+body.visitor-only .quick-card-actions,
+body.visitor-only .public-template-select,
+body.visitor-only .public-template-download,
+body.visitor-only .event-favorite,
+body.visitor-only [data-filter="favorites"],
+body.visitor-only [data-filter="personal"],
+body.visitor-only .favorite-button,
+body.visitor-only .design-actions,
+body.visitor-only #new-personal-event,
+body.visitor-only .archive-item[download],
+body.visitor-only .all-events-link[download] {display:none!important}
+body.visitor-only .visitor-readonly-note{margin:14px 0;padding:12px 16px;border-radius:13px;background:var(--ios-tint,#e4f3e9);color:var(--ios-accent,#086b51);font-size:12px;font-weight:750;line-height:1.8}
+body.visitor-only .app-tabs,body.visitor-only .app-nav{justify-content:space-evenly}
+body.visitor-only .app-tabs .native-tab-link,body.visitor-only .app-nav .native-tab-link{flex:1}
+body.visitor-only .public-template-card{pointer-events:none}
+body.visitor-only .agenda-filters button{min-width:65px}
