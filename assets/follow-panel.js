@@ -139,45 +139,136 @@ function titleLines(c,phrase,maxWidth,initialSize,limit=2){
  if(lines.length>limit){lines=lines.slice(0,limit);lines[limit-1]+='…';}
  return {lines,size};
 }
+// Subtle frosted-glass surfaces. Each card sits directly above the template
+// artwork; no opaque parent panel or fake white backing is painted behind them.
+function glassPanel(c,x,y,w,h,r,dark=false){
+ if(w<=0||h<=0)return;
+ c.save();
+ c.shadowColor=dark?'rgba(0,0,0,.18)':'rgba(8,55,47,.11)';
+ c.shadowBlur=12;
+ c.shadowOffsetY=3;
+ const gradient=c.createLinearGradient(x,y,x,y+h);
+ gradient.addColorStop(0,dark?'rgba(255,255,255,.24)':'rgba(255,255,255,.72)');
+ gradient.addColorStop(1,dark?'rgba(255,255,255,.09)':'rgba(255,255,255,.29)');
+ rect(c,x,y,w,h,r,gradient,dark?'rgba(255,255,255,.35)':'rgba(255,255,255,.83)',1.3);
+ c.restore();
+ // A tiny highlight on the upper inner edge adds depth without clutter.
+ c.save();
+ c.strokeStyle=dark?'rgba(255,255,255,.24)':'rgba(255,255,255,.60)';
+ c.lineWidth=.8;
+ c.beginPath();c.moveTo(x+r,y+2);c.lineTo(x+w-r,y+2);c.stroke();
+ c.restore();
+}
+function footerBackgroundIsDark(c,region,fallback=false){
+ // Sample the underlying canvas artwork *before* painting any glass layer.
+ // This ensures both pale and dark poster templates get legible typography.
+ try{
+  const sample=c.getImageData(Math.round(region.x+region.w/2),
+    Math.round(region.y+region.h/2),1,1).data;
+  if(sample[3]<180)return fallback;
+  const brightness=(sample[0]*.2126+sample[1]*.7152+sample[2]*.0722)/255;
+  return brightness<.49;
+ }catch{return fallback;}
+}
+function drawWhatsAppIcon(c,cx,cy,size){
+ c.save();c.translate(cx-size/2,cy-size/2);c.scale(size/40,size/40);
+ rect(c,0,0,40,40,11,'#25D366','rgba(255,255,255,.6)',.9);
+ // White chat bubble with a tail and an unmistakable telephone receiver.
+ c.beginPath();c.arc(20.4,18.5,11.7,0,Math.PI*2);
+ c.strokeStyle='#fff';c.lineWidth=2.5;c.stroke();
+ c.beginPath();c.moveTo(11.7,26);c.lineTo(9.2,32.2);c.lineTo(15.6,29.5);
+ c.strokeStyle='#fff';c.lineWidth=2.5;c.lineJoin='round';c.stroke();
+ c.beginPath();
+ c.moveTo(15.5,12.9);c.bezierCurveTo(14.1,13.1,13.9,15.3,14.8,17.4);
+ c.bezierCurveTo(16.6,22.1,20.4,25.1,25,25.8);
+ c.bezierCurveTo(27.3,26,28.2,23.1,26.5,22.4);
+ c.lineTo(23.1,20.8);c.lineTo(21.4,22.7);
+ c.bezierCurveTo(19.6,22,17.8,20.1,17,18.4);
+ c.lineTo(18.5,16.5);c.lineTo(16.6,13);c.closePath();
+ c.fillStyle='#fff';c.fill();c.restore();
+}
+function drawSnapchatIcon(c,cx,cy,size){
+ c.save();c.translate(cx-size/2,cy-size/2);c.scale(size/40,size/40);
+ rect(c,0,0,40,40,11,'#FFFC00','rgba(47,47,12,.18)',.9);
+ // Crisp vector ghost, not a platform-dependent emoji.
+ c.beginPath();
+ c.moveTo(13.4,19.5);c.lineTo(13.4,15.5);
+ c.bezierCurveTo(13.4,7.7,26.6,7.7,26.6,15.5);
+ c.lineTo(26.6,19.5);
+ c.bezierCurveTo(27.8,22.4,29.6,22.7,31.6,23.1);
+ c.bezierCurveTo(33.4,23.6,31.6,25.5,28.5,26.4);
+ c.bezierCurveTo(27.8,27.5,28.6,28.6,29.4,29.3);
+ c.bezierCurveTo(27.3,29,26.3,29.9,25.1,31.3);
+ c.bezierCurveTo(22.5,30.3,17.5,30.3,14.9,31.3);
+ c.bezierCurveTo(13.7,29.9,12.7,29,10.6,29.3);
+ c.bezierCurveTo(11.4,28.6,12.2,27.5,11.5,26.4);
+ c.bezierCurveTo(8.4,25.5,6.6,23.6,8.4,23.1);
+ c.bezierCurveTo(10.4,22.7,12.2,22.4,13.4,19.5);
+ c.closePath();c.fillStyle='#fff';c.strokeStyle='#171717';c.lineWidth=1.55;
+ c.lineJoin='round';c.fill();c.stroke();
+ c.restore();
+}
 function followBlock(c,cfg,qr,r,kind){
  const f=resolveFollow(cfg);if(!f.enabled)return;
- const {x,y,w,h}=r,p=palette(cfg,f,kind),layout=followLayout(r,{showQr:Boolean(f.showQr&&qr)});
+ const p=palette(cfg,f,kind),layout=followLayout(r,{showQr:Boolean(f.showQr&&qr)});
  const {qr:q,middle,title,unit}=layout;
+ const dark=footerBackgroundIsDark(c,r,p.dark);
+ const textColor=f.colorMode==='custom'?p.fg:dark?'#fff9eb':'#123f36';
+ const subColor=f.colorMode==='custom'?p.accent:dark?'#e8d49c':'#3a6a5b';
+ const radius=Math.min(f.radius*unit,15*unit);
  c.save();
- // Transparent outer panel: keep the original template visible beneath it.
- // QR on the far LEFT, with its own quiet zone for reliable scanning.
+ // QR: its white quiet zone is required for scanning. The area surrounding it
+ // is translucent and independent of the rest of the footer.
  if(q.size>0){
-   rect(c,q.x-4*unit,q.y-4*unit,q.size+8*unit,q.size+8*unit,7*unit,'#ffffff');
-   c.imageSmoothingEnabled=false;c.drawImage(qr,q.x,q.y,q.size,q.size);c.imageSmoothingEnabled=true;
-   if(f.qrCaption)line(c,f.qrCaption,q.x+q.size/2,y+h-9*unit,10*unit,p.accent,q.size+16*unit,650);
+  const qrBoxX=q.x-9*unit,qrBoxY=q.y-8*unit;
+  const qrBoxW=q.size+18*unit,qrBoxH=q.size+26*unit;
+  glassPanel(c,qrBoxX,qrBoxY,qrBoxW,qrBoxH,radius,dark);
+  rect(c,q.x-3*unit,q.y-3*unit,q.size+6*unit,q.size+6*unit,6*unit,'#fff');
+  c.imageSmoothingEnabled=false;c.drawImage(qr,q.x,q.y,q.size,q.size);
+  c.imageSmoothingEnabled=true;
+  if(f.qrCaption)line(c,f.qrCaption,q.x+q.size/2,qrBoxY+qrBoxH-9*unit,
+    10*unit,subColor,qrBoxW-8*unit,650);
  }
- // The CENTER has two low-profile rows, not two large side-by-side boxes.
+ // Two individual glass rows: genuine vector logos at the right edge,
+ // with phone number and Snapchat ID centered in the remaining visual space.
  const channels=[];
- if(f.showWhatsapp&&f.whatsapp)channels.push([f.whatsappLabel,f.whatsapp]);
- if(f.showSnapchat&&f.snapchat)channels.push([f.snapchatLabel,f.snapchat]);
+ if(f.showWhatsapp&&f.whatsapp)channels.push(['whatsapp',f.whatsapp]);
+ if(f.showSnapchat&&f.snapchat)channels.push(['snapchat',f.snapchat]);
  if(channels.length){
-   const rowGap=6*unit,rowHeight=Math.min(43*unit,(middle.h-rowGap*(channels.length-1))/channels.length);
-   const used=channels.length*rowHeight+(channels.length-1)*rowGap;
-   const top=middle.y+(middle.h-used)/2;
-   channels.forEach(([label,value],i)=>{
-      const ry=top+i*(rowHeight+rowGap),cy=ry+rowHeight/2;
-      rect(c,middle.x,ry,middle.w,rowHeight,10*unit,null,p.border,1*unit);
-      const labelMax=Math.min(middle.w*.31,148*unit);
-      line(c,label,middle.x+middle.w-10*unit,cy,14*unit,p.accent,labelMax,780,'right');
-      line(c,value,middle.x+12*unit,cy,20*unit,p.fg,middle.w-labelMax-38*unit,850,'left','ltr');
-   });
+  const gap=7*unit,rowHeight=Math.min(44*unit,(middle.h-gap*(channels.length-1))/channels.length);
+  const used=channels.length*rowHeight+(channels.length-1)*gap;
+  const top=middle.y+(middle.h-used)/2;
+  channels.forEach(([type,value],i)=>{
+   const ry=top+i*(rowHeight+gap),cy=ry+rowHeight/2;
+   glassPanel(c,middle.x,ry,middle.w,rowHeight,Math.min(12*unit,radius),dark);
+   const iconSize=Math.min(29*unit,rowHeight-8*unit);
+   const iconX=middle.x+middle.w-12*unit-iconSize/2;
+   if(type==='whatsapp')drawWhatsAppIcon(c,iconX,cy,iconSize);
+   else drawSnapchatIcon(c,iconX,cy,iconSize);
+   const freeRight=middle.x+middle.w-iconSize-24*unit;
+   const valueCenter=(middle.x+7*unit+freeRight)/2;
+   const valueWidth=Math.max(28,freeRight-(middle.x+18*unit));
+   line(c,value,valueCenter,cy,20*unit,textColor,valueWidth,850,'center','ltr');
+  });
  }
- // The RIGHT title is at most two lines, with optional small subheading.
- if(f.showTitle&&f.title){
-   const max=title.w-18*unit,setting=titleLines(c,f.title,max,22*unit,2),rows=setting.lines;
-   const lineHeight=Math.max(20*unit,setting.size*1.33);
-   const hasSubtitle=Boolean(f.subtitle),headingH=rows.length*lineHeight;
-   const anchorY=title.y+(title.h-headingH-(hasSubtitle?19*unit:0))/2+lineHeight/2;
-   rows.forEach((row,i)=>line(c,row,title.x+title.w-5*unit,anchorY+i*lineHeight,setting.size,p.fg,max,850,'right'));
-   if(hasSubtitle)line(c,f.subtitle,title.x+title.w-5*unit,anchorY+headingH-1*unit,
-     10*unit,p.accent,max,600,'right');
- }else if(f.subtitle){
-   line(c,f.subtitle,title.x+title.w-5*unit,title.y+title.h/2,15*unit,p.fg,title.w-15*unit,700,'right');
+ // Separate glass block for the subscription heading on the RIGHT.
+ // Preserve the editing controls for title and subtitle visibility.
+ if((f.showTitle&&f.title)||f.subtitle){
+  glassPanel(c,title.x,title.y,title.w,title.h,radius,dark);
+  const max=title.w-24*unit;
+  if(f.showTitle&&f.title){
+   const setting=titleLines(c,f.title,max,21*unit,2),rows=setting.lines;
+   const lineHeight=Math.max(19*unit,setting.size*1.3);
+   const subtitleVisible=Boolean(f.subtitle),headingH=rows.length*lineHeight;
+   const firstY=title.y+(title.h-headingH-(subtitleVisible?18*unit:0))/2+lineHeight/2;
+   rows.forEach((row,i)=>line(c,row,title.x+title.w/2,firstY+i*lineHeight,
+    setting.size,textColor,max,850,'center'));
+   if(subtitleVisible)line(c,f.subtitle,title.x+title.w/2,
+     firstY+headingH,10*unit,subColor,max,600,'center');
+  }else{
+   line(c,f.subtitle,title.x+title.w/2,title.y+title.h/2,
+     15*unit,textColor,max,700,'center');
+  }
  }
  c.restore();
 }
