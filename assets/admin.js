@@ -1,8 +1,8 @@
 import {PAYMENT_RULE_LABELS,paymentRule,nextPaymentDate} from './payment-schedule.js?v=pay2';
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {prepareBanner,compactBanner} from './advertising.js?v=banner25';
-import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=follow1';
-import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=pay1';
+import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=glass20261110';
+import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=glass20261110';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
 const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v4';
