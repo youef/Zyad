@@ -54,3 +54,22 @@ body.visitor-only :is(input,textarea,[contenteditable="true"]){
 }
 body.visitor-only :is(button,a,summary){touch-action:manipulation}
 body.visitor-only .public-template-select{touch-action:manipulation}
+
+/* iPhone viewport containment: never let the 1080px card canvas widen the page. */
+html:has(body.visitor-only),body.visitor-only{width:100%;max-width:100%;min-width:0;overflow-x:hidden!important}
+body.visitor-only{touch-action:pan-y!important}
+body.visitor-only .app-workspace,body.visitor-only main,body.visitor-only [data-app-view],body.visitor-only .day-workspace,body.visitor-only .card-panel,body.visitor-only .poster-shell,body.visitor-only .action-buttons,body.visitor-only .visitor-readonly-note{box-sizing:border-box;max-width:100%!important;min-width:0!important}
+body.visitor-only .poster-shell{width:100%!important;overflow:hidden!important;touch-action:pan-y!important}
+body.visitor-only .poster-shell #poster{display:block!important;width:100%!important;height:auto!important;max-width:100%!important;min-width:0!important;object-fit:contain!important;touch-action:pan-y!important}
+body.visitor-only .action-buttons{display:flex;flex-wrap:wrap;gap:8px;overflow:hidden}
+body.visitor-only .action-buttons button{flex:1 1 130px;max-width:100%;white-space:normal}
+body.visitor-only .visitor-readonly-note{overflow-wrap:anywhere;line-height:1.8}
+body.visitor-only :is(.app-tabs,.app-header,.app-date-strip,.calendar-library-note,.public-template-grid){max-width:100%!important;min-width:0!important}
+body.visitor-only input{font-size:16px!important}
+@media(max-width:800px){
+ body.visitor-only.smart-app .app-workspace{width:100%!important;max-width:100%!important;margin:0!important;padding-left:14px!important;padding-right:14px!important;overflow-x:clip!important}
+ body.visitor-only.smart-app .day-workspace{display:grid!important;grid-template-columns:minmax(0,1fr)!important}
+ body.visitor-only.smart-app .card-panel{padding:14px!important;width:100%!important}
+ body.visitor-only.smart-app .poster-shell{padding:7px!important;max-width:100%!important}
+ body.visitor-only.smart-app .poster-shell #poster{border-radius:9px!important;box-shadow:none!important}
+}
