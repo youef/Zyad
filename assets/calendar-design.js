@@ -127,14 +127,6 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  const start=titleY+42,end=1508,cols=s.columns,rows=Math.max(1,Math.ceil(items.length/cols)),gap=s.grid==='ledger'?10:14,tw=(952-(cols-1)*gap)/cols,th=Math.min(cfg.design?.density==='compact'?143:186,(end-start-(rows-1)*gap)/rows);
  items.forEach((item,i)=>tile(c,item,tools.remaining(item,iso),{x:64+(cols-1-i%cols)*(tw+gap),y:start+Math.floor(i/cols)*(th+gap),w:tw,h:th},p,s,nearest,cfg));
  if(!items.length)text(c,'لا توجد مواعيد مضافة',540,start+160,40,p.ink);
- // Footer remains complete in every layout, including branding and a genuinely scannable QR.
- box(c,48,1680,984,172,22,dark?rgba('#071c21',.88):rgba('#fffef9',.96),rgba(p.gold,.62),2);
- const qrShown=cfg.settings?.showQr!==false;const cx=qrShown?635:540,space=qrShown?707:890;
- if(qrShown){box(c,67,1697,140,140,12,'#fff');if(tools.qr){c.imageSmoothingEnabled=false;c.drawImage(tools.qr,75,1705,124,124);c.imageSmoothingEnabled=true;}}
- if(!hasBanner(cfg))text(c,cfg.card?.promo||'بطاقتك اليومية',cx,1718,29,p.ink,space);
- const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join('  •  ');if(!hasBanner(cfg)&&cfg.settings?.showContact!==false&&contact)text(c,contact,cx,1763,25,p.ink,space,'center',600);
- if(!hasBanner(cfg))text(c,cfg.card?.footer||'بطاقتك اليومية',cx,1812,20,p.ink,space,'center',500);
- // Keep the template's native footer intact. The discreet sponsor line is drawn at y=1880.
- text(c,cfg.card?.disclaimer||'المواعيد التقديرية تُراجع مع الجهات الرسمية',540,1904,15,p.ink,948,'center',500);
-}
-export {box,text,paragraph,line,circle,rgba};
+ // Shared transparent footer is rendered once after this calendar template.
+ }
+ export {box,text,paragraph,line,circle,rgba};
