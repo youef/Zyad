@@ -1,4 +1,4 @@
-import {paymentOccurrences,paymentRule,PAYMENT_RULE_LABELS} from './payment-schedule.js?v=1';
+import {paymentOccurrences,paymentRule,PAYMENT_RULE_LABELS} from './payment-schedule.js?v=pay2';
 
 import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=pay1';
 
