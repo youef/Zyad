@@ -20,7 +20,7 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
  await Promise.all([...new Set(d.layers.map(l=>l.font))].map(f=>loadTypeface(f)));await document.fonts.ready;
  const [banner,brand,globalFollow]=await Promise.all([
    bannerForDesign(d),loadImage(d.brand?.logo||'assets/branding/logo-transparent.png').catch(()=>null),getPublishedFollow()]);
- const cardConfig={...globalFollow,follow:{...globalFollow.follow,...(d.follow||{})},advertising:d.advertising||{enabled:true}};const followQR=await buildFollowQr(cardConfig);const [w,h]=d.dimensions;canvas.width=w*scale;canvas.height=h*scale;const c=canvas.getContext('2d');c.scale(scale,scale);
+ const cardConfig={...globalFollow,theme:{...globalFollow.theme,cream:d.background?.color||globalFollow.theme?.cream},follow:{...globalFollow.follow,...(d.follow||{})},advertising:d.advertising||{enabled:true}};const followQR=await buildFollowQr(cardConfig);const [w,h]=d.dimensions;canvas.width=w*scale;canvas.height=h*scale;const c=canvas.getContext('2d');c.scale(scale,scale);
  c.fillStyle=d.background.color||'#f4eee1';c.fillRect(0,0,w,h);
  if(d.background.gradient){const g=c.createLinearGradient(0,0,w,h);g.addColorStop(0,d.background.color);g.addColorStop(1,d.background.gradient);c.fillStyle=g;c.fillRect(0,0,w,h);}
  if(d.background.asset)cover(c,await loadImage(d.background.asset),0,0,w,h);

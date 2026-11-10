@@ -81,7 +81,7 @@ function palette(cfg,f,kind){
  const pale=validColor(theme.cream)?theme.cream:'#f8f4e9';
  const darkArt=kind==='heritage'||kind==='premium'||kind==='night'||(validColor(pale)&&luminance(pale)<.16);
  const mode=f.colorMode;
- const bg=mode==='custom'?f.backgroundColor:mode==='light'?'#fbfaf4':mode==='dark'?green:darkArt?green:pale;
+ const bg=mode==='custom'?f.backgroundColor:mode==='light'?'#fbfaf4':mode==='dark'?(luminance(green)<.34?green:'#073f34'):darkArt?green:pale;
  const dark=luminance(bg)<.35;
  return {bg,fg:mode==='custom'?f.textColor:dark?'#ffffff':'#173f35',
   accent:mode==='custom'?f.accentColor:dark?gold:green,
