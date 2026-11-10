@@ -77,7 +77,6 @@ function detail(record){
   const view=elem('button','btn primary','عرض بطاقة يوم الحدث');view.type='button';
   view.onclick=()=>{location.hash='poster-section';dialog.close();const input=document.getElementById('chosen-date');if(input){input.value=record.date;input.dispatchEvent(new Event('change'));}document.getElementById('poster-section')?.scrollIntoView({behavior:'smooth'});};
   actions.append(view);
-  const create=elem('a','btn primary','إنشاء بطاقة من الحدث');create.href='studio/?template=countdown&date='+saToday()+'&target='+record.date+'&title='+encodeURIComponent(record.title);actions.append(create);
   const share=elem('button','btn secondary','مشاركة الحدث');share.onclick=async()=>{try{const text=record.title+' — '+dayLabel(record.date);if(navigator.share)await navigator.share({title:record.title,text});else await navigator.clipboard.writeText(text);}catch(e){if(e.name!=='AbortError')share.textContent='تعذرت المشاركة';}};actions.append(share);
   const ics=elem('button','btn secondary','إضافة إلى تقويم الجوال');ics.type='button';
   ics.onclick=()=>{
@@ -100,12 +99,12 @@ export function openPlannerEvent(record){if(dialog&&data)detail(record);}
 function renderCalendar(){
   const grid=container.querySelector('#planner-days');grid.replaceChildren();
   const [y,m]=chosenMonth.split('-').map(Number),start=new Date(Date.UTC(y,m-1,1)).getUTCDay(),count=maxDay(y,m);
-  for(const day of ['ح','ن','ث','ر','خ','ج','س'])grid.append(elem('span','planner-weekday',day));
+  for(const day of ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'])grid.append(elem('span','planner-weekday',day));
   for(let k=0;k<start;k++)grid.append(elem('span','planner-spacer'));
   const grouped=new Map();
   for(const r of rows.filter(e=>e.month===chosenMonth))grouped.set(r.date,(grouped.get(r.date)||0)+1);
   for(let d=1;d<=count;d++){
-    const date=chosenMonth+'-'+pad(d),btn=elem('button','planner-day',String(d));btn.type='button';
+    const date=chosenMonth+'-'+pad(d),btn=elem('button','planner-day',String(d));btn.type='button';btn.setAttribute('aria-label',dayLabel(date));btn.setAttribute('aria-pressed',String(date===chosenDate));
     if(date===saToday())btn.classList.add('today');if(date===chosenDate)btn.classList.add('chosen');
     if(grouped.has(date)){btn.classList.add('eventful');btn.title=String(grouped.get(date))+' حدث';}
     btn.onclick=()=>{chosenDate=chosenDate===date?'':date;render();};
@@ -115,21 +114,25 @@ function renderCalendar(){
 function render(){
   container.querySelector('#planner-current-month').textContent=monthLabel(chosenMonth);
   const current=rows.filter(e=>e.month===chosenMonth);
-  container.querySelector('#planner-month-count').textContent=String(current.length)+' أحداث';
+  container.querySelector('#planner-month-count').textContent=String(current.length)+' موعد';
   const rail=container.querySelector('#planner-months');rail.replaceChildren();
   for(let k=0;k<horizon;k++){
     const ym=monthPlus(monthKey(fromDate),k),count=rows.filter(r=>r.month===ym).length,btn=elem('button','planner-month');
     btn.type='button';if(ym===chosenMonth)btn.classList.add('active');
-    attach(btn,elem('strong','',monthLabel(ym)),elem('small','',String(count)+' أحداث'));
+    attach(btn,elem('strong','',monthLabel(ym)),elem('small','',String(count)+' موعد'));
+    btn.setAttribute('aria-pressed',String(ym===chosenMonth));
     btn.onclick=()=>{chosenMonth=ym;chosenDate='';render();};rail.append(btn);
   }
   const q=search.toLocaleLowerCase('ar'),list=container.querySelector('#planner-list');list.replaceChildren();
   const matches=current.filter(e=>(!chosenDate||e.date===chosenDate)&&(kind==='الكل'||e.category===kind)&&(!q||[e.title,e.category,e.item.summary,e.item.details,e.item.notes].filter(Boolean).join(' ').toLocaleLowerCase('ar').includes(q)));
   for(const record of matches){
     const btn=elem('button','planner-event');btn.type='button';
-    attach(btn,attach(elem('div','planner-event-line'),elem('strong','',record.title),elem('span','',remainingLabel(record.days))),
-      elem('small','',dayLabel(record.date)+' · '+eventType(record.item)),
-      elem('p','',record.item.summary||'اضغط على الحدث لمعرفة المزيد'));
+    const badge=elem('span','planner-event-countdown',remainingLabel(record.days));
+    const headline=elem('div','planner-event-line');headline.append(elem('strong','',record.title),badge);
+    const dateRow=elem('div','planner-event-date');dateRow.append(elem('span','planner-event-day-number',String(Number(record.date.slice(-2)))),elem('span','planner-event-month-name',dayLabel(record.date)));
+    const content=elem('div','planner-event-copy');content.append(headline,elem('small','planner-event-category',record.category+' · '+eventType(record.item)),elem('p','',record.item.summary||'اضغط لعرض الموعد والتفاصيل'));
+    btn.append(dateRow,content);
+    btn.setAttribute('aria-label',record.title+'، '+dayLabel(record.date)+'، '+remainingLabel(record.days));
     btn.onclick=()=>detail(record);list.append(btn);
   }
   if(!matches.length)list.append(elem('p','planner-empty','لا توجد أحداث مطابقة في هذا الشهر.'));
@@ -140,30 +143,24 @@ function render(){
   renderCalendar();
 }
 export function mountPlanner(config,selected=saToday()){
-  let custom=[];try{custom=JSON.parse(localStorage.getItem('zyad-custom-events')||'[]');}catch{}data={...config,counters:[...(config.counters||[]),...custom]};fromDate=selected;horizon=[1,3,6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;rows=futureEvents(data,fromDate,horizon);
+  data={...config,counters:[...(config.counters||[])]};fromDate=selected;horizon=[1,3,6,12,24].includes(Number(config.settings?.plannerMonths))?Number(config.settings.plannerMonths):12;rows=futureEvents(data,fromDate,horizon);
   container=document.getElementById('smart-planner');
   if(!container)return;
   if(!container.dataset.initialized){
     const heading=elem('div','planner-heading');
-    const h=elem('div');attach(h,elem('span','eyebrow','تقويم ذكي'),elem('h2','','شهورك القادمة في مكان واحد'),elem('p','','تقويم تفاعلي للشهور الاثني عشر المقبلة، مع تفاصيل كل حدث والعد التنازلي.'));
+    const h=elem('div','planner-hero-copy');attach(h,elem('span','eyebrow','رزنامة السعودية · المواعيد'),elem('h2','','تقويمك، كل المواعيد'),elem('p','','تابع المناسبات والاستحقاقات في تقويم واضح، واعرف ما ينتظرك يومًا بيوم.'));
     const stats=elem('div','planner-stat-row');
-    for(const [title,id] of [['أقرب حدث','planner-next-title'],['المتبقي','planner-next-time'],['مجموع المواعيد','planner-total']]){
+    for(const [title,id] of [['الموعد القادم','planner-next-title'],['الوقت المتبقي','planner-next-time'],['إجمالي المواعيد','planner-total']]){
       const wrap=elem('div','planner-stat');attach(wrap,elem('small','',title),elem('strong','',title==='مجموع المواعيد'?'0':'—'));wrap.querySelector('strong').id=id;stats.append(wrap);
     }
     attach(heading,h,stats);
-    const range=elem('label','planner-range','مدى عرض المستقبل');
+    const range=elem('label','planner-range','الفترة المعروضة');
     const rangePicker=elem('select');rangePicker.setAttribute('aria-label','عدد الأشهر القادمة');
     for(const n of [1,3,6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);rangePicker.append(option);}
     rangePicker.value=String(horizon);
     rangePicker.onchange=()=>{horizon=Number(rangePicker.value);rows=futureEvents(data,fromDate,horizon);chosenMonth=monthKey(fromDate);chosenDate='';render();};
     range.append(rangePicker);
-    const add=elem('button','btn secondary','＋ حدث شخصي');add.type='button';add.onclick=()=>{
-      const form=elem('dialog','planner-dialog'),title=elem('h3','','حدث على هذا الجهاز'),fields={};
-      const close=elem('button','','إغلاق');close.onclick=()=>{form.close();form.remove();};form.append(close,title);
-      for(const [key,label,type]of [['label','اسم الحدث','text'],['date','التاريخ الميلادي','date'],['day','يوم الشهر / اليوم الهجري','number'],['hijriMonth','الشهر الهجري','number'],['details','الوصف','text'],['location','المكان','text'],['link','الرابط','url']]){const wrap=elem('label','field',label),input=elem('input');input.type=type;input.maxLength=350;fields[key]=input;wrap.append(input);form.append(wrap);}fields.date.value=selected;fields.day.value='1';fields.hijriMonth.value='9';
-      const mode=elem('select');for(const [v,t]of [['once','مرة واحدة'],['yearly','سنوي'],['monthly','شهري'],['hijri','هجري سنوي']]){const o=elem('option','',t);o.value=v;mode.append(o);}const modeLabel=elem('label','field','التكرار');modeLabel.append(mode);form.append(modeLabel);const save=elem('button','btn primary','حفظ الحدث'),msg=elem('p');form.append(save,msg);
-      save.onclick=()=>{if(!fields.label.value.trim()){msg.textContent='أدخل اسم الحدث';return;}const m=mode.value,rec={id:crypto.randomUUID(),label:fields.label.value.trim(),mode:m==='once'||m==='yearly'?'date':m,repeat:m==='yearly'?'yearly':'none',date:fields.date.value,day:Math.max(1,Math.min(31,Number(fields.day.value)||1)),hijriMonth:Math.max(1,Math.min(12,Number(fields.hijriMonth.value)||9)),hijriDay:Math.max(1,Math.min(30,Number(fields.day.value)||1)),details:fields.details.value,location:fields.location.value,link:fields.link.value,category:'أحداثي',custom:true,enabled:true};try{const list=JSON.parse(localStorage.getItem('zyad-custom-events')||'[]');if(list.length>=100)throw Error('الحد الأقصى 100 حدث شخصي');list.push(rec);localStorage.setItem('zyad-custom-events',JSON.stringify(list));data.counters.push(rec);rows=futureEvents(data,fromDate,horizon);form.close();form.remove();render();}catch(e){msg.textContent=e.message;}};document.body.append(form);form.showModal();};range.append(add);
-    const months=elem('div','planner-months');months.id='planner-months';
+    const months=elem('div','planner-months');months.id='planner-months';months.setAttribute('aria-label','اختيار الشهر');
     const content=elem('div','planner-content'),aside=elem('aside','planner-calendar'),right=elem('div','planner-results');
     const top=elem('div','planner-calendar-head');const title=elem('h3');title.id='planner-current-month';
     const counter=elem('small');counter.id='planner-month-count';
@@ -171,16 +168,17 @@ export function mountPlanner(config,selected=saToday()){
     clear.onclick=()=>{chosenDate='';render();};
     attach(top,attach(elem('div'),title,counter),clear);aside.append(top);
     const days=elem('div','planner-days');days.id='planner-days';attach(aside,days,elem('p','planner-hint','الأيام المميزة تحتوي على مواعيد.'));
+    const resultsHeading=elem('div','planner-results-heading');resultsHeading.append(elem('h3','','مواعيد الشهر'),elem('small','','اختر الموعد لعرض التفاصيل'));right.append(resultsHeading);
     const filters=elem('div','planner-filters');
-    const searchBox=elem('label','planner-field','بحث');const input=elem('input');input.type='search';input.placeholder='ابحث باسم الحدث...';
-    input.oninput=()=>{search=input.value;render();};searchBox.append(input);
+    const searchBox=elem('label','planner-field','ابحث عن موعد');const input=elem('input');input.type='search';input.placeholder='ابحث باسم الحدث...';
+    input.setAttribute('aria-label','البحث في المواعيد');input.oninput=()=>{search=input.value;render();};searchBox.append(input);
     const categoryBox=elem('label','planner-field','الفئة');const select=elem('select');
     let choices=['الكل',...new Set((data.counters||[]).filter(c=>c.enabled!==false&&c.mode!=='manual').map(c=>c.category||eventType(c)))];
     for(const choice of choices){const op=elem('option','',choice);op.value=choice;select.append(op);}
     select.onchange=()=>{kind=select.value;render();};categoryBox.append(select);
     attach(filters,searchBox,categoryBox);right.append(filters);
     const list=elem('div','planner-list');list.id='planner-list';right.append(list);
-    attach(content,aside,right);attach(container,heading,range,months,content);
+    attach(content,aside,right);const sectionTitle=elem('div','planner-months-heading');sectionTitle.append(elem('h3','','استعرض الشهور'),elem('span','','اختر الشهر الذي تريده'));attach(container,heading,range,sectionTitle,months,content);
     dialog=elem('dialog','planner-dialog');document.body.append(dialog);
     container.dataset.initialized='true';
   }
