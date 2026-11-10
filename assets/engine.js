@@ -38,7 +38,7 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
   if(['image','logo','decoration'].includes(l.type)){
    if(l.src)cover(c,await loadImage(l.src),box.x,box.y,bw,bh,l.type==='decoration'?'contain':l.fit||'cover');
   }else if(l.type==='qr'){
-   if(!globalThis.ZyadQR)throw Error('مكتبة QR غير جاهزة');const qr=document.createElement('canvas');await globalThis.ZyadQR.toCanvas(qr,l.text,{width:Math.round(bw),margin:2,errorCorrectionLevel:'M'});c.drawImage(qr,box.x,box.y,bw,bw);box.h=bw;
+   if(!globalThis.ZyadQR)throw Error('مكتبة QR غير جاهزة');const qr=document.createElement('canvas');await globalThis.ZyadQR.toCanvas(qr,l.text,{width:Math.round(bw),margin:2,errorCorrectionLevel:'M'});box.y=y-bw/2;box.h=bw;c.imageSmoothingEnabled=false;c.drawImage(qr,box.x,box.y,bw,bw);c.imageSmoothingEnabled=true;
   }else if(l.type==='shape'){
    c.beginPath();if(l.shape==='circle')c.ellipse(x,y,bw/2,bh/2,0,0,Math.PI*2);else c.roundRect(box.x,box.y,bw,bh,16);c.fill();if(l.border)c.stroke();
   }else{
