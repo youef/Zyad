@@ -59,7 +59,7 @@ function detail(record){
   const hero=elem('div','planner-modal-hero');
   attach(hero,elem('span','planner-chip',record.category),elem('h3','',record.title),elem('p','',item.summary||item.details||'تفاصيل هذا الحدث'));
   const facts=elem('div','planner-modal-facts');
-  for(const [k,v]of [['الميلادي',dayLabel(record.date)],['الهجري',hijriDate(record.date,data)],['المتبقي',remainingLabel(record.days)],['التكرار',eventType(item)],['المنطقة الزمنية','Asia/Riyadh'],['حالة الموعد',item.custom?'مخصص':item.source?'راجع المصدر المرفق':'تقديري — راجع الجهة المختصة']]){
+  for(const [k,v]of [['الميلادي',dayLabel(record.date)],['الهجري',hijriDate(record.date,data)],['المتبقي',remainingLabel(record.days)],['التكرار',eventType(item)],...(item.mode==='monthly'?[['سياسة عطلة الأسبوع',PAYMENT_RULE_LABELS[paymentRule(item)]||'بدون تعديل']]:[]),['المنطقة الزمنية','Asia/Riyadh'],['حالة الموعد',item.custom?'مخصص':item.source?'راجع المصدر المرفق':'تقديري — راجع الجهة المختصة']]){
     attach(facts,attach(elem('div'),elem('small','',k),elem('strong','',v)));
   }
   const body=elem('div','planner-modal-body');
