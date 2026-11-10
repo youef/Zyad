@@ -19,7 +19,7 @@ function setupGalleryControls(){
  root.replaceChildren();
  for(const category of categories){
   const button=document.createElement('button');
-  button.type='button';button.textContent=category;button.dataset.category=category;
+  button.type='button';button.textContent=category==='الكل'?'الكل · '+CARD_PRESETS.length:category+' · '+CARD_PRESETS.filter(p=>(p.category||'تصاميم متنوعة')===category).length;button.dataset.category=category;
   button.className='gallery-category-chip'+(galleryCategory===category?' active':'');
   button.setAttribute('aria-pressed',String(galleryCategory===category));
   button.onclick=()=>{
@@ -74,8 +74,9 @@ function filterCalendarGallery(){
   empty.textContent=favoriteMode&&!fav.size?'لا توجد تصاميم مفضلة بعد. اضغط على القلب في معرض التصاميم لحفظها.':'لا توجد تصاميم مطابقة. جرّب تصنيفًا أو كلمة بحث أخرى.';
  }
  const count=$('#gallery-visible-count');if(count)count.textContent=visible+' تصميم';
- const title=$('#template-gallery .gallery-hero-copy h2');if(title)title.textContent=favoriteMode?'تصاميمك المفضلة.':'بطاقتك، بذوقك.';
+ const title=$('#template-gallery .gallery-head h2');if(title)title.textContent=favoriteMode?'المفضلة':'اختر بطاقتك';
  const label=$('#visitor-favorites-description');if(label)label.hidden=!favoriteMode;
+ const selected=CARD_PRESETS.find(p=>p.id===activePreset);const selectedName=$('#gallery-selected-name');if(selectedName)selectedName.textContent=selected?.name||'بطاقة اليوم';const selectedCategory=$('#gallery-selected-category');if(selectedCategory)selectedCategory.textContent=selected?.category||'تصميم يومي';
 }
 setupGalleryControls();
 $('#calendar-search').addEventListener('input',e=>{gallerySearch=e.target.value.trim();filterCalendarGallery();});
@@ -155,19 +156,19 @@ function renderGallery(){
   if(preset.id===activePreset)item.classList.add('active');
   const select=document.createElement('button');select.type='button';select.className='public-template-select';
   select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
-  const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.hidden=true;img.alt='بطاقة قالب '+preset.name;img.src='images/templates/'+preset.id+'.webp';
-  img.addEventListener('error',()=>{img.hidden=true;});
+  const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.hidden=true;img.alt='بطاقة قالب '+preset.name;
+  img.addEventListener('error',()=>{img.hidden=true;previewDate.textContent='معاينة توضيحية';});
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">رزنامة السعودية</span><span class="visitor-preview-date">بطاقة اليوم</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
-  img.addEventListener('load',()=>{img.hidden=false;fallback.hidden=true;item.dataset.previewState='ready';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
+  img.addEventListener('load',()=>{img.hidden=false;fallback.hidden=true;item.dataset.previewState='ready';previewDate.textContent='جاهز للعرض';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
   const badge=document.createElement('span');badge.className='gallery-card-badge';badge.textContent=preset.category||'تصميم';
   const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
   const heading=document.createElement('strong');heading.textContent=preset.name;
   const desc=document.createElement('small');desc.textContent=preset.description;
-  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='جارٍ تجهيز تاريخ '+dateInput.value;
+  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';img.src='images/templates/'+preset.id+'.webp';
   const frame=document.createElement('span');frame.className='gallery-card-frame';frame.append(img,fallback,art,badge,chosen);select.append(frame,heading,desc,previewDate);
-  select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});await refresh();say('تم اختيار تصميم '+preset.name+'، يمكنك عرضه وحفظه من بطاقة اليوم.');};
+  select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});filterCalendarGallery();await refresh();say('تم اختيار تصميم '+preset.name+'، يمكنك عرضه وحفظه من بطاقة اليوم.');};
   const actions=document.createElement('div');actions.className='visitor-template-actions';const favorite=document.createElement('button');favorite.className='visitor-template-fav';favorite.type='button';favorite.textContent=isFavorite(preset.id)?'♥':'♡';favorite.setAttribute('aria-label',isFavorite(preset.id)?'إزالة من المفضلة':'إضافة إلى المفضلة');favorite.setAttribute('aria-pressed',String(isFavorite(preset.id)));favorite.onclick=()=>favoriteTemplate(preset.id);const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
-  download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ التوليد...';try{await exportPreset(preset.id);}catch(e){say('فشل التوليد: '+e.message);}finally{download.disabled=false;download.textContent='تنزيل هذا التصميم';}};
+  download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ الحفظ…';try{await exportPreset(preset.id);}catch(e){say('تعذر حفظ التصميم: '+e.message);}finally{download.disabled=false;download.textContent='حفظ الصورة ↓';}};
   actions.append(download,favorite);item.append(select,actions);grid.append(item);galleryObserver.observe(item);
  }
  const empty=document.createElement('p');empty.id='visitor-gallery-empty';empty.className='visitor-gallery-empty';empty.hidden=true;grid.append(empty);filterCalendarGallery();
