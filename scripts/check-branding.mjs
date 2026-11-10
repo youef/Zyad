@@ -14,7 +14,7 @@ assert(source.size>1000&&source.width>=100&&source.height>=100,'Official source 
 const config=JSON.parse(await read('data/config.json'));
 assert(typeof config.brand.logo==='string'&&(/^(?:assets\/branding\/logo(?:-transparent)?\.png|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$/.test(config.brand.logo)),'Official logo or valid administrator-provided transparent override expected');
 const transparent=await png('assets/branding/logo-transparent.png');assert(transparent.width>30&&transparent.height>30,'Transparent brand missing');
-assert(typeof config.brand.name==='string'&&config.brand.name.trim().length>0&&config.brand.name.length<=80,'Published custom brand name must be nonblank');
+assert(typeof config.brand.name==='string'&&config.brand.name.length<=80,'Custom brand name may intentionally be blank when only the logo is shown');
 for(const size of [180,192,512]){
  const asset=await png('assets/app-'+size+'.png');
  assert.equal(asset.width,size);assert.equal(asset.height,size);
