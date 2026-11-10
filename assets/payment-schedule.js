@@ -11,20 +11,17 @@ export const PAYMENT_RULE_LABELS=Object.freeze({
  previous_workday:'الجمعة والسبت → الخميس السابق',
  next_workday:'الجمعة والسبت → الأحد التالي'
 });
-// Apply only when the item's administrator has enabled a rule, or when a
-// verified program has the established recurring rule.
-export const DEFAULT_PAYMENT_RULES=Object.freeze({
- salary:'previous_thursday_next_sunday',
- citizen:'previous_thursday_next_sunday',
- social:'previous_thursday_next_sunday'
-});
+// Platform-wide default for all recurring Gregorian monthly payments.
+// This is a prediction, not proof of an official provider disbursement date.
+// The administrator can set paymentRule:'none' or supply a monthly override.
+export const DEFAULT_MONTHLY_PAYMENT_RULE='previous_thursday_next_sunday';
 export const validIso=s=>/^\d{4}-\d{2}-\d{2}$/.test(s||'')&&!Number.isNaN(Date.parse(s+'T12:00:00Z'))&&new Date(s+'T12:00:00Z').toISOString().slice(0,10)===s;
 export const addDate=(s,n)=>{const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
 export const monthDay=(y,m,day)=>`${y}-${pad(m)}-${pad(Math.min(new Date(Date.UTC(y,m,0)).getUTCDate(),Math.max(1,Math.floor(Number(day)||1))))}`;
 export function paymentRule(item={}){
  const configured=item.paymentRule;
  if(configured&&Object.prototype.hasOwnProperty.call(PAYMENT_RULE_LABELS,configured))return configured;
- return item.mode==='monthly'?(DEFAULT_PAYMENT_RULES[item.id]||'none'):'none';
+ return item.mode==='monthly'?DEFAULT_MONTHLY_PAYMENT_RULE:'none';
 }
 export function adjustPaymentDate(date,rule='none'){
  if(!validIso(date))return date;
