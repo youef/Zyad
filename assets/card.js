@@ -1,6 +1,6 @@
 import {renderPremium} from './design.js?v=20261104r4';
 import {bannerForPoster} from './advertising.js?v=working24';
-import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=follow1';
+import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=follow2';
 import {renderHeritage} from './heritage-premium.js?v=20261109v2';
 import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js';
