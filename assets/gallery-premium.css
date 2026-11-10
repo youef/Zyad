@@ -133,3 +133,34 @@ body.visitor-only .public-template-card.active .gallery-card-chosen{display:bloc
  body.visitor-only .gallery-selected-view{grid-column:1/-1;width:100%}
  body.visitor-only .gallery-total-pill{display:none}
 }
+
+/* Fix WebKit lazy-image deadlock: keep images in layout, invisible until decoded.
+   Never use the HTML hidden attribute on a lazy-loaded thumbnail. */
+body.visitor-only .public-template-card .gallery-card-frame .gallery-template-image{
+ display:block!important;
+ opacity:0;
+ visibility:visible!important;
+ position:absolute!important;
+ inset:0;
+ width:100%!important;
+ height:100%!important;
+ object-fit:cover;
+ pointer-events:none;
+ z-index:2;
+ transition:opacity .18s ease;
+}
+body.visitor-only .public-template-card .gallery-card-frame .gallery-template-image.is-loaded{
+ opacity:1!important;
+}
+body.visitor-only .public-template-card .gallery-card-frame .gallery-template-image.is-error{
+ opacity:0!important;
+}
+body.visitor-only .public-template-card .gallery-card-frame .public-template-fallback{
+ z-index:1;
+}
+body.visitor-only .public-template-card .gallery-card-frame .public-template-art:not([hidden]){
+ z-index:2;
+}
+@media(prefers-reduced-motion:reduce){
+ body.visitor-only .public-template-card .gallery-card-frame .gallery-template-image{transition:none}
+}
