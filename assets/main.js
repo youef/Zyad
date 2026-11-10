@@ -48,8 +48,44 @@ async function exportPreset(id){
 function renderGallery(){
  const revision=++galleryRevision;galleryObserver?.disconnect();
  const grid=$('#public-template-grid');if(!grid)return;grid.replaceChildren();
- let pending=Promise.resolve();
- galleryObserver=new IntersectionObserver(entries=>{for(const entry of entries){if(!entry.isIntersecting)continue;galleryObserver.unobserve(entry.target);const card=entry.target,id=card.dataset.preset,selectedDate=dateInput.value;pending=pending.then(async()=>{if(revision!==galleryRevision)return;try{const art=card.querySelector('.public-template-art');await renderPoster(art,activeConfig(id),selectedDate,{preview:true,scale:.5});if(revision!==galleryRevision)return;art.hidden=false;card.querySelector('img').hidden=true;card.querySelector('.public-template-fallback').hidden=true;card.querySelector('.preview-date').textContent='معاينة بتاريخ '+selectedDate;}catch(e){card.querySelector('.preview-date').textContent='تعذرت المعاينة — أعد المحاولة';}});}}, {rootMargin:'180px'});
+ // Static WebP previews load immediately. Only missing previews are rendered on demand.
+ const queue=[];let working=false;
+ async function processQueue(){
+  if(working)return;working=true;
+  while(queue.length&&revision===galleryRevision){
+   const card=queue.shift();
+   if(!card?.isConnected||card.hidden||card.dataset.previewState==='ready')continue;
+   const image=card.querySelector('img');
+   if(image.complete&&image.naturalWidth){card.dataset.previewState='ready';continue;}
+   try{
+    const art=card.querySelector('.public-template-art');
+    await renderPoster(art,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35});
+    if(revision!==galleryRevision)break;
+    art.hidden=false;image.hidden=true;card.querySelector('.public-template-fallback').hidden=true;
+    card.querySelector('.preview-date').textContent='معاينة البطاقة';
+    card.dataset.previewState='ready';
+   }catch(error){
+    card.querySelector('.preview-date').textContent='معاينة بديلة متاحة';
+    card.dataset.previewState='fallback';
+   }
+   // Return control to Safari between expensive canvas renders.
+   await new Promise(resolve=>setTimeout(resolve,0));
+  }
+  working=false;
+ }
+ galleryObserver=new IntersectionObserver(entries=>{
+  for(const entry of entries){
+   if(!entry.isIntersecting)continue;
+   const card=entry.target;galleryObserver.unobserve(card);
+   if(card.dataset.previewState==='ready')continue;
+   const image=card.querySelector('img');
+   if(image.complete&&!image.naturalWidth){queue.push(card);void processQueue();}
+   else if(image.complete&&image.naturalWidth){card.dataset.previewState='ready';}
+   else{
+    image.addEventListener('error',()=>{if(revision===galleryRevision){queue.push(card);void processQueue();}},{once:true});
+   }
+  }
+ },{rootMargin:'120px'});
  for(const preset of CARD_PRESETS){
   const item=document.createElement('article');item.className='public-template-card';item.dataset.preset=preset.id;
   if(preset.id===activePreset)item.classList.add('active');
@@ -58,7 +94,7 @@ function renderGallery(){
   const img=document.createElement('img');img.src='images/templates/'+preset.id+'.webp';img.loading='lazy';img.alt='بطاقة قالب '+preset.name;
   img.addEventListener('error',()=>{img.hidden=true;});
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">رزنامة السعودية</span><span class="visitor-preview-date">بطاقة اليوم</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
-  img.addEventListener('load',()=>{fallback.hidden=true;});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
+  img.addEventListener('load',()=>{fallback.hidden=true;item.dataset.previewState='ready';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
   const heading=document.createElement('strong');heading.textContent=preset.name;
   const desc=document.createElement('small');desc.textContent=preset.description;
   const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='جارٍ تجهيز تاريخ '+dateInput.value;
@@ -74,7 +110,7 @@ async function refresh(){
  if(!config)return;const id=++renderId;syncQuickDays();say('جارٍ توليد البطاقة...');
  try{
   const temp=document.createElement('canvas'),snapshot=JSON.parse(JSON.stringify(config));
-  await renderPoster(temp,snapshot,dateInput.value);
+  await renderPoster(temp,snapshot,dateInput.value,{preview:true,scale:.65});
   if(id!==renderId)return;
   canvas.width=temp.width;canvas.height=temp.height;canvas.getContext('2d').drawImage(temp,0,0);
   mountPlanner(config,dateInput.value);
