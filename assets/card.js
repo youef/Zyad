@@ -3,7 +3,7 @@ import {bannerForPoster} from './advertising.js?v=working24';
 import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=follow2';
 import {renderHeritage} from './heritage-premium.js?v=footer3';
 import {presetInfo} from './templates.js';
-import {renderCalendar} from './calendar-design.js?v=footer3';
+import {renderCalendar} from './calendar-design.js?v=footer4';
 import {renderListCalendar} from './list-calendar.js?v=footer3';
 import {drawDailyPanel} from './daily-panel.js';
 import {resolveContent} from './daily.js';
