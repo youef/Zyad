@@ -98,17 +98,5 @@ export function renderPremium(ctx,cfg,iso,tools){
  const h=Math.min(compact?116:155,Math.floor((1515-(883+lift))/rows)-11),space=compact?10:14;
  items.forEach((item,i)=>counter(ctx,item,780-i%4*240,885+lift+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false));
  if(!items.length)label(ctx,'لا توجد مواعيد مضافة',540,1170,46,dark?'#fff':soft);
- ctx.strokeStyle=rgba(gold,.8);ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(58,1641);ctx.lineTo(1021,1641);ctx.stroke();
- if(!hasBanner(cfg))label(ctx,cfg.card?.promo||'تابع البطاقة اليومية',604,1685,32,dark?'#f9e6bd':green,735);
- const contact=[cfg.card?.phone,cfg.card?.social].filter(Boolean).join(' • ');
- if(!hasBanner(cfg)&&cfg.settings?.showContact!==false&&contact)label(ctx,contact,605,1731,26,dark?'#ddd3ae':soft,725);
- if(cfg.settings?.showQr!==false){
-  round(ctx,64,1656,188,188,17,'#fff',gold,3);
-  if(tools.qr)ctx.drawImage(tools.qr,77,1669,162,162);
-  else label(ctx,'QR',157,1740,47,green);
- }
- if(!hasBanner(cfg))label(ctx,cfg.card?.footer||'بطاقتك اليومية',604,1792,22,dark?'#d6ceb7':ink,730);
- ctx.fillStyle=dark?'#154b42':green;ctx.fillRect(0,1843,1080,77);
- label(ctx,cfg.card?.disclaimer||'المواعيد التقديرية تخضع للجهات الرسمية',540,1906,15,'#f6e8bb',1030);
-}  // Shared footer owns the ad, contact channels, QR and single disclaimer.
- }
+ // Shared transparent footer is rendered by drawCombinedFooter().
+}
