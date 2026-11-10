@@ -29,7 +29,7 @@ try{
    const p=a.getContext('2d').getImageData(0,0,a.width,a.height).data;
    const q=b.getContext('2d').getImageData(0,0,b.width,b.height).data;
    let bannerArea=0,topArea=0;
-   const cutoff=Math.floor(a.height*.76);
+   const cutoff=Math.floor(a.height*.70);
    for(let y=0;y<a.height;y++)for(let x=0;x<a.width;x++){
     const i=(y*a.width+x)*4;
     if(Math.abs(p[i]-q[i])+Math.abs(p[i+1]-q[i+1])+Math.abs(p[i+2]-q[i+2])>55){
