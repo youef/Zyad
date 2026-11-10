@@ -20,7 +20,7 @@ export function resolveFollow(cfg={}){
  return {
   enabled:f.enabled!==false,
   title:clean(f.title,base.title,90),subtitle:clean(f.subtitle,base.subtitle,100),
-  showTitle:f.showTitle!==false,showQr:f.showQr!==false&&cfg.settings?.showQr!==false,
+  showTitle:f.showTitle!==false,showQr:f.showQr==null?cfg.settings?.showQr!==false:f.showQr!==false,
   qrCaption:clean(f.qrCaption,base.qrCaption,34),
   qrUrl:clean(f.qrUrl||c.qrUrl||defaultUrl,defaultUrl,350),
   showWhatsapp:f.showWhatsapp!==false,
@@ -163,11 +163,15 @@ export function drawCombinedFooter(c,cfg,banner,qr,{kind='calendar',dimensions=[
  const f=resolveFollow(cfg),hasBanner=cfg.advertising?.enabled!==false&&!!banner;
  const g=footerGeometry(dimensions,kind),p=palette(cfg,f,kind);
  c.save();
- // This region is part of the image itself and shares the template palette.
- rect(c,g.x,g.y,g.w,g.h,Math.min(f.radius+6,26),p.dark?'rgba(2,41,33,.91)':'rgba(255,253,247,.96)',p.border,1.5);
+ const bottom=g.y+g.h;
+ // Keep the two blocks independent; hiding one must not leave its empty slot.
+ const start=hasBanner&&f.enabled?g.y:hasBanner?g.follow.y-23:
+   dimensions[0]===1080&&dimensions[1]===1920?1640:g.follow.y-28;
+ rect(c,g.x,start,g.w,bottom-start,Math.min(f.radius+6,26),
+   p.dark?'rgba(2,41,33,.96)':'rgba(255,253,247,.98)',p.border,1.5);
  if(hasBanner){
-  // The advertised 5:1 artwork preserves its exact ratio and never obscures the QR.
-  bannerInside(c,banner,g.ad.x,g.ad.y,g.ad.w,g.ad.h,12);
+   const place=f.enabled?g.ad:{...g.ad,y:g.follow.y-8};
+   bannerInside(c,banner,place.x,place.y,place.w,place.h,12);
  }
  if(f.enabled)followBlock(c,cfg,qr,g.follow,kind);
  if(g.noteY)line(c,cfg.card?.disclaimer||'المواعيد تقديرية؛ راجع الجهة الرسمية',dimensions[0]/2,g.noteY,15,p.fg,dimensions[0]*.88,500);

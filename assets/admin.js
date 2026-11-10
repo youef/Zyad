@@ -190,7 +190,7 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
   initTemplates();
   tab($(".tab.active").dataset.tab);
   $('#export-json').addEventListener('click',()=>downloadFile('zyad-config.json',new Blob([JSON.stringify(config,null,2)],{type:'application/json;charset=utf-8'})));
-  $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();redrawSavedDesigns();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
+  $('#restore-original').addEventListener('click',()=>{if(!confirm('هل تريد تجاهل تعديلاتك المحلية والعودة إلى النسخة المنشورة؟'))return;config=cloneConfig(published);config.follow={...cloneConfig(FOLLOW_DEFAULTS),...(config.follow||{})};localStorage.removeItem(DRAFT_KEY);syncFields();buildCounters();syncTemplate();redrawSavedDesigns();syncPreview();draftStatus.textContent='تمت استعادة النسخة المنشورة';});
   $('#publish-config').addEventListener('click',publish);
   $('#quick-save').addEventListener('click',()=>{tab('publish');void publish();});
 }
@@ -198,7 +198,7 @@ function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.add
 let saving=false;
 async function publish(){
  if(!config||saving)return;
- validateFollow(config.follow);
+ try{validateFollow(config.follow);}catch(error){setStatus('تحقق من بيانات قسم المتابعة: '+error.message,false);return;}
  saving=true;
  const button=$('#publish-config');button.disabled=true;
  const label=button.textContent;button.textContent='جارٍ الحفظ...';
