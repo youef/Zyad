@@ -1,3 +1,4 @@
+import {PAYMENT_RULE_LABELS,paymentRule,nextPaymentDate} from './payment-schedule.js?v=1';
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {prepareBanner,compactBanner} from './advertising.js?v=banner25';
 import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=follow1';
@@ -139,6 +140,24 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
   fields.append(inputField('العنوان',item.label,'text',v=>{item.label=v.slice(0,35);title.textContent=`${i+1}. ${item.label}`;changed();}));
   fields.append(selectField('طريقة الحساب',item.mode,[['monthly','شهري'],['date','تاريخ محدد'],['hijri','هجري متكرر'],['manual','رقم يدوي']],v=>{item.mode=v;buildCounters();changed();}));
   if(item.mode==='monthly')fields.append(inputField('يوم الشهر (1–31)',item.day||1,'number',v=>{item.day=Math.max(1,Math.min(31,Math.floor(v)||1));changed();}));
+  if(item.mode==='monthly'){
+    fields.append(selectField('تعديل عطلة نهاية الأسبوع',paymentRule(item),
+      Object.entries(PAYMENT_RULE_LABELS).map(([value,label])=>[value,label]),
+      v=>{item.paymentRule=v;buildCounters();changed();}));
+    const official=document.createElement('label');official.className='field';
+    official.textContent='موعد استثنائي رسمي لهذا الشهر (اختياري)';
+    const ym=dateField.value.slice(0,7);
+    const extra=document.createElement('input');extra.type='date';extra.value=item.paymentOverrides?.[ym]||'';
+    extra.addEventListener('change',()=>{
+      item.paymentOverrides||={};
+      if(extra.value)item.paymentOverrides[ym]=extra.value;
+      else delete item.paymentOverrides[ym];
+      changed();
+    });official.append(extra);fields.append(official);
+    const hint=document.createElement('small');hint.className='tip';
+    hint.textContent='الموعد القادم الفعلي: '+(nextPaymentDate(item,dateField.value)||'غير محدد')+' · الاستثناء مرتبط بالشهر '+ym;
+    fields.append(hint);
+  }
   if(item.mode==='date'){
     fields.append(inputField('تاريخ الموعد',item.date||saToday(),'date',v=>{item.date=v;changed();}));
     fields.append(selectField('التكرار',item.repeat||'none',[['none','مرة واحدة'],['yearly','كل سنة ميلادية']],v=>{item.repeat=v;changed();}));
