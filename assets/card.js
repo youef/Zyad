@@ -1,3 +1,4 @@
+import {nextPaymentDate} from './payment-schedule.js?v=1';
 import {renderPremium} from './design.js?v=footer3';
 import {bannerForPoster} from './advertising.js?v=working24';
 import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=follow2';
@@ -45,15 +46,8 @@ export function remaining(item, iso) {
   }
 
   if (item.mode === 'monthly') {
-    const [y,m,d] = iso.split('-').map(Number);
-    const day = Math.min(31,Math.max(1,Math.floor(Number(item.day)||1)));
-    const candidate = (year,month) => {
-      const actual = Math.min(day,new Date(Date.UTC(year,month,0)).getUTCDate());
-      return `${year}-${String(month).padStart(2,'0')}-${String(actual).padStart(2,'0')}`;
-    };
-    let target=candidate(y,m);
-    if (target < iso) {const next=new Date(Date.UTC(y,m,1));target=candidate(next.getUTCFullYear(),next.getUTCMonth()+1);}
-    return Math.max(0,daysBetween(iso,target));
+    const target=nextPaymentDate(item,iso);
+    return target?Math.max(0,daysBetween(iso,target)):0;
   }
   if (item.mode === 'date' && /^\d{4}-\d{2}-\d{2}$/.test(item.date||'')) {
     let target=item.date;
