@@ -17,7 +17,7 @@ function updateText(node,lang){
 }
 function updateAttrs(node,lang){
  if(!canTranslate(node))return;
- const attrs=['placeholder','aria-label','title'];
+ const attrs=['placeholder','aria-label','title','alt'];
  for(const name of attrs){
   if(!node.hasAttribute(name))continue;
   const value=node.getAttribute(name);
@@ -43,7 +43,7 @@ function schedule(){
  queueMicrotask(()=>{scheduled=false;updateAll()});
 }
 const observer=new MutationObserver(schedule);
-observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
+observer.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','aria-label','title','alt']});
 window.addEventListener('zyad-language-change',schedule);
 window.addEventListener('zyad-calendar-updated',schedule);
 window.addEventListener('zyad-route-updated',schedule);
