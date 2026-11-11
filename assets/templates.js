@@ -8,7 +8,11 @@ export const CARD_PRESETS=Object.freeze([
  {id:'desert',name:'الصحراء الملكية',description:'هوية رملية ولمسات نحاسية',symbol:'◆',theme:{green:'#693f30',greenLight:'#9a6945',gold:'#bd9259',cream:'#fbf0df',ink:'#5d3d2c'}},
  {id:'pearl',name:'اللؤلؤة',description:'عاجي ونفحات نعناع',symbol:'◇',theme:{green:'#166d5b',greenLight:'#4d9e86',gold:'#bc9555',cream:'#fffdf8',ink:'#155947'}},
  {id:'heritage',name:'التراثي',description:'المدالية الكلاسيكية والزخرفة الأصيلة',symbol:'❖',theme:{green:'#064b43',greenLight:'#37765e',gold:'#c99a42',cream:'#f8f5ea',ink:'#103f38'}}
-].map(p=>({...p,category:'التقويم الكلاسيكي',calendar:CLASSIC_COMPOSITIONS[p.id]})).concat(CALENDAR_PRESETS,LIST_PRESETS));
+].map(p=>({...p,category:'التقويم الكلاسيكي',calendar:CLASSIC_COMPOSITIONS[p.id]})).concat(CALENDAR_PRESETS,LIST_PRESETS,[
+ {id:'inspire-botanical',name:'إشراقة الورد',description:'بطاقة يومية إيمانية بالورود والزخارف الهادئة',category:'بطاقات يومية فاخرة',symbol:'❀',theme:{green:'#07564f',greenLight:'#4c8b83',gold:'#bc9857',cream:'#fffaf1',ink:'#173e3b'},inspiration:'botanical'},
+ {id:'inspire-royal',name:'الرسالة الملكية',description:'تصميم زمردي بإطار ذهبي ورسالة اليوم',category:'بطاقات يومية فاخرة',symbol:'✦',theme:{green:'#083f39',greenLight:'#286b62',gold:'#d6ad64',cream:'#fff8e9',ink:'#103a36'},inspiration:'royal'},
+ {id:'inspire-pearl',name:'يوم من نور',description:'بطاقة عاجية عصرية برسالة ومواعيد اليوم',category:'بطاقات يومية فاخرة',symbol:'◇',theme:{green:'#287268',greenLight:'#75aaa1',gold:'#c3a677',cream:'#fffdf8',ink:'#244c48'},inspiration:'pearl'}
+]));
 const byId=new Map(CARD_PRESETS.map(item=>[item.id,item]));
 export const validPreset=id=>byId.has(id);
 export const presetInfo=id=>byId.get(id)||CARD_PRESETS[0];
