@@ -1,8 +1,8 @@
 import {templates,createDesign} from './catalog.js';
 import {put,get,getAll,saveDesign} from './storage.js';
-import {exportImage,download,renderDesign} from './engine.js?v=banner25';
+import {exportImage,download,renderDesign} from './engine.js?v=i18n4';
 import {toast} from './common.js';
-import {saToday} from './card.js?v=glass20261110';
+import {saToday} from './card.js?v=i18n4';
 const root=new URL('../',import.meta.url),link=(path)=>new URL(path,root).href;
 const grid=document.getElementById('smart-template-grid');let search='',category='الكل';
 const node=(tag,text,cls)=>{const e=document.createElement(tag);if(text)e.textContent=text;if(cls)e.className=cls;return e;};
