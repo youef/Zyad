@@ -76,6 +76,7 @@ jobs:
       - name: Check studio in Chromium
         run: |
           node scripts/check-app.mjs
+          node scripts/check-calendar-layout.mjs
           node scripts/check-settings.mjs
           node scripts/check-calendars.mjs
           node scripts/check-platform.mjs
