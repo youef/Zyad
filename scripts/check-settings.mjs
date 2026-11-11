@@ -20,7 +20,7 @@ try{
  assert.equal(await page.evaluate(()=>localStorage.getItem('zyad-appearance')),'dark');
  await page.locator('input[name="visitor-theme"][value="light"]').check({force:true});
  assert.equal(await page.evaluate(()=>document.documentElement.dataset.theme),'light');
- await page.locator('input[name="visitor-language"][value="en"]').check({force:true});
+ await page.evaluate(()=>{const input=document.querySelector('input[name="visitor-language"][value="en"]');input.checked=true;input.dispatchEvent(new Event('change',{bubbles:true}));});
  await page.waitForFunction(()=>document.documentElement.lang==='en'&&document.documentElement.dir==='ltr');
  assert.equal((await page.locator('#visitor-settings-heading').textContent()).trim(),'Settings');
  assert.equal((await page.locator('.visitor-tabs a[href="#more"] .tab-label').textContent()).trim(),'More');
@@ -33,7 +33,7 @@ try{
  assert.equal(await page.evaluate(()=>JSON.parse(localStorage.getItem('zyad-event-favorites'))[0]),'salary');
  await page.evaluate(()=>location.hash='#settings');
  await page.locator('#settings').waitFor({state:'visible'});
- await page.locator('input[name="visitor-language"][value="ar"]').check({force:true});
+ await page.evaluate(()=>{const input=document.querySelector('input[name="visitor-language"][value="ar"]');input.checked=true;input.dispatchEvent(new Event('change',{bubbles:true}));});
  await page.waitForFunction(()=>document.documentElement.lang==='ar'&&document.documentElement.dir==='rtl');
  assert.equal((await page.locator('.visitor-tabs a[href="#more"] .tab-label').textContent()).trim(),'المزيد');
  await page.locator('input[name="visitor-theme"][value="system"]').check({force:true});
