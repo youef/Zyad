@@ -44,7 +44,11 @@
       "summary": "بداية شهر رمضان المبارك وفق التقويم الهجري التقديري.",
       "details": "يُحسب الموعد من تقويم أم القرى. إعلان الجهات المختصة هو المرجع النهائي.",
       "location": "المملكة العربية السعودية",
-      "notes": "قد يختلف الموعد مع إعلان ثبوت الهلال."
+      "notes": "قد يختلف الموعد مع إعلان ثبوت الهلال.",
+      "summaryEn": "Ramadan starts according to the estimated Umm al-Qura calendar.",
+      "detailsEn": "Official announcements take precedence over this estimate.",
+      "notesEn": "The date may change following moon-sighting announcements.",
+      "categoryEn": "Islamic Occasion"
     },
     {
       "id": "salary",
@@ -57,7 +61,11 @@
       "details": "موعد تقريبي حسب الإعدادات؛ يمكن تعديله من لوحة الإدارة.",
       "location": "جهة العمل",
       "notes": "قد يختلف موعد الإيداع بين الجهات.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Expected monthly salary payment date.",
+      "detailsEn": "Estimated according to settings; administrators can update the date.",
+      "notesEn": "Deposit dates can differ by employer.",
+      "categoryEn": "Salaries"
     },
     {
       "id": "uni",
@@ -70,7 +78,11 @@
       "details": "يعتمد على اليوم المحفوظ في المشروع، لا على إعلان الجامعة.",
       "location": "الجامعات السعودية",
       "notes": "راجع الجهة المعنية للتاريخ المؤكد.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Estimated monthly university stipend date.",
+      "detailsEn": "This reflects the saved calendar date, not a university announcement.",
+      "notesEn": "Check with the university for the confirmed date.",
+      "categoryEn": "Education"
     },
     {
       "id": "retirement",
@@ -83,7 +95,11 @@
       "details": "عداد شهري قابل للتغيير.",
       "location": "جهة التقاعد",
       "notes": "المواعيد تقديرية.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled pension payment date.",
+      "detailsEn": "Recurring monthly countdown, adjustable in settings.",
+      "notesEn": "Dates are estimates.",
+      "categoryEn": "Salaries"
     },
     {
       "id": "social",
@@ -96,7 +112,11 @@
       "details": "عداد شهري قابل للتعديل.",
       "location": "جهة البرنامج",
       "notes": "راجع الإعلان الرسمي.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled social security payment date.",
+      "detailsEn": "Adjustable monthly countdown.",
+      "notesEn": "Check official announcements.",
+      "categoryEn": "Support"
     },
     {
       "id": "citizen",
@@ -109,7 +129,11 @@
       "details": "عداد يذكّر بتاريخ الاستحقاق الشهري.",
       "location": "برنامج حساب المواطن",
       "notes": "يخضع للإعلانات الرسمية.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled Citizen Account payment date.",
+      "detailsEn": "Recurring monthly payment reminder.",
+      "notesEn": "Subject to official announcements.",
+      "categoryEn": "Support"
     },
     {
       "id": "hafez",
@@ -122,7 +146,11 @@
       "details": "عداد متكرر شهريًا حسب يوم البرنامج المحدد.",
       "location": "برنامج حافز",
       "notes": "راجع حساب المستفيد.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Estimated monthly Hafiz payment date.",
+      "detailsEn": "Recurring monthly countdown based on the configured date.",
+      "notesEn": "Check your beneficiary account.",
+      "categoryEn": "Support"
     },
     {
       "id": "rehab",
@@ -135,7 +163,11 @@
       "details": "يمكن تعديل موعد الصرف حسب المعلومات المؤكدة.",
       "location": "جهة البرنامج",
       "notes": "حسب الاستحقاق.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Estimated rehabilitation allowance date.",
+      "detailsEn": "Administrators can adjust the payment date when confirmed.",
+      "notesEn": "Depends on eligibility.",
+      "categoryEn": "Support"
     },
     {
       "id": "insurance",
@@ -148,7 +180,11 @@
       "details": "عداد شهري لخدمات التأمينات.",
       "location": "التأمينات الاجتماعية",
       "notes": "راجع الجهة المعنية.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled social insurance payment date.",
+      "detailsEn": "Monthly insurance-services countdown.",
+      "notesEn": "Check with the responsible authority.",
+      "categoryEn": "Salaries"
     },
     {
       "id": "housing",
@@ -161,7 +197,11 @@
       "details": "عداد شهري قابل للتغيير.",
       "location": "برنامج الدعم السكني",
       "notes": "قد يختلف تاريخ الإيداع.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled housing support payment date.",
+      "detailsEn": "Adjustable monthly countdown.",
+      "notesEn": "Actual deposit dates may vary.",
+      "categoryEn": "Support"
     },
     {
       "id": "farming",
@@ -174,7 +214,11 @@
       "details": "موعد متكرر حسب الإعدادات.",
       "location": "الجهات المختصة",
       "notes": "قد يختلف حسب البرنامج.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled agricultural support date.",
+      "detailsEn": "Recurring date based on settings.",
+      "notesEn": "May vary by program.",
+      "categoryEn": "Support"
     },
     {
       "id": "tamheer",
@@ -187,7 +231,11 @@
       "details": "عداد شهري لمتابعة الاستحقاق.",
       "location": "برنامج تمهير",
       "notes": "يرتبط بشروط البرنامج.",
-      "paymentRule": "previous_thursday_next_sunday"
+      "paymentRule": "previous_thursday_next_sunday",
+      "summaryEn": "Scheduled Tamheer stipend date.",
+      "detailsEn": "Monthly countdown for the expected stipend.",
+      "notesEn": "Subject to program conditions.",
+      "categoryEn": "Training"
     },
     {
       "id": "summer",
@@ -200,7 +248,11 @@
       "summary": "بداية فصل الصيف الفلكي.",
       "details": "موعد فصلي يعتمد على التاريخ الميلادي المسجل.",
       "location": "المملكة العربية السعودية",
-      "notes": "قد تختلف البداية المناخية."
+      "notes": "قد تختلف البداية المناخية.",
+      "summaryEn": "Astronomical start of summer.",
+      "detailsEn": "Seasonal date based on the registered Gregorian date.",
+      "notesEn": "Meteorological dates may differ.",
+      "categoryEn": "Seasons"
     },
     {
       "id": "winter",
@@ -213,7 +265,11 @@
       "summary": "بداية فصل الشتاء الفلكي.",
       "details": "موعد سنوي قابل للتعديل.",
       "location": "المملكة العربية السعودية",
-      "notes": "يُستخدم للتذكير فقط."
+      "notes": "يُستخدم للتذكير فقط.",
+      "summaryEn": "Start of midyear school holidays.",
+      "detailsEn": "Adjustable annual date.",
+      "notesEn": "For reminders only; check the official school calendar.",
+      "categoryEn": "Seasons"
     },
     {
       "id": "autumn",
@@ -226,7 +282,11 @@
       "details": "الرقم الثابت لا يظهر ضمن التخطيط الشهري.",
       "location": "",
       "notes": "عدّل نوع الموعد لتحويله إلى حدث تاريخي.",
-      "date": "2026-11-20"
+      "date": "2026-11-20",
+      "summaryEn": "Autumn holiday date.",
+      "detailsEn": "Scheduled date for the autumn holiday.",
+      "notesEn": "Check the official academic calendar.",
+      "categoryEn": "Seasons"
     },
     {
       "id": "spring",
@@ -239,7 +299,11 @@
       "summary": "بداية فصل الربيع الفلكي.",
       "details": "موعد سنوي قابل للتعديل.",
       "location": "المملكة العربية السعودية",
-      "notes": "يُستخدم للتذكير فقط."
+      "notes": "يُستخدم للتذكير فقط.",
+      "summaryEn": "Astronomical start of spring.",
+      "detailsEn": "Adjustable annual date.",
+      "notesEn": "For reminders only.",
+      "categoryEn": "Seasons"
     }
   ],
   "design": {
