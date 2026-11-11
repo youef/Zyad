@@ -123,6 +123,46 @@ Object.assign(map,{
  'باقي الأيام… بألوانها':'Colorful Days Ahead',
  'مواعيدك… أقرب مما تظن':'Your Dates Are Nearer Than You Think'
 });
+Object.assign(map,{
+ 'حكمة اليوم':'Thought of the Day','اشترك معنا مجانًا':'Subscribe for Free',
+ 'يومًا إلى':'Days Until','مواعيدك المهمة':'Important Events',
+ 'مقتطف من حديث صحيح':'Authentic Hadith Excerpt',
+ 'يدوي':'Manual','الميلادي':'Gregorian','الهجري':'Hijri',
+ 'إغلاق':'Close','الوصف':'Description',
+ 'سياسة عطلة الأسبوع':'Weekend Payment Rule',
+ 'بدون تعديل':'No Adjustment',
+ 'راجع المصدر المرفق':'Check the Linked Source',
+ 'تقديري — راجع الجهة المختصة':'Estimated — Check the Official Provider',
+ 'لا يوجد وصف إضافي بعد.':'No Additional Description Yet',
+ 'غير محدد':'Not Specified','لا توجد ملاحظات':'No Notes',
+ 'موعد منفرد':'One-time Event',
+ 'عرض بطاقة يوم الحدث':'View Event-Day Card',
+ 'تعذرت المشاركة':'Unable to Share',
+ 'إضافة إلى تقويم الجوال':'Add to Phone Calendar',
+ 'عدد الأشهر القادمة':'Number of Upcoming Months',
+ 'شهرًا':'Months','استعرض الشهور':'Browse Months',
+ 'اختر الشهر الذي تريده':'Choose a Month',
+ 'ابحث باسم الحدث...':'Search by Event Name…',
+ 'البحث في المواعيد':'Search Events',
+ 'حدث':'Event','أحداثي':'My Events',
+ 'المفضلة:':'Favorite:','متبقّي':'Remaining',
+ 'حذف الموعد':'Delete Event','حُذف الموعد من أحداثك':'Event Deleted',
+ 'حُفظ موعدك':'Event Saved','الحد الأقصى 100 موعد شخصي':'Limit: 100 Personal Events',
+ 'تعذر النسخ على هذا الجهاز':'Copy is Unavailable on This Device',
+ '✦ تصميم يومي متجدد':'✦ Daily Rotating Design',
+ '✦ تفعيل التصميم اليومي':'✦ Enable Daily Design',
+ 'باقي الأيام… بألوانها':'Days Ahead in Color',
+ 'مواعيدك… أقرب مما تظن':'Your Events Are Closer Than You Think',
+ 'المواعيد القادمة':'Upcoming Events',
+ 'برامج الدعم':'Support Programs','التقاعد':'Pension',
+ 'المواعيد التقديرية تخضع للجهات الرسمية':'Estimated Dates; Verify With Official Providers',
+ 'العدد':'Number',
+ 'رابط متابعة QR غير صالح':'Invalid Follow QR Link',
+ 'إعدادات الاشتراك غير صالحة':'Invalid Subscription Settings',
+ 'مكتبة رمز QR غير جاهزة':'QR Library Not Ready',
+ 'تعذر تحميل إعدادات المتابعة':'Unable to Load Follow Settings',
+ 'التقويم':'Calendar','الرئيسية':'Home'
+});
 export function presetName(p,lang=getLanguage()){
  return lang==='en'?(ENGLISH_PRESET_NAMES[p?.id]||translate(p?.name||'',lang)):p?.name||'';
 }
