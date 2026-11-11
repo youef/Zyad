@@ -65,7 +65,7 @@ export function hijriDate(iso, cfg) {
   if (iso===saToday() && cfg?.settings?.hijriOverride?.trim()) return cfg.settings.hijriOverride.trim();
   const offset=Math.max(-3,Math.min(3,Number(cfg?.settings?.hijriOffset)||0));
   const d=new Date(isoAdd(iso,offset)+'T12:00:00Z');
-  try { return new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{year:'numeric',month:'long',day:'numeric', timeZone:'Asia/Riyadh'}).format(d).replace(/\s*هـ\s*$/,'') + ' هـ'; }
+  try { return localeDate(isoAdd(iso,offset),{year:'numeric',month:'long',day:'numeric'},'islamic-umalqura')+(getLanguage()==='en'?' AH':' هـ'); }
   catch { return 'التاريخ الهجري'; }
 }
 function hijriPanel(iso,cfg) {
