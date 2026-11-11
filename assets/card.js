@@ -1,3 +1,4 @@
+import {localizedConfig,localeDate,getLanguage,translate} from './locale.js?v=locale1';
 import {nextPaymentDate} from './payment-schedule.js?v=pay2';
 import {renderPremium} from './design.js?v=footer3';
 import {bannerForPoster} from './advertising.js?v=working24';
@@ -74,13 +75,13 @@ function hijriPanel(iso,cfg) {
   const date=new Date(isoAdd(iso,offset)+'T12:00:00Z');
   try {
     const parts=Object.fromEntries(new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura',{year:'numeric',month:'numeric',day:'numeric',timeZone:'Asia/Riyadh'}).formatToParts(date).map(p=>[p.type,p.value]));
-    const month=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{month:'long',timeZone:'Asia/Riyadh'}).format(date);
-    return {number:`${parts.year}/${parts.month}/${parts.day} هـ`,label:month};
+    const month=localeDate(isoAdd(iso,offset),{month:'long'},'islamic-umalqura');
+    return {number:`${parts.year}/${parts.month}/${parts.day} ${getLanguage()==='en'?'AH':'هـ'}`,label:month};
   }catch {return {number:hijriDate(iso,cfg),label:'هجري'};}
 }
 function weekday(iso) {
   const d=new Date(iso+'T12:00:00Z');
-  return new Intl.DateTimeFormat('ar-SA',{weekday:'long',timeZone:'Asia/Riyadh'}).format(d);
+  return localeDate(iso,{weekday:'long'});
 }
 function roundedRect(ctx,x,y,w,h,r,fill,stroke=null,lineWidth=1) {
   const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.roundRect(x,y,w,h,rr);
@@ -164,7 +165,7 @@ export function cloneConfig(config) {return JSON.parse(JSON.stringify(config));}
 export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   if(!canvas||!config)throw Error('لا توجد إعدادات صالحة للبطاقة');
   if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) iso=saToday();
-  config=resolveContent(config,iso);await loadTypeface(config.design?.fontFamily);
+  config=localizedConfig(resolveContent(config,iso));await loadTypeface(config.design?.fontFamily);
   await (document.fonts?.ready ?? Promise.resolve());
   const root=options.rootPrefix || 'assets/';
   const imageSrc=String(config.brand?.logo||'');
@@ -177,7 +178,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const scale=options.preview?Math.min(1,Math.max(.15,Number(options.scale)||.5)):options.displayScale?Math.min(1,Math.max(.5,Number(options.displayScale)||1)):([1,2,3].includes(Number(options.scale))?Number(options.scale):1);
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
-  ctx.zyadFont=fontStack(config.design?.fontFamily);
+  ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
   if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if((config.design?.preset||'royal')==='heritage'){renderHeritage(ctx,config,iso,{logo,qr,remaining,hijriDate,hijriPanel,weekday});}
