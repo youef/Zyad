@@ -1,3 +1,4 @@
+import {getLanguage,translate,localeDate} from './locale.js?v=locale2';
 import {fontStack,loadTypeface} from './typography.js';
 import {bannerForDesign} from './advertising.js?v=working24';
 import {buildFollowQr,drawCombinedFooter,getPublishedFollow,footerGeometry} from './follow-panel.js?v=glass20261110';
@@ -12,8 +13,8 @@ export function loadImage(src){
  const p=new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>resolve(im);im.onerror=()=>{cache.delete(src);reject(Error('تعذر تحميل الصورة'));};im.src=src.startsWith('data:')?src:assetUrl(src);});cache.set(src,p);if(cache.size>45)cache.delete(cache.keys().next().value);return p;
 }
 export function layerText(l,d){
- if(l.type==='gregorian'||l.type==='hijri')return new Intl.DateTimeFormat(l.type==='hijri'?'ar-SA-u-ca-islamic-umalqura':'ar-SA-u-ca-gregory',{dateStyle:'long',timeZone:'Asia/Riyadh'}).format(new Date(d.date+'T12:00:00Z'));
- if(l.type==='countdown'){if(!l.target)return 'حدد الموعد';return Math.max(0,Math.round((Date.parse(l.target+'T12:00:00Z')-Date.parse(d.date+'T12:00:00Z'))/86400000))+' يوم';}return String(l.text||'');
+ if(l.type==='gregorian'||l.type==='hijri')return localeDate(d.date,{dateStyle:'long'},l.type==='hijri'?'islamic-umalqura':'gregory');
+ if(l.type==='countdown'){if(!l.target)return 'حدد الموعد';return Math.max(0,Math.round((Date.parse(l.target+'T12:00:00Z')-Date.parse(d.date+'T12:00:00Z'))/86400000))+' يوم';}return String(getLanguage()==='en'?(l.textEn||translate(l.text||'')):l.text||'');
 }
 function cover(c,im,x,y,w,h,fit='cover'){const s=fit==='contain'?Math.min(w/im.width,h/im.height):Math.max(w/im.width,h/im.height);c.save();c.beginPath();c.rect(x,y,w,h);c.clip();c.drawImage(im,x+(w-im.width*s)/2,y+(h-im.height*s)/2,im.width*s,im.height*s);c.restore();}
 export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null}={}){
@@ -42,7 +43,7 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
   }else if(l.type==='shape'){
    c.beginPath();if(l.shape==='circle')c.ellipse(x,y,bw/2,bh/2,0,0,Math.PI*2);else c.roundRect(box.x,box.y,bw,bh,16);c.fill();if(l.border)c.stroke();
   }else{
-   c.direction='rtl';c.textBaseline='middle';c.textAlign=l.align||'center';let size=l.size*Math.min(w/1080,h/1350);const text=layerText(l,d),words=text.split(/\s+/);let lines=[];
+   c.direction=getLanguage()==='en'?'ltr':'rtl';c.textBaseline='middle';c.textAlign=l.align||'center';let size=l.size*Math.min(w/1080,h/1350);const text=layerText(l,d),words=text.split(/\s+/);let lines=[];
    const wrap=()=>{lines=[];let line='';c.font=`${l.weight||700} ${size}px ${fontStack(l.font)}`;for(const word of words){const next=line?line+' '+word:word;if(line&&c.measureText(next).width>bw){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);};
    wrap();while((lines.length>4||lines.length*size*(l.lineHeight||1.6)>h*.18||lines.some(s=>c.measureText(s).width>bw))&&size>14){size-=2;wrap();}
    const lineHeight=size*(l.lineHeight||1.6),th=Math.max(size,lines.length*lineHeight),tx=l.align==='right'?x+bw/2:l.align==='left'?x-bw/2:x;
