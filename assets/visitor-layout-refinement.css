@@ -27,6 +27,18 @@ body.visitor-only #smart-planner.smart-planner{
  flex-direction:column;
  gap:var(--visitor-space-3)!important;
  padding:0 0 28px!important;
+ /* Remove legacy poster-like frame; the calendar is a full app page. */
+ background:transparent!important;
+ border:0!important;
+ border-radius:0!important;
+ box-shadow:none!important;
+ outline:0!important;
+ overflow:visible!important;
+}
+body.visitor-only #smart-planner.smart-planner::before,
+body.visitor-only #smart-planner.smart-planner::after{
+ content:none!important;
+ display:none!important;
 }
 body.visitor-only .planner-heading{
  padding:clamp(24px,4.4vw,39px) clamp(22px,5vw,43px)!important;
