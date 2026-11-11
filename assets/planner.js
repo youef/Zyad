@@ -115,12 +115,12 @@ function renderCalendar(){
 function render(){
   container.querySelector('#planner-current-month').textContent=monthLabel(chosenMonth);
   const current=rows.filter(e=>e.month===chosenMonth);
-  container.querySelector('#planner-month-count').textContent=String(current.length)+' موعد';
+  container.querySelector('#planner-month-count').textContent=String(current.length)+' '+translate('موعد');
   const rail=container.querySelector('#planner-months');rail.replaceChildren();
   for(let k=0;k<horizon;k++){
     const ym=monthPlus(monthKey(fromDate),k),count=rows.filter(r=>r.month===ym).length,btn=elem('button','planner-month');
     btn.type='button';if(ym===chosenMonth)btn.classList.add('active');
-    attach(btn,elem('strong','',monthLabel(ym)),elem('small','',String(count)+' موعد'));
+    attach(btn,elem('strong','',monthLabel(ym)),elem('small','',String(count)+' '+translate('موعد')));
     btn.setAttribute('aria-pressed',String(ym===chosenMonth));
     btn.onclick=()=>{chosenMonth=ym;chosenDate='';render();};rail.append(btn);
   }
@@ -130,16 +130,13 @@ function render(){
     const btn=elem('button','planner-event');btn.type='button';
     const badge=elem('span','planner-event-countdown',remainingLabel(record.days));
     const headline=elem('div','planner-event-line');headline.append(elem('strong','',record.title),badge);
-    const dateRow=elem('div','planner-event-date');dateRow.append(elem('span','planner-event-day-number',String(Number(record.date.slice(-2)))),elem('span','planner-event-month-name',dayLabel(record.date)));
-    const content=elem('div','planner-event-copy');content.append(headline,elem('small','planner-event-category',record.category+' · '+eventType(record.item)),elem('p','',record.item.summary||'اضغط لعرض الموعد والتفاصيل'));
+    const dateRow=elem('div','planner-event-date');dateRow.append(elem('span','planner-event-day-number',String(Number(record.date.slice(-2)))),elem('span','planner-event-month-name',monthLabel(record.month)));
+    const content=elem('div','planner-event-copy');content.append(headline,elem('small','planner-event-category',record.category+' · '+eventType(record.item)));
     btn.append(dateRow,content);
     btn.setAttribute('aria-label',record.title+'، '+dayLabel(record.date)+'، '+remainingLabel(record.days));
     btn.onclick=()=>detail(record);list.append(btn);
   }
   if(!matches.length)list.append(elem('p','planner-empty','لا توجد أحداث مطابقة في هذا الشهر.'));
-  const next=rows[0];container.querySelector('#planner-next-title').textContent=next?next.title:'لا يوجد';
-  container.querySelector('#planner-next-time').textContent=next?remainingLabel(next.days):'—';
-  container.querySelector('#planner-total').textContent=String(rows.length);
   container.querySelector('#planner-clear').hidden=!chosenDate;
   renderCalendar();
 }
@@ -149,13 +146,9 @@ export function mountPlanner(config,selected=saToday()){
   if(!container)return;
   if(!container.dataset.initialized){
     const heading=elem('div','planner-heading');
-    const h=elem('div','planner-hero-copy');attach(h,elem('span','eyebrow','رزنامة السعودية · المواعيد'),elem('h2','','تقويمك، كل المواعيد'),elem('p','','تابع المناسبات والاستحقاقات في تقويم واضح، واعرف ما ينتظرك يومًا بيوم.'));
-    const stats=elem('div','planner-stat-row');
-    for(const [title,id] of [['الموعد القادم','planner-next-title'],['الوقت المتبقي','planner-next-time'],['إجمالي المواعيد','planner-total']]){
-      const wrap=elem('div','planner-stat');attach(wrap,elem('small','',title),elem('strong','',title==='إجمالي المواعيد'?'0':'—'));wrap.querySelector('strong').id=id;stats.append(wrap);
-    }
-    attach(heading,h,stats);
-    const range=elem('label','planner-range','الفترة المعروضة');
+    const h=elem('div','planner-hero-copy');attach(h,elem('span','eyebrow','رزنامة السعودية · المواعيد'),elem('h2','','تقويمك، كل المواعيد'),elem('p','','اختر شهرًا لمتابعة جميع المواعيد وتفاصيلها في مكان واحد.'));
+    heading.append(h);
+    const range=elem('label','planner-range');range.append(elem('span','planner-range-label','الفترة المعروضة'));
     const rangePicker=elem('select');rangePicker.setAttribute('aria-label','عدد الأشهر القادمة');
     for(const n of [1,3,6,12,24]){const option=elem('option','',n+' شهرًا');option.value=String(n);rangePicker.append(option);}
     rangePicker.value=String(horizon);
@@ -168,8 +161,8 @@ export function mountPlanner(config,selected=saToday()){
     const clear=elem('button','planner-reset','عرض كامل الشهر');clear.type='button';clear.id='planner-clear';
     clear.onclick=()=>{chosenDate='';render();};
     attach(top,attach(elem('div'),title,counter),clear);aside.append(top);
-    const days=elem('div','planner-days');days.id='planner-days';attach(aside,days,elem('p','planner-hint','الأيام المميزة تحتوي على مواعيد.'));
-    const resultsHeading=elem('div','planner-results-heading');resultsHeading.append(elem('h3','','مواعيد الشهر'),elem('small','','اختر الموعد لعرض التفاصيل'));right.append(resultsHeading);
+    const days=elem('div','planner-days');days.id='planner-days';aside.append(days);
+    const resultsHeading=elem('div','planner-results-heading');resultsHeading.append(elem('h3','','مواعيد الشهر'));right.append(resultsHeading);
     const filters=elem('div','planner-filters');
     const searchBox=elem('label','planner-field','ابحث عن موعد');const input=elem('input');input.type='search';input.placeholder='ابحث باسم الحدث...';
     input.setAttribute('aria-label','البحث في المواعيد');input.oninput=()=>{search=input.value;render();};searchBox.append(input);
@@ -179,7 +172,7 @@ export function mountPlanner(config,selected=saToday()){
     select.onchange=()=>{kind=select.value;render();};categoryBox.append(select);
     attach(filters,searchBox,categoryBox);right.append(filters);
     const list=elem('div','planner-list');list.id='planner-list';right.append(list);
-    attach(content,aside,right);const sectionTitle=elem('div','planner-months-heading');sectionTitle.append(elem('h3','','استعرض الشهور'),elem('span','','اختر الشهر الذي تريده'));attach(container,heading,range,sectionTitle,months,content);
+    attach(content,aside,right);const sectionTitle=elem('div','planner-months-heading');sectionTitle.append(elem('h3','','الشهور'),range);attach(container,heading,sectionTitle,months,content);
     dialog=elem('dialog','planner-dialog');document.body.append(dialog);
     container.dataset.initialized='true';
   }
