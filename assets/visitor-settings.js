@@ -3,6 +3,7 @@ const KEY_THEME='zyad-appearance',KEY_LANG='zyad-language';
 const settingsRoot=document.getElementById('settings');
 const dictionary={
  ar:{
+  more:'المزيد',moreKicker:'رزنامة السعودية',moreDesc:'كل الخدمات والأقسام الإضافية في مكان واحد.',moreFuture:'ستظهر الأقسام الجديدة هنا دون تغيير شريط التنقل الرئيسي.',backMore:'العودة إلى المزيد',archiveMoreDesc:'العودة إلى بطاقات الأيام السابقة',
   settings:'الإعدادات',settingsDesc:'خصّص طريقة عرض رزنامة السعودية على جهازك.',
   appearance:'المظهر',appearanceDesc:'اختر الوضع المناسب لك أو استخدم إعدادات الجهاز.',
   light:'فاتح',dark:'داكن',system:'تلقائي',language:'اللغة',
@@ -20,6 +21,7 @@ const dictionary={
   titleNote:'اللغة الإنجليزية متاحة لواجهة التطبيق. أسماء المناسبات والنصوص المنشورة تبقى بلغتها الأصلية.'
  },
  en:{
+  more:'More',moreKicker:'Saudi Calendar',moreDesc:'Additional features and services, all in one place.',moreFuture:'New sections will appear here without changing the main navigation.',backMore:'Back to More',archiveMoreDesc:'Revisit cards from previous days',
   settings:'Settings',settingsDesc:'Personalize Saudi Calendar on this device.',
   appearance:'Appearance',appearanceDesc:'Choose a theme or follow your device settings.',
   light:'Light',dark:'Dark',system:'System',language:'Language',
@@ -42,12 +44,12 @@ const localized=[
  ['.side-links a[href="#smart-planner"] span:last-child','calendar'],
  ['.side-links a[href="#template-gallery"] span:nth-child(2)','gallery'],
  ['.side-links a[href="#archive"] span:last-child','archive'],
- ['.side-links a[href="#settings"] span:last-child','settings'],
+ ['.side-links a[href="#more"] span:last-child','more'],
  ['.visitor-tabs a[href="#today-app"] .tab-label','home'],
  ['.visitor-tabs a[href="#smart-planner"] .tab-label','calendar'],
  ['.visitor-tabs a[href="#template-gallery"] .tab-label','designs'],
  ['.visitor-tabs a[href="#favorites"] .tab-label','favorites'],
- ['.visitor-tabs a[href="#settings"] .tab-label','settings'],
+ ['.visitor-tabs a[href="#more"] .tab-label','more'],
  ['#brand-title','brand'],
  ['#app-greeting','greeting'],
  ['.ios-home-intro-copy .ios-overline','introTag'],
@@ -75,7 +77,7 @@ const localized=[
 const pageTitles={
  'today-app':'todayTitle','poster-section':'poster','smart-planner':'plannerTitle',
  'template-gallery':'galleryTitle','favorites':'favoritesTitle',
- 'archive':'archiveTitle','settings':'settings'
+ 'archive':'archiveTitle','settings':'settings','more':'more'
 };
 function preference(key,fallback){try{return localStorage.getItem(key)||fallback}catch{return fallback}}
 function setPreference(key,value){try{localStorage.setItem(key,value)}catch{}}
@@ -130,4 +132,5 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>
  if(preference(KEY_THEME,'system')==='system')applyTheme('system');
 });
 window.addEventListener('hashchange',()=>setTitle(preference(KEY_LANG,'ar')));
+window.addEventListener('zyad-route-updated',()=>setTitle(preference(KEY_LANG,'ar')));
 window.addEventListener('zyad-calendar-updated',()=>setTitle(preference(KEY_LANG,'ar')));
