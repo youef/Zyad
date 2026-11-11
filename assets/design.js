@@ -21,8 +21,7 @@ function wrap(c,src,width,size=35,cap=3){
  if(acc)all.push(acc);c.restore();return all.slice(0,cap);
 }
 function clockText(iso){
- const day=new Date(iso+'T12:00:00Z');
- const fmt=(o)=>new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{timeZone:'Asia/Riyadh',...o}).format(day);
+ const fmt=(o)=>localeDate(iso,o);
  return {weekday:fmt({weekday:'long'}),date:fmt({day:'numeric',month:'long',year:'numeric'})};
 }
 function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
