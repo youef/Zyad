@@ -1,3 +1,4 @@
+import {getLanguage,translate,localeDate,eventLabel} from './locale.js?v=locale1';
 import {paymentOccurrences,paymentRule,PAYMENT_RULE_LABELS} from './payment-schedule.js?v=pay2';
 
 import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=glass20261110';
@@ -8,10 +9,10 @@ const monthKey=iso=>iso.slice(0,7);
 function monthPlus(key,n){const [y,m]=key.split('-').map(Number);const d=new Date(Date.UTC(y,m-1+n,1,12));return d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1);}
 function real(iso){if(!re.test(iso))return false;const d=new Date(iso+'T12:00:00Z');return !Number.isNaN(d.getTime())&&d.toISOString().slice(0,10)===iso;}
 const maxDay=(y,m)=>new Date(Date.UTC(y,m,0)).getUTCDate();
-export const dayLabel=iso=>new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',month:'long',year:'numeric',timeZone:'Asia/Riyadh'}).format(new Date(iso+'T12:00:00Z'));
-export const monthLabel=key=>new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{month:'long',year:'numeric',timeZone:'Asia/Riyadh'}).format(new Date(key+'-01T12:00:00Z'));
+export const dayLabel=iso=>localeDate(iso,{day:'numeric',month:'long',year:'numeric'});
+export const monthLabel=key=>localeDate(key+'-01',{month:'long',year:'numeric'});
 export const eventType=i=>i.mode==='monthly'?'شهري':i.mode==='hijri'?'هجري':i.mode==='manual'?'يدوي':i.repeat==='yearly'?'سنوي':'مرة واحدة';
-export const remainingLabel=n=>n===0?'اليوم':n===1?'غدًا':'بعد '+n+' يوم';
+export const remainingLabel=n=>getLanguage()==='en'?(n===0?'Today':n===1?'Tomorrow':'In '+n+' days'):n===0?'اليوم':n===1?'غدًا':'بعد '+n+' يوم';
 export function nextEventDates(item,fromIso,months=12){
   if(!item||item.enabled===false||item.mode==='manual'||!real(fromIso))return [];
   const end=monthPlus(monthKey(fromIso),months)+'-01',found=[];
@@ -42,7 +43,7 @@ export function futureEvents(cfg,fromIso,months=12){
   const out=[];
   for(const item of cfg.counters||[]){
     for(const date of nextEventDates(item,fromIso,months)){
-      out.push({item,date,month:monthKey(date),days:daysBetween(fromIso,date),title:item.label||'موعد',category:item.category||eventType(item)});
+      out.push({item,date,month:monthKey(date),days:daysBetween(fromIso,date),title:eventLabel(item),category:translate(item.category||eventType(item))});
     }
   }
   return out.sort((a,b)=>a.date.localeCompare(b.date)||a.title.localeCompare(b.title,'ar'));
@@ -99,7 +100,7 @@ export function openPlannerEvent(record){if(dialog&&data)detail(record);}
 function renderCalendar(){
   const grid=container.querySelector('#planner-days');grid.replaceChildren();
   const [y,m]=chosenMonth.split('-').map(Number),start=new Date(Date.UTC(y,m-1,1)).getUTCDay(),count=maxDay(y,m);
-  for(const day of ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'])grid.append(elem('span','planner-weekday',day));
+  for(const day of ['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'])grid.append(elem('span','planner-weekday',translate(day)));
   for(let k=0;k<start;k++)grid.append(elem('span','planner-spacer'));
   const grouped=new Map();
   for(const r of rows.filter(e=>e.month===chosenMonth))grouped.set(r.date,(grouped.get(r.date)||0)+1);
