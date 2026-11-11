@@ -1,3 +1,4 @@
+import {getLanguage,translate,localeDate} from './locale.js?v=locale1';
 // Print-resolution calendar art. Dates, quotes, counters, branding and QR stay live.
 import {drawHangingLogo} from './brand-art.js';
 import {hasCardMessage} from './daily.js';
@@ -7,7 +8,7 @@ import {footerGeometry} from './follow-panel.js?v=glass20261110';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};
 function box(c,x,y,w,h,r,fill,stroke,lw=1){c.beginPath();c.roundRect(x,y,w,h,Math.min(r,w/2,h/2));if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}}
-function text(c,str,x,y,size,color,width=900,align='center',weight=700){c.save();c.direction='rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;let s=size;do{c.font=`${weight} ${s}px ${c.zyadFont||FONT}`;if(c.measureText(String(str||'')).width<=width)break;s--;}while(s>14);c.fillText(String(str||''),x,y,width);c.restore();}
+function text(c,str,x,y,size,color,width=900,align='center',weight=700){c.save();c.direction=getLanguage()==='en'?'ltr':'rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;let s=size;do{c.font=`${weight} ${s}px ${c.zyadFont||FONT}`;if(c.measureText(String(str||'')).width<=width)break;s--;}while(s>14);c.fillText(String(translate(str)||''),x,y,width);c.restore();}
 function poly(c,x,y,rx,ry,n,fill,stroke,indent=1){c.beginPath();for(let i=0;i<n;i++){const a=i*Math.PI*2/n-Math.PI/2,r=i%2?indent:1,px=x+Math.cos(a)*rx*r,py=y+Math.sin(a)*ry*r;i?c.lineTo(px,py):c.moveTo(px,py);}c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=2;c.stroke();}}
 function line(c,x,y,xx,yy,color,width=2){c.beginPath();c.moveTo(x,y);c.lineTo(xx,yy);c.strokeStyle=color;c.lineWidth=width;c.stroke();}
 function circle(c,x,y,r,fill,stroke,width=2){c.beginPath();c.arc(x,y,r,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=width;c.stroke();}}
@@ -17,7 +18,7 @@ function wrap(c,value,width,size){c.font=`600 ${size}px ${c.zyadFont||FONT}`;con
 function paragraph(c,value,x,y,width,height,color,preferred=36,min=22){let size=preferred,lines;do{lines=wrap(c,value,width,size);if(lines.length*size*1.65<=height)break;size--;}while(size>min);const max=Math.max(1,Math.floor(height/(size*1.65)));if(lines.length>max){lines=lines.slice(0,max);lines[max-1]=lines[max-1].slice(0,-2)+'…';}const step=size*1.65;lines.forEach((s,i)=>text(c,s,x,y+(i-(lines.length-1)/2)*step,size,color,width,'center',600));}
 function header(c,cfg,iso,tools,p,s){
  const {green,gold,ink,cream}=p,kind=s.header,hh=s.headerHeight,dark=s.dark;
- const d=new Date(iso+'T12:00:00Z'),day=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{weekday:'long',timeZone:'Asia/Riyadh'}).format(d),num=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',timeZone:'Asia/Riyadh'}).format(d),month=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{month:'long',year:'numeric',timeZone:'Asia/Riyadh'}).format(d);
+ const d=new Date(iso+'T12:00:00Z'),day=localeDate(iso,{weekday:'long'}),num=localeDate(iso,{day:'numeric'}),month=localeDate(iso,{month:'long',year:'numeric'});
  const pale='#f8edcf',surface=dark?rgba(green,.88):rgba(cream,.94);let tx=540,ty=205,ts=94,number=false;
  
  drawHangingLogo(c,tools.logo,{x:67,y:25,width:189,height:119,light:dark});
@@ -54,7 +55,7 @@ function header(c,cfg,iso,tools,p,s){
  default:text(c,day,tx,ty,ts,ink);
  }
  // Date treatment varies between compositions while always including both calendars.
- const greg=number?iso:new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{dateStyle:'long',timeZone:'Asia/Riyadh'}).format(d),hijri=tools.hijriDate(iso,cfg),y=hh-69;
+ const greg=number?iso:localeDate(iso,{dateStyle:'long'}),hijri=tools.hijriDate(iso,cfg),y=hh-69;
  if(['editorial','swiss','ledger','brand'].includes(kind)){
   line(c,66,y-34,1014,y-34,gold);text(c,greg,1000,y,29,ink,440,'right',600);text(c,hijri,80,y,27,ink,450,'left',600);
  }else if(['arch','dome','lantern','invitation','laurel','crest','pearl'].includes(kind)){
