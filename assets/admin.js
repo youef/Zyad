@@ -138,6 +138,7 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
   bar.append(title,actions);article.append(bar);
   const fields=document.createElement('div');fields.className='counter-fields';
   fields.append(inputField('العنوان',item.label,'text',v=>{item.label=v.slice(0,35);title.textContent=`${i+1}. ${item.label}`;changed();}));
+  fields.append(inputField('English title',item.labelEn||'','text',v=>{item.labelEn=v.slice(0,100);changed();}));
   fields.append(selectField('طريقة الحساب',item.mode,[['monthly','شهري'],['date','تاريخ محدد'],['hijri','هجري متكرر'],['manual','رقم يدوي']],v=>{item.mode=v;buildCounters();changed();}));
   if(item.mode==='monthly')fields.append(inputField('يوم الشهر (1–31)',item.day||1,'number',v=>{item.day=Math.max(1,Math.min(31,Math.floor(v)||1));changed();}));
   if(item.mode==='monthly'){
@@ -169,10 +170,10 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
   if(item.mode==='manual')fields.append(inputField('الرقم الظاهر',item.value||0,'number',v=>{item.value=Math.max(0,Math.floor(v)||0);changed();}));
   article.append(fields);
   const more=document.createElement('div');more.className='counter-detail-fields';
-  for(const [key,title,limit] of [['category','الفئة',32],['summary','ملخص يظهر للزوار',120],['location','الجهة أو الموقع',120],['link','رابط الحدث',350]]){
+  for(const [key,title,limit] of [['category','الفئة',32],['categoryEn','English category',60],['summary','ملخص يظهر للزوار',120],['summaryEn','English summary',240],['location','الجهة أو الموقع',120],['link','رابط الحدث',350]]){
     more.append(inputField(title,item[key]||'','text',v=>{item[key]=v.slice(0,limit);changed();}));
   }
-  for(const [key,title,limit] of [['details','التفاصيل الكاملة',800],['notes','ملاحظات إضافية',400]]){
+  for(const [key,title,limit] of [['details','التفاصيل الكاملة',800],['detailsEn','English details',1200],['notes','ملاحظات إضافية',400],['notesEn','English notes',600]]){
     const wrap=document.createElement('label');wrap.className='field';wrap.textContent=title;const area=document.createElement('textarea');
     area.rows=3;area.value=item[key]||'';area.maxLength=limit;area.addEventListener('input',()=>{item[key]=area.value;changed();});
     wrap.append(area);more.append(wrap);
