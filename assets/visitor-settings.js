@@ -18,7 +18,7 @@ const dictionary={
   greeting:'كل يوم، بداية جميلة',introTag:'رزنامتك اليومية',introTitle:'مواعيدك، بكل وضوح.',introDesc:'اطّلع على المواعيد والمناسبات والبطاقات المنشورة، دون الحاجة إلى إنشاء حساب.',galleryIntro:'تصفح التصاميم، اختر المفضل لديك، واحفظه مباشرة دون حساب.',galleryPick:'اختر بطاقتك',calendarAll:'التقويم الكامل',upcoming:'مواعيدك القادمة',archiveDesc:'صورة كل يوم محفوظة للرجوع إليها.',spotlight:'أقرب موعد',selectedDesign:'التصميم المختار حاليًا',searchDesign:'ابحث باسم التصميم أو المناسبة',favoriteFirst:'المفضلة أولاً',
   search:'ابحث عن موعد…',all:'الكل',dues:'الاستحقاقات',
   hint:'يتم حفظ اللغة والمظهر في هذا المتصفح، ولا يتغير تصميم البطاقة المنشورة.',
-  titleNote:'اللغة الإنجليزية متاحة لواجهة التطبيق. أسماء المناسبات والنصوص المنشورة تبقى بلغتها الأصلية.'
+  titleNote:'تشمل اللغة المختارة القوائم والتقويم والبطاقات اليومية. المحتوى المخصص يُعرض بالإنجليزية عند توفر ترجمة له.'
  },
  en:{
   more:'More',moreKicker:'Saudi Calendar',moreDesc:'Additional features and services, all in one place.',moreFuture:'New sections will appear here without changing the main navigation.',backMore:'Back to More',archiveMoreDesc:'Revisit cards from previous days',
@@ -36,7 +36,7 @@ const dictionary={
   greeting:'Every day, a fresh start',introTag:'Your daily calendar',introTitle:'Your schedule, made clear.',introDesc:'Explore upcoming payments, events and public cards without creating an account.',galleryIntro:'Browse designs, choose a favorite and save it instantly without an account.',galleryPick:'Choose your card',calendarAll:'Full calendar',upcoming:'Upcoming events',archiveDesc:'Browse and revisit cards from earlier days.',spotlight:'Next event',selectedDesign:'Currently selected design',searchDesign:'Search designs or occasions',favoriteFirst:'Favorites first',
   search:'Search events…',all:'All',dues:'Payments',
   hint:'Language and theme are stored in this browser. Published card artwork is unchanged.',
-  titleNote:'English covers the app interface. Published event names and card content remain in their original language.'
+  titleNote:'The chosen language covers menus, calendar and daily cards. Custom content uses English where a translation is available.'
  }
 };
 const localized=[
