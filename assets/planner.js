@@ -1,7 +1,7 @@
-import {getLanguage,translate,localeDate,eventLabel,localizedConfig} from './locale.js?v=locale2';
+import {getLanguage,translate,localeDate,eventLabel,localizedConfig} from './locale.js?v=i18n4';
 import {paymentOccurrences,paymentRule,PAYMENT_RULE_LABELS} from './payment-schedule.js?v=pay2';
 
-import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=glass20261110';
+import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=i18n4';
 
 const re=/^\d{4}-\d{2}-\d{2}$/;
 const pad=n=>String(n).padStart(2,'0');
