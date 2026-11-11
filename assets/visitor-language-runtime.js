@@ -1,4 +1,4 @@
-import {getLanguage,translate} from './locale.js?v=locale2';
+import {getLanguage,translate} from './locale.js?v=i18n4';
 // Translate UI text added by the planner/gallery without permanently mutating
 // source strings, so Arabic is always restored exactly when switched back.
 const originalText=new WeakMap(),originalAttrs=new WeakMap();
