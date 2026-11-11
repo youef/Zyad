@@ -1,3 +1,4 @@
+import {getLanguage,translate,localeDate} from './locale.js?v=locale1';
 /* A clean, print-first Saudi heritage card. All content is live and editable. */
 import {drawHangingLogo} from './brand-art.js';
 import {drawDailyPanel} from './daily-panel.js';
@@ -13,10 +14,10 @@ function rr(c,x,y,w,h,r,fill,stroke,lw=1){
 }
 function txt(c,v,x,y,size,color,max=920,weight='800',minSize=20,dir='rtl'){
   const s=String(v??'');
-  c.save();c.direction=dir;c.textAlign='center';c.textBaseline='middle';c.fillStyle=color;
+  c.save();c.direction=getLanguage()==='en'?'ltr':dir;c.textAlign='center';c.textBaseline='middle';c.fillStyle=color;
   let fs=size;
   do{c.font=weight+' '+fs+'px '+(c.zyadFont||fallbackFont);if(c.measureText(s).width<=max||fs<=minSize)break;fs--;}while(fs>minSize);
-  c.fillText(s,x,y,max);c.restore();
+  c.fillText(translate(s),x,y,max);c.restore();
 }
 function star(c,x,y,r,col,opacity=1){
   c.save();c.translate(x,y);c.globalAlpha=opacity;c.strokeStyle=col;c.lineWidth=2;
