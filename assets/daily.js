@@ -1,10 +1,15 @@
+import {getLanguage} from './locale.js?v=locale2';
 import {CONTENT_LIBRARY} from './content-library.js';
 import {selectTemplate} from './rules.js';
 export {CONTENT_LIBRARY};
 export const dayNumber=iso=>Math.floor(Date.parse(iso+'T12:00:00Z')/86400000);
 const mod=(n,d)=>(n%d+d)%d;
 export function dailyContent(config,iso){const settings=config.content||{},excluded=new Set(settings.excludedIds||[]),seed=Math.trunc(Number(settings.offset)||0),day=dayNumber(iso);const hadiths=CONTENT_LIBRARY.hadiths.filter(h=>!excluded.has(h.id)),duas=[...CONTENT_LIBRARY.duas,...(settings.customDuas||[]).filter(d=>typeof d.text==='string'&&d.text.length<=250).map((d,i)=>({id:d.id||'custom-'+i,text:d.text,type:'general',reference:'دعاء عام — أضافه مدير المحتوى'}))].filter(d=>!excluded.has(d.id));
- return {date:iso,hadith:settings.showHadith===false||!hadiths.length?null:hadiths[mod(day+seed,hadiths.length)],dua:settings.showDua===false||!duas.length?null:duas[mod(day+seed+7,duas.length)]};
+ const localize=r=>r&&getLanguage()==='en'?{...r,text:r.textEn||r.text,reference:r.referenceEn||r.reference}:r;
+ return {date:iso,
+  hadith:localize(settings.showHadith===false||!hadiths.length?null:hadiths[mod(day+seed,hadiths.length)]),
+  dua:localize(settings.showDua===false||!duas.length?null:duas[mod(day+seed+7,duas.length)])
+ };
 }
 export function hasCardMessage(cfg){
  if(cfg.settings?.showQuote===false)return false;
