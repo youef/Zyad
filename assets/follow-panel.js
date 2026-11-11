@@ -1,3 +1,4 @@
+import {getLanguage,translate} from './locale.js?v=locale1';
 /* Shared Saudi Calendar footer: image advertisement ABOVE editable follow-up block.
  * Drawn into the source canvas before any export, never an HTML overlay. */
 import './vendor/qrcode.js';
@@ -94,8 +95,8 @@ function rect(c,x,y,w,h,r,fill,stroke,lw=1){
  if(stroke){c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();}
 }
 function line(c,t,x,y,size,color,maxWidth,weight=700,align='center',dir='rtl'){
- const value=String(t||'');if(!value)return;
- c.save();c.direction=dir;c.textBaseline='middle';c.textAlign=align;c.fillStyle=color;
+ const value=String(translate(t)||'');if(!value)return;
+ c.save();c.direction=getLanguage()==='en'?'ltr':dir;c.textBaseline='middle';c.textAlign=align;c.fillStyle=color;
  let n=size;do{c.font=weight+' '+n+'px '+(c.zyadFont||'"Cairo",Tahoma,Arial,sans-serif');
  if(c.measureText(value).width<=maxWidth||n<=10)break;n-=1;}while(n>10);
  c.fillText(value,x,y,maxWidth);c.restore();
