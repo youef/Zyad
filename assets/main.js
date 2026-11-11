@@ -14,13 +14,13 @@ const socialFormat=()=>document.getElementById('social-output-format')?.value||'
 async function socialCanvas(cfg,date,quality=1){
  const original=document.createElement('canvas');
  await renderPoster(original,cfg,date,{scale:quality===2?2:1});
- return adaptPoster(original,socialSize(),{quality:1});
+ return adaptPoster(original,socialSize(),{quality});
 }
 async function socialDownload(cfg,date,preset,quality=1){
  const output=await socialCanvas(cfg,date,quality),format=socialFormat();
  downloadFile('calendar-'+date+'-'+preset+'-'+socialSize()+(quality>1?'-HD':'')+'.'+format,await exportBlob(output,format));
 }
-document.addEventListener('zyad-social-size-change',()=>{if(config)void refresh();});
+document.addEventListener('zyad-social-size-change',()=>{if(config){renderGallery();void refresh();}});
 
 let config=null,publishedConfig=null,activePreset='',renderId=0;
 let automatic=localStorage.getItem('zyad-template-mode')!=='manual';
