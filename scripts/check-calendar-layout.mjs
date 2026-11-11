@@ -37,10 +37,15 @@ try{
     calendar:{top:calendar.top,bottom:calendar.bottom,right:calendar.right,left:calendar.left},
     events:{top:events.top,bottom:events.bottom,right:events.right,left:events.left},
     daysDirection:getComputedStyle(get('.planner-days')).direction,
+    frame:{border:getComputedStyle(get('#smart-planner')).borderTopWidth,shadow:getComputedStyle(get('#smart-planner')).boxShadow,overflow:getComputedStyle(get('#smart-planner')).overflow,ornament:getComputedStyle(get('#smart-planner'),'::before').content},
     dock:visible('.app-tabs.visitor-tabs')
    };
   });
   assert.equal(data.view,'smart-planner');
+  assert.equal(data.frame.border,'0px','Legacy white border must be removed');
+  assert.equal(data.frame.shadow,'none','Legacy frame shadow must be removed');
+  assert.equal(data.frame.overflow,'visible','Month rail must not be clipped');
+  assert(['none','normal'].includes(data.frame.ornament),'Legacy background ornament must be hidden');
   assert.equal(data.header,false,'Redundant global header visible in calendar');
   assert.equal(data.dateStrip,false,'Daily date picker duplicated in calendar');
   assert.equal(data.duplicateStats,0,'Redundant calendar hero stats remain');
