@@ -161,7 +161,7 @@ export function renderHeritage(c,cfg,iso,tools){
   rr(c,28,28,1024,1864,30,null,'rgba(187,151,86,.34)',1.3);
   heading(c,cfg,iso,tools);
   const hijri=tools.hijriPanel(iso,cfg);
-  const month=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{timeZone:'Asia/Riyadh',month:'long'}).format(new Date(iso+'T12:00:00Z'));
+  const month=localeDate(iso,{month:'long'});
   datePlaque(c,54,382,'ميلادي',iso.replaceAll('-','/'),month);
   datePlaque(c,558,382,'هجري',hijri.number,hijri.label);
   if(hasCardMessage(cfg))quote(c,cfg);
