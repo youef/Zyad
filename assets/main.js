@@ -1,3 +1,4 @@
+import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=locale2';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {mountPlanner} from './planner.js?v=calendar20261110';
 import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=glass20261110';
@@ -52,7 +53,7 @@ function filterCalendarGallery(){
   const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);
   if(!p)continue;
   const q=gallerySearch.toLocaleLowerCase('ar');
-  const text=`${p.name} ${p.description} ${p.category||''}`.toLocaleLowerCase('ar');
+  const text=`${p.name} ${presetName(p)} ${p.description} ${presetDescription(p)} ${p.category||''}`.toLocaleLowerCase('ar');
   const show=(!favoriteMode||fav.has(p.id))&&(galleryCategory==='الكل'||(p.category||'تصاميم متنوعة')===galleryCategory)&&(!q||text.includes(q));
   card.hidden=!show;if(show)visible++;
  }
@@ -158,12 +159,12 @@ function renderGallery(){
   select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
   const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='gallery-template-image';img.alt='بطاقة قالب '+preset.name;
   img.addEventListener('error',()=>{img.classList.remove('is-loaded');img.classList.add('is-error');previewDate.textContent='جارٍ تجهيز معاينة البطاقة';});
-  const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">رزنامة السعودية</span><span class="visitor-preview-date">بطاقة اليوم</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
+  const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">'+translate('رزنامة السعودية')+'</span><span class="visitor-preview-date">'+translate('بطاقة اليوم')+'</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
   img.addEventListener('load',()=>{img.classList.add('is-loaded');img.classList.remove('is-error');fallback.hidden=true;item.dataset.previewState='ready';previewDate.textContent='جاهز للعرض';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
-  const badge=document.createElement('span');badge.className='gallery-card-badge';badge.textContent=preset.category||'تصميم';
+  const badge=document.createElement('span');badge.className='gallery-card-badge';badge.textContent=translate(preset.category||'تصميم');
   const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
-  const heading=document.createElement('strong');heading.textContent=preset.name;
-  const desc=document.createElement('small');desc.textContent=preset.description;
+  const heading=document.createElement('strong');heading.textContent=presetName(preset);
+  const desc=document.createElement('small');desc.textContent=presetDescription(preset);
   const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';img.src='images/templates/'+preset.id+'.webp';
   const frame=document.createElement('span');frame.className='gallery-card-frame';frame.append(img,fallback,art,badge,chosen);select.append(frame,heading,desc,previewDate);
   select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});filterCalendarGallery();await refresh();say('تم اختيار تصميم '+preset.name+'، يمكنك عرضه وحفظه من بطاقة اليوم.');};
@@ -194,6 +195,7 @@ function exportAction(id,action){$(id).addEventListener('click',async()=>{const 
 exportAction('#download',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);downloadFile(`calendar-${iso}-${preset}.png`,await getPngBlob(c));say('تم تجهيز الصورة للتنزيل.');});
 exportAction('#download-4k',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso,{scale:2});downloadFile(`calendar-${iso}-${preset}-4k.png`,await getPngBlob(c));say('تم تجهيز الصورة بالدقة المضاعفة 2160 × 3840.');});
 exportAction('#share',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);const file=new File([await getPngBlob(c)],`calendar-${iso}-${preset}.png`,{type:'image/png'});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'بطاقتي الذكية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
+window.addEventListener('zyad-language-change',()=>{if(!config)return;renderGallery();void refresh();});
 window.zyadVisitorFavorites={read:readFavorites,toggle:favoriteTemplate};window.zyadCalendar={getConfig:()=>config?JSON.parse(JSON.stringify(config)):null,getDate:()=>dateInput.value,setDate,automatic:()=>automatic,rotate:()=>{automatic=true;localStorage.setItem('zyad-template-mode','auto');setDate(dateInput.value);}};
 async function loadArchive(){try{const r=await fetch('data/history.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('not found');const list=await r.json();const grid=$('#archive-grid');if(!Array.isArray(list)||!list.length)return;grid.replaceChildren();for(const rec of list.slice(0,24)){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)||!/^images\/[\w.-]+\.png$/.test(rec.path))continue;
