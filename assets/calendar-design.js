@@ -132,7 +132,7 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  const titleY=quoteY+quoteH+48; text(c,'المواعيد والعدّادات',1001,titleY,31,p.ink,620,'right');
  if(next&&cfg.design?.highlightNext!==false)text(c,'الأقرب: '+next.label,78,titleY,19,p.ink,350,'left',500);
  const start=titleY+42,end=1508,cols=s.columns,rows=Math.max(1,Math.ceil(items.length/cols)),gap=s.grid==='ledger'?10:14,tw=(952-(cols-1)*gap)/cols,th=Math.min(cfg.design?.density==='compact'?143:186,(end-start-(rows-1)*gap)/rows);
- items.forEach((item,i)=>tile(c,item,tools.remaining(item,iso),{x:64+(cols-1-i%cols)*(tw+gap),y:start+Math.floor(i/cols)*(th+gap),w:tw,h:th},p,s,nearest,cfg));
+ items.forEach((item,i)=>tile(c,item,tools.remaining(item,iso),{x:64+(getLanguage()==='en'?i%cols:cols-1-i%cols)*(tw+gap),y:start+Math.floor(i/cols)*(th+gap),w:tw,h:th},p,s,nearest,cfg));
  if(!items.length)text(c,'لا توجد مواعيد مضافة',540,start+160,40,p.ink);
  // Shared transparent footer is rendered once after this calendar template.
  }
