@@ -170,7 +170,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   await (document.fonts?.ready ?? Promise.resolve());
   const root=options.rootPrefix || 'assets/';
   const imageSrc=String(config.brand?.logo||'');
-  const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg)$/i.test(imageSrc);
+  const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg|svg)$/i.test(imageSrc);
   const definition=presetInfo(config.design?.preset),art=options.preview?definition.calendar?.background:definition.calendar?.original;
   const [logo,qr,background,banner]=await Promise.all([
     safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,
