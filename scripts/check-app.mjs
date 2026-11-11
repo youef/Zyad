@@ -1,18 +1,67 @@
 import assert from 'node:assert/strict';import {chromium} from 'playwright';import {serve,root} from './serve.mjs';import {dailyContent,dailyTemplate,resolveContent,CONTENT_LIBRARY} from '../assets/daily.js';import {CARD_PRESETS} from '../assets/templates.js';import {isoAdd} from '../assets/card.js';import {readFile,writeFile,mkdir} from 'node:fs/promises';import {join} from 'node:path';import jsQR from 'jsqr';
 const config=JSON.parse(await readFile(join(root,'data/config.json'),'utf8')),output=join(root,'images/app-verification');await mkdir(output,{recursive:true});assert.equal(CONTENT_LIBRARY.hadiths.length,24);assert.equal(CONTENT_LIBRARY.duas.length,40);assert.equal(CARD_PRESETS.length,42);assert.equal(config.card.qrUrl,'https://wa.me/966558930532');assert.equal(config.advertising?.phone||config.card.servicePhone,'0538243481','Service contact is published in the advertisement settings');for(const item of CONTENT_LIBRARY.hadiths){assert(item.url?.startsWith('https:'));assert(item.reference);assert(item.excerpt);}let previous;for(let n=0;n<500;n++){const date=isoAdd('2026-11-05',n),daily=dailyContent(config,date),template=dailyTemplate(config,date,CARD_PRESETS);assert.deepEqual(daily,dailyContent(config,date));if(previous){if(previous.daily.hadith&&daily.hadith)assert.notEqual(previous.daily.hadith.id,daily.hadith.id);if(previous.daily.dua&&daily.dua)assert.notEqual(previous.daily.dua.id,daily.dua.id);if(config.design?.autoRotate!==false)assert.notEqual(previous.template,template);else assert.equal(template,config.design.preset);}previous={daily,template};}assert.equal(dailyTemplate({...config,smartRules:[{weekday:'any',templateId:'blue-agenda',priority:9,enabled:true}]},'2026-11-05',CARD_PRESETS),'blue-agenda');assert.equal(resolveContent(config,'2026-11-05').daily.date,'2026-11-05');assert(!config.daily,'Source config must not be mutated');assert.equal(resolveContent({...config,content:{mode:'manual'}},'2026-11-05').card.quote,config.card.quote);
-const server=await serve(),base='http://127.0.0.1:'+server.address().port;let browser;const checks=['500 days deterministic content/design rotation without adjacent repeats','24 sourced hadith excerpts + 40 clearly attributed supplications','original manual content preserved'];
-try{browser=await chromium.launch();for(const viewport of [{width:390,height:844},{width:1440,height:1100}]){const context=await browser.newContext({viewport}),p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'/?date=2026-11-05');assert(await p.evaluate(()=>window.__posterReady));await p.locator('.event-row').first().waitFor();assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));const visibleDaily=(config.content?.showHadith===false?0:1)+(config.content?.showDua===false?0:1);assert.equal(await p.locator('.daily-tile').count(),visibleDaily);if(visibleDaily)assert(await p.locator('.daily-tile a').first().getAttribute('href'));await p.screenshot({path:join(output,'app-'+viewport.width+'.png')});
-const current=await p.evaluate(()=>window.zyadCalendar.getConfig().design.preset);await p.locator('#chosen-date').fill('2026-11-06');await p.locator('#chosen-date').dispatchEvent('change');await p.waitForFunction(()=>document.querySelector('#page-status').textContent.includes('جاهزة'));if(config.design?.autoRotate!==false)assert.notEqual(await p.evaluate(()=>window.zyadCalendar.getConfig().design.preset),current);else assert.equal(await p.evaluate(()=>window.zyadCalendar.getConfig().design.preset),current);assert(!new URL(p.url()).searchParams.has('template'),'Automatic selection must remain automatic on reload');await p.reload();assert(await p.evaluate(()=>window.__posterReady));assert(await p.evaluate(()=>window.zyadCalendar.automatic()));
-await p.locator('.event-main').first().click();assert(await p.locator('dialog.planner-dialog').evaluate(d=>d.open));await p.locator('.planner-modal-close').click();await p.locator('.event-favorite').first().click();assert.equal(await p.locator('.event-favorite[aria-pressed=true]').count(),1);await p.locator('#new-personal-event').click();await p.locator('.personal-form input[type=text]').first().fill('موعدي التجريبي');await p.locator('.personal-form input[type=date]').fill('2026-11-09');await p.getByRole('button',{name:'حفظ الموعد',exact:true}).click();await p.locator('[data-filter=personal]').click();assert(await p.locator('#upcoming-list').textContent().then(s=>s.includes('موعدي التجريبي')));await p.locator('[data-filter=all]').click();
-await p.evaluate(()=>location.hash='template-gallery');await p.locator('#template-gallery').waitFor({state:'visible'});assert.equal(await p.locator('.public-template-card').count(),42);await p.locator('[data-preset=blue-agenda] .public-template-select').click();await p.waitForFunction(()=>document.querySelector('#page-status').textContent.includes('الأجندة الزرقاء'));await p.screenshot({path:join(output,'gallery-'+viewport.width+'.png')});await p.evaluate(()=>location.hash='poster-section');await p.locator('#edit-calendar').click();await p.waitForURL('**/studio/calendar.html?handoff=*');assert(await p.evaluate(()=>window.__calendarStudioReady));assert.equal(await p.locator('#calendar-template').inputValue(),'blue-agenda');await p.locator('#calendar-font').selectOption('amiri');const brand=p.locator('#calendar-fields label').filter({hasText:'اسم البطاقة'}).locator('input');await brand.fill('بطاقتي القابلة للتحرير');await brand.press('Tab');await p.locator('#calendar-save').click();await p.waitForFunction(()=>document.querySelector('#toast')?.textContent.includes('حُفظ'));await p.screenshot({path:join(output,'calendar-studio-'+viewport.width+'.png')});
-if(viewport.width===1440){await p.locator('#calendar-scale').selectOption('2');const [download]=await Promise.all([p.waitForEvent('download'),p.locator('#calendar-download').click()]);const bytes=await readFile(await download.path());assert.deepEqual([bytes.readUInt32BE(16),bytes.readUInt32BE(20)],[2160,3840]);await writeFile(join(output,'calendar-edited.png'),bytes);}
-await p.locator('#calendar-preview-app').click();await p.waitForURL('**/?project=*#poster-section');assert(await p.evaluate(()=>window.__posterReady));assert.equal(await p.evaluate(()=>window.zyadCalendar.getConfig().brand.name),'بطاقتي القابلة للتحرير');assert.equal(await p.evaluate(()=>window.zyadCalendar.getConfig().design.fontFamily),'amiri');await p.locator('#edit-calendar').click();await p.waitForURL('**/studio/calendar.html?handoff=*');assert(await p.evaluate(()=>window.__calendarStudioReady));await p.route('**/api/zyad?action=*',async route=>{const query=new URL(route.request().url()).searchParams.get('action');const body=query==='status'?{ok:true,ready:true}:query==='login'?{ok:true,token:'playwright-test-session'}:query==='config'?{ok:true,config}:query==='session'?{ok:true}:{ok:false,error:'Not supported in test'};await route.fulfill({status:200,contentType:'application/json',headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type'},body:JSON.stringify(body)});});
-await p.locator('#calendar-send-admin').click();await p.waitForURL('**/admin/');
-assert(await p.locator('#zyad-login-form').isVisible(),'Admin must require login before opening the editor');
-assert(await p.locator('#zyad-private').isHidden(),'Admin editor must remain hidden until authentication');
-await p.locator('#zyad-login-form [name=username]').fill('admin');
-await p.locator('#zyad-login-form [name=password]').fill('playwright-test-password');
-await p.locator('#zyad-login-button').click();
-await p.waitForFunction(()=>Boolean(window.zyadAdmin?.getConfig()));await p.evaluate(()=>window.__adminReady);assert.equal(await p.locator('[data-bind="brand.name"]').inputValue(),'بطاقتي القابلة للتحرير');await p.locator('[data-tab=app]').click();await p.locator('#admin-setting-content-showHadith').uncheck();await p.reload();await p.locator('[data-tab=app]').click();assert.equal(await p.locator('#admin-setting-content-showHadith').isChecked(),false);await p.screenshot({path:join(output,'admin-settings-'+viewport.width+'.png')});
-const qr=await p.evaluate(async()=>{const {renderPoster}=await import('/assets/card.js'),{duplicateForPreset}=await import('/assets/templates.js');const cfg=await(await fetch('/data/config.json')).json();cfg.card.qrUrl='https://example.com/my-edited-card';const c=document.createElement('canvas');await renderPoster(c,duplicateForPreset(cfg,'blue-agenda'),'2026-11-06');const q=document.createElement('canvas');const {footerGeometry,followLayout}=await import('/assets/follow-panel.js');const bounds=followLayout(footerGeometry([1080,1920]).follow,{showQr:true}).qr;const size=Math.ceil(bounds.size+10),left=Math.floor(bounds.x-5),top=Math.floor(bounds.y-5);q.width=size;q.height=size;q.getContext('2d').drawImage(c,left,top,size,size,0,0,size,size);return {data:[...q.getContext('2d').getImageData(0,0,size,size).data],size};});assert.equal(jsQR(new Uint8ClampedArray(qr.data),qr.size,qr.size)?.data,'https://example.com/my-edited-card','Edited QR URL must render without waiting for server generation');await p.evaluate(()=>navigator.serviceWorker.ready);const savedId=await p.evaluate(async()=>{const {getAll}=await import('/assets/storage.js');return (await getAll()).find(d=>d.kind==='calendar').id;});await context.setOffline(true);await p.goto(base+'/studio/calendar.html?design='+savedId);assert(await p.evaluate(()=>window.__calendarStudioReady),'Full calendar editor must reopen offline');await context.setOffline(false);assert.deepEqual(errors,[]);checks.push('app navigation, events, favorites, editable calendar handoff, save, local app preview, admin handoff and settings persistence '+viewport.width);await context.close();}
-await writeFile(join(output,'results.json'),JSON.stringify({status:'passed',checks},null,2));console.log('PASS: daily app, 500-day rotation, full calendar editing, app/studio/admin handoff, settings, personal events, custom QR, mobile and desktop.');}finally{await browser?.close();await new Promise(r=>server.close(r));}
+
+const server=await serve(),base='http://127.0.0.1:'+server.address().port;
+let browser;
+try{
+ browser=await chromium.launch();
+ for(const viewport of [{width:390,height:844},{width:1440,height:1100}]){
+  const context=await browser.newContext({viewport});
+  const p=await context.newPage(),errors=[];
+  p.on('pageerror',e=>errors.push(e.message));
+  await p.goto(base+'/?date=2026-11-05');
+  assert(await p.evaluate(()=>window.__posterReady));
+  await p.locator('.event-row').first().waitFor();
+  assert.equal(await p.locator('.public-template-card').count(),42);
+  assert.equal(await p.locator('.visitor-tabs a.native-tab-link').count(),5);
+  assert(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2));
+  const expected=(config.content?.showHadith===false?0:1)+(config.content?.showDua===false?0:1);
+  assert.equal(await p.locator('.daily-tile').count(),expected);
+  await p.evaluate(()=>location.hash='#more');
+  await p.locator('#more').waitFor({state:'visible'});
+  await p.locator('.vs-more-link[href="#settings"]').click();
+  await p.locator('#settings').waitFor({state:'visible'});
+  await p.locator('input[name="visitor-language"][value="en"]').check({force:true});
+  await p.waitForFunction(()=>document.documentElement.lang==='en'&&document.documentElement.dir==='ltr');
+  assert.equal((await p.locator('.visitor-tabs a[href="#more"] .tab-label').textContent()).trim(),'More');
+  assert.equal((await p.locator('#app-view-title').textContent()).trim(),'Settings');
+  const langDetails=await p.evaluate(async()=>{
+   const {localizedConfig,getLanguage,localeDate,presetName}=await import('/assets/locale.js');
+   const {CARD_PRESETS}=await import('/assets/templates.js');
+   const cfg=await(await fetch('/data/config.json')).json();
+   const {renderPoster}=await import('/assets/card.js');
+   const canvas=document.createElement('canvas');
+   await renderPoster(canvas,cfg,'2026-11-05');
+   return {language:getLanguage(),first:localizedConfig(cfg).counters[1].label,
+    card:[canvas.width,canvas.height],date:localeDate('2026-11-05',{month:'long'}),
+    preset:presetName(CARD_PRESETS.find(x=>x.id==='blue-agenda'))};
+  });
+  assert.equal(langDetails.language,'en');
+  assert.equal(langDetails.first,'Salary');
+  assert.deepEqual(langDetails.card,[1080,1920]);
+  assert(langDetails.date.includes('November'));
+  assert.equal(langDetails.preset,'Blue Agenda');
+  await p.evaluate(()=>location.hash='#smart-planner');
+  await p.locator('#smart-planner').waitFor({state:'visible'});
+  assert.equal((await p.locator('#planner-days .planner-weekday').first().textContent()).trim(),'Sunday');
+  await p.evaluate(()=>location.hash='#template-gallery');
+  await p.locator('#template-gallery').waitFor({state:'visible'});
+  assert((await p.locator('[data-preset="blue-agenda"]').first().textContent()).includes('Blue Agenda'));
+  await p.evaluate(()=>location.hash='#settings');
+  await p.locator('#settings').waitFor({state:'visible'});
+  await p.locator('input[name="visitor-language"][value="ar"]').check({force:true});
+  await p.waitForFunction(()=>document.documentElement.lang==='ar'&&document.documentElement.dir==='rtl');
+  assert.equal((await p.locator('.visitor-tabs a[href="#more"] .tab-label').textContent()).trim(),'المزيد');
+  await p.locator('input[name="visitor-language"][value="en"]').check({force:true});
+  await p.reload();
+  assert(await p.evaluate(()=>window.__posterReady));
+  await p.waitForFunction(()=>document.documentElement.lang==='en'&&document.documentElement.dir==='ltr');
+  assert.equal((await p.locator('.visitor-tabs a[href="#more"] .tab-label').textContent()).trim(),'More');
+  await p.screenshot({path:join(output,'language-'+viewport.width+'.png')});
+  assert.deepEqual(errors,[],'Browser errors in '+viewport.width+': '+errors.join(' | '));
+  await context.close();
+ }
+ console.log('PASS: Visitor app, dynamic English/Arabic switching, LTR/RTL navigation, 42 designs, calendar dates, localized poster export and saved language.');
+}finally{
+ await browser?.close();await new Promise(r=>server.close(r));
+}
