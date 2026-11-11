@@ -1,0 +1,24 @@
+/* Public visitor settings, iOS-style translucent controls; RTL/LTR aware. */
+body.visitor-only .visitor-settings{max-width:860px;margin:0 auto;padding:18px 12px 90px;color:var(--ios-text,var(--ink));}
+.visitor-settings .vs-eyebrow{font-size:12px;font-weight:750;letter-spacing:.03em;color:var(--ios-accent,#126b54)}
+.visitor-settings .vs-title{font-size:clamp(24px,4vw,38px);line-height:1.35;margin:7px 0 8px;font-weight:850}
+.visitor-settings .vs-intro{font-size:14px;color:var(--ios-muted,var(--muted));margin:0 0 25px;line-height:1.9}
+.visitor-settings .vs-section{margin:24px 0}
+.visitor-settings .vs-section-head{margin-bottom:13px}
+.visitor-settings .vs-section-head h3{font-size:17px;margin:0 0 3px;font-weight:800}
+.visitor-settings .vs-section-head p{font-size:12px;line-height:1.75;color:var(--ios-muted,var(--muted));margin:0}
+.visitor-settings .vs-surface{padding:14px;border-radius:25px;background:color-mix(in srgb,var(--ios-surface,var(--surface)) 88%,transparent);border:1px solid var(--ios-hair,var(--line));box-shadow:0 12px 32px rgba(15,54,40,.07);-webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px)}
+.visitor-settings .vs-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.visitor-settings .vs-options.vs-two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.visitor-settings .vs-choice{position:relative;display:grid;justify-items:center;align-content:center;gap:7px;padding:16px 7px;min-height:103px;border:1px solid color-mix(in srgb,var(--ios-hair,var(--line)) 90%,transparent);border-radius:18px;background:color-mix(in srgb,var(--ios-surface,var(--surface)) 85%,transparent);cursor:pointer;margin:0;text-align:center;font-size:13px;font-weight:750;color:var(--ios-text,var(--ink));transition:background .18s,border-color .18s,transform .18s}
+.visitor-settings .vs-choice:hover{transform:translateY(-1px)}
+.visitor-settings .vs-choice svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+.visitor-settings .vs-choice input{position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;margin:0}
+.visitor-settings .vs-choice:has(input:checked){background:color-mix(in srgb,var(--ios-accent,#0b7055) 13%,var(--ios-surface,var(--surface)));border-color:var(--ios-accent,#0b7055);box-shadow:inset 0 0 0 1px var(--ios-accent,#0b7055)}
+.visitor-settings .vs-choice:has(input:checked)::after{content:'✓';position:absolute;top:7px;inset-inline-end:10px;font-size:13px;color:var(--ios-accent,#0b7055);font-weight:900}
+.visitor-settings .vs-choice:has(input:focus-visible){outline:3px solid var(--ios-accent,#0b7055);outline-offset:3px}
+.visitor-settings .vs-note{font-size:12px;line-height:1.9;padding:16px 19px;margin:20px 0;background:color-mix(in srgb,var(--ios-surface,var(--surface)) 85%,transparent);border:1px solid var(--ios-hair,var(--line));border-radius:17px;color:var(--ios-muted,var(--muted))}
+.visitor-settings .vs-note strong{display:block;font-size:13px;color:var(--ios-text,var(--ink));margin-bottom:3px}
+html[dir="ltr"] body.visitor-only .app-workspace,html[dir="ltr"] body.visitor-only .visitor-settings{text-align:left}
+html[dir="ltr"] body.visitor-only .visitor-tabs{direction:ltr}
+@media(max-width:550px){body.visitor-only .visitor-settings{padding:12px 4px 110px}.visitor-settings .vs-surface{padding:9px}.visitor-settings .vs-options{gap:7px}.visitor-settings .vs-choice{padding:12px 4px;min-height:92px;font-size:12px}}
