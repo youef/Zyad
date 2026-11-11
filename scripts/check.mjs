@@ -6,7 +6,7 @@ const config=JSON.parse(await readFile(new URL('../data/config.json',import.meta
 assert.equal(isoAdd('2026-11-30',1),'2026-12-01');
 assert.equal(daysBetween('2026-11-03','2026-12-01'),28);
 assert.equal(remaining({mode:'monthly',day:1,enabled:true},'2026-11-03'),28);
-assert.equal(remaining({mode:'monthly',day:31,enabled:true},'2026-02-01'),28); // Feb 28 Saturday -> Sun March 1
+assert.equal(remaining({mode:'monthly',day:31,enabled:true},'2026-02-01'),0); // Jan 31 Saturday paid Sun Feb 1 (prior-month spillover)
 assert.equal(remaining({mode:'manual',value:9,enabled:true},'2026-02-01'),9);
 assert.equal(remaining({mode:'date',date:'2026-12-01',enabled:true},'2026-11-03'),28);
 assert(remaining({mode:'hijri',hijriMonth:9,hijriDay:1,enabled:true},'2026-11-04')>0);
