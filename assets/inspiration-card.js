@@ -26,7 +26,7 @@ export function drawInspirationCard(c,cfg,iso,preset){
  const hijri=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);
  const greg=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);
  panel(c,75,75,930,225,'#ffffffbc',gold,40);
- text(c,cfg.brand?.name||'رزنامة السعودية',540,135,61,green,900,830);
+ text(c,cfg.brand?.name||'أوان السعودية',540,135,61,green,900,830);
  text(c,'إشراقة يومك · مناسبات ورسائل ملهمة',540,213,32,gold,700,830);
  text(c,day,540,352,105,green,900,900);
  panel(c,85,430,910,134,'#ffffffdd',gold,28);
@@ -45,5 +45,5 @@ export function drawInspirationCard(c,cfg,iso,preset){
  text(c,'وتفاءل بما عند الله من جميل العطاء',540,1472,36,green,700,820);
  panel(c,85,1590,910,165,green,green,38);
  text(c,'بطاقة يومية | '+day,540,1645,43,'#fff9e9',900,820);
- text(c,'حفظ ومشاركة · تصميم رزنامة السعودية',540,1712,28,'#fff9e9',600,830);
+ text(c,'حفظ ومشاركة · تصميم أوان السعودية',540,1712,28,'#fff9e9',600,830);
 }
