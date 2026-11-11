@@ -1,4 +1,4 @@
-import {getLanguage,translate,localeDate,eventLabel} from './locale.js?v=locale1';
+import {getLanguage,translate,localeDate,eventLabel,localizedConfig} from './locale.js?v=locale2';
 import {paymentOccurrences,paymentRule,PAYMENT_RULE_LABELS} from './payment-schedule.js?v=pay2';
 
 import {isoAdd,daysBetween,hijriDate,saToday} from './card.js?v=glass20261110';
@@ -41,7 +41,7 @@ export function nextEventDates(item,fromIso,months=12){
 }
 export function futureEvents(cfg,fromIso,months=12){
   const out=[];
-  for(const item of cfg.counters||[]){
+  for(const item of localizedConfig(cfg).counters||[]){
     for(const date of nextEventDates(item,fromIso,months)){
       out.push({item,date,month:monthKey(date),days:daysBetween(fromIso,date),title:eventLabel(item),category:translate(item.category||eventType(item))});
     }
