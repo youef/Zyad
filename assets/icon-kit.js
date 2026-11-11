@@ -1,6 +1,7 @@
 /* Saudi Calendar icon library: a self-contained, offline-capable subset of
    Lucide-style 24px outline icons. Uses SVG paths, not emoji or icon fonts. */
 const PATHS={
+ 'ellipsis':'<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>',
  'heart':'<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>',
  'settings':'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a2 2 0 0 0 .4 2.2l-1.6 1.6a2 2 0 0 0-2.2-.4l-1.2.5a2 2 0 0 0-1.2 1.8V22h-2.3v-1.3a2 2 0 0 0-1.2-1.8l-1.2-.5a2 2 0 0 0-2.2.4l-1.6-1.6a2 2 0 0 0 .4-2.2l-.5-1.2a2 2 0 0 0-1.8-1.2H2v-2.3h1.3a2 2 0 0 0 1.8-1.2l.5-1.2a2 2 0 0 0-.4-2.2l1.6-1.6a2 2 0 0 0 2.2.4l1.2-.5A2 2 0 0 0 11.4 2V1h2.3v1a2 2 0 0 0 1.2 1.8l1.2.5a2 2 0 0 0 2.2-.4l1.6 1.6a2 2 0 0 0-.4 2.2l.5 1.2a2 2 0 0 0 1.8 1.2H23v2.3h-1.3a2 2 0 0 0-1.8 1.2Z"/>',
  'moon':'<path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>',
