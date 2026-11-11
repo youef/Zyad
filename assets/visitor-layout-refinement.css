@@ -17,6 +17,8 @@ body.visitor-only [data-app-view]:not([hidden]){
  margin-block-start:var(--visitor-space-1);
  margin-block-end:var(--visitor-space-3);
 }
+/* A routed section must stay hidden even with display:flex on its active view. */
+body.visitor-only #smart-planner.smart-planner[hidden]{display:none!important}
 body.visitor-only #smart-planner.smart-planner{
  width:100%;
  max-width:1180px;
