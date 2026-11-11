@@ -1,9 +1,10 @@
+import {getLanguage,translate,localeDate} from './locale.js?v=locale1';
 import {drawListHeader} from './list-header.js';
 import {drawHangingLogo} from './brand-art.js';
 import {hasCardMessage} from './daily.js';
 import {hasBanner} from './advertising.js?v=img1';
 import {box,text,paragraph,line,circle,rgba} from './calendar-design.js';import {drawIcon,eventIcon,EVENT_COLORS} from './event-icons.js';import {drawDailyPanel} from './daily-panel.js';
-export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme,s=definition.calendar,style=s.listStyle,items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),date=new Date(iso+'T12:00:00Z'),weekday=new Intl.DateTimeFormat('ar-SA',{weekday:'long',timeZone:'Asia/Riyadh'}).format(date),greg=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{dateStyle:'long',timeZone:'Asia/Riyadh'}).format(date),hijri=tools.hijriDate(iso,cfg);c.fillStyle=p.cream;c.fillRect(0,0,1080,1920);
+export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme,s=definition.calendar,style=s.listStyle,items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),date=new Date(iso+'T12:00:00Z'),weekday=localeDate(iso,{weekday:'long'}),greg=localeDate(iso,{dateStyle:'long'}),hijri=tools.hijriDate(iso,cfg);c.fillStyle=p.cream;c.fillRect(0,0,1080,1920);
  drawListHeader(c,{cfg,style,p,iso,weekday,greg,hijri});drawHangingLogo(c,tools.logo,{x:48,y:20,width:172,height:114,light:['saudi','brush'].includes(style)});
  let top=367;if(hasCardMessage(cfg)){const h=cfg.daily?268:184;box(c,52,top,976,h,22,rgba('#ffffff',.85),rgba(p.gold,.4));if(!drawDailyPanel(c,cfg,52,top,976,h,p)){paragraph(c,cfg.card?.quote||'',540,top+h*.44,872,h-70,p.ink,29);text(c,cfg.card?.attribution||'',540,top+h-25,18,p.ink,860);}top+=h+28;}
  const columns=items.length>20?3:style==='columns'?2:items.length>12?2:1,gap=12,count=Math.ceil(items.length/columns),end=1510,rh=Math.min(columns===2?146:133,(end-top-gap*(count-1))/Math.max(1,count)),rw=(976-(columns-1)*18)/columns;const timed=items.filter(i=>i.mode!=='manual').map(i=>tools.remaining(i,iso)),nearest=timed.length?Math.min(...timed):null;
@@ -14,7 +15,7 @@ export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme
   if(style==='week')for(let j=0;j<4;j++)box(c,x+19+j*18,y-4,7,12,3,p.gold);
   const iconSize=Math.min(49,rh*.62),iconX=x+rw-64,iconY=y+rh/2-iconSize/2;if(style!=='timeline'&&cfg.design?.showIcons!==false){circle(c,iconX+iconSize/2,iconY+iconSize/2,iconSize*.64,rgba(color,.11));drawIcon(c,eventIcon(item),iconX,iconY,iconSize,color);}
   const number= item.mode==='manual'?String(n).padStart(2,'0'):n===0?'اليوم':n===1?'غدًا':String(n).padStart(2,'0'),labelX=style==='timeline'?x+rw-77:x+rw-91,labelWidth=rw*.63;const hasDates=rh>=66&&cfg.design?.showEventDates!==false&&item.mode!=='manual';text(c,item.label||'موعد',labelX,y+rh*(hasDates?.37:.48),Math.min(32,rh*.44),p.ink,labelWidth,'right',700);text(c,number,x+rw*.105,y+rh*.42,Math.min(49,rh*.55),color,rw*.18,'center',800);if(n>1&&rh>=72&&cfg.design?.showUnit!==false)text(c,item.mode==='manual'?'قيمة':'يوم',x+rw*.105,y+rh*.77,18,color,rw*.17);
-  if(hasDates){const next=new Date(date);next.setUTCDate(next.getUTCDate()+Number(n));text(c,new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{dateStyle:'medium',timeZone:'Asia/Riyadh'}).format(next)+' · تقديري',labelX,y+rh*.77,18,p.ink,labelWidth,'right',400);}
+  if(hasDates){const next=new Date(date);next.setUTCDate(next.getUTCDate()+Number(n));text(c,localeDate(next.toISOString().slice(0,10),{dateStyle:'medium'})+' · تقديري',labelX,y+rh*.77,18,p.ink,labelWidth,'right',400);}
  }
  if(!items.length)text(c,'لا توجد مواعيد مضافة',540,top+110,39,p.ink,900);
  // Shared transparent footer is rendered once after this list template.
