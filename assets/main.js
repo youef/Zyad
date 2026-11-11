@@ -1,3 +1,4 @@
+import {SOCIAL_SIZES,getSocialSize,adaptPoster,exportBlob,socialControls} from './social-sizes.js?v=1';
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
@@ -6,6 +7,21 @@ import {dailyTemplate} from './daily.js?v=i18n4';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
+const socialPanel=socialControls();
+document.querySelector('#poster-section .action-buttons')?.before(socialPanel);
+const socialSize=()=>document.getElementById('social-output-size')?.value||'whatsapp';
+const socialFormat=()=>document.getElementById('social-output-format')?.value||'png';
+async function socialCanvas(cfg,date,quality=1){
+ const original=document.createElement('canvas');
+ await renderPoster(original,cfg,date,{scale:quality===2?2:1});
+ return adaptPoster(original,socialSize(),{quality:1});
+}
+async function socialDownload(cfg,date,preset,quality=1){
+ const output=await socialCanvas(cfg,date,quality),format=socialFormat();
+ downloadFile('calendar-'+date+'-'+preset+'-'+socialSize()+(quality>1?'-HD':'')+'.'+format,await exportBlob(output,format));
+}
+document.addEventListener('zyad-social-size-change',()=>{if(config)void refresh();});
+
 let config=null,publishedConfig=null,activePreset='',renderId=0;
 let automatic=localStorage.getItem('zyad-template-mode')!=='manual';
 let galleryObserver=null,galleryRevision=0;
@@ -107,8 +123,7 @@ function updateUrl(){
 }
 async function exportPreset(id){
  const snapshot=activeConfig(id),cv=document.createElement('canvas'),iso=dateInput.value;
- await renderPoster(cv,snapshot,iso);
- downloadFile('calendar-'+iso+'-'+id+'.png',await getPngBlob(cv));
+ await socialDownload(snapshot,iso,id);
  say('تم تنزيل بطاقة '+CARD_PRESETS.find(x=>x.id===id).name+'.');
 }
 function renderGallery(){
@@ -125,7 +140,7 @@ function renderGallery(){
    if(image.complete&&image.naturalWidth){image.classList.add('is-loaded');card.dataset.previewState='ready';continue;}
    try{
     const art=card.querySelector('.public-template-art');
-    await renderPoster(art,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35});
+    const temp=document.createElement('canvas');await renderPoster(temp,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35});const adapted=adaptPoster(temp,socialSize());art.width=adapted.width;art.height=adapted.height;art.getContext('2d').drawImage(adapted,0,0);
     if(revision!==galleryRevision)break;
     art.hidden=false;image.classList.remove('is-loaded');image.classList.add('is-error');card.querySelector('.public-template-fallback').hidden=true;
     card.querySelector('.preview-date').textContent='معاينة البطاقة';
@@ -178,9 +193,9 @@ async function refresh(){
  if(!config)return;const id=++renderId;syncQuickDays();say('جارٍ توليد البطاقة...');
  try{
   const temp=document.createElement('canvas'),snapshot=JSON.parse(JSON.stringify(config));
-  await renderPoster(temp,snapshot,dateInput.value,{displayScale:.65});
+  await renderPoster(temp,snapshot,dateInput.value,{displayScale:.65});const socialPreview=adaptPoster(temp,socialSize());
   if(id!==renderId)return;
-  canvas.width=temp.width;canvas.height=temp.height;canvas.getContext('2d').drawImage(temp,0,0);
+  canvas.width=socialPreview.width;canvas.height=socialPreview.height;canvas.getContext('2d').drawImage(socialPreview,0,0);
   mountPlanner(config,dateInput.value);
   window.dispatchEvent(new CustomEvent('zyad-calendar-updated',{detail:{config:JSON.parse(JSON.stringify(config)),date:dateInput.value,automatic}}));
   say('بطاقة '+CARD_PRESETS.find(x=>x.id===activePreset)?.name+' جاهزة للتنزيل والمشاركة.');
@@ -192,9 +207,9 @@ $('#next').addEventListener('click',()=>setDate(isoAdd(dateInput.value,1)));
 $('#today').addEventListener('click',()=>setDate(saToday()));
 dateInput.addEventListener('change',()=>{if(dateInput.value)setDate(dateInput.value);});
 function exportAction(id,action){$(id).addEventListener('click',async()=>{const button=$(id);if(button.disabled||!config)return;button.disabled=true;const snapshot=JSON.parse(JSON.stringify(config)),iso=dateInput.value,preset=activePreset;try{await action(snapshot,iso,preset);}catch(e){if(e.name!=='AbortError')say('تعذر تجهيز البطاقة: '+e.message);}finally{button.disabled=false;}});}
-exportAction('#download',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);downloadFile(`calendar-${iso}-${preset}.png`,await getPngBlob(c));say('تم تجهيز الصورة للتنزيل.');});
-exportAction('#download-4k',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso,{scale:2});downloadFile(`calendar-${iso}-${preset}-4k.png`,await getPngBlob(c));say('تم تجهيز الصورة بالدقة المضاعفة 2160 × 3840.');});
-exportAction('#share',async(snapshot,iso,preset)=>{const c=document.createElement('canvas');await renderPoster(c,snapshot,iso);const file=new File([await getPngBlob(c)],`calendar-${iso}-${preset}.png`,{type:'image/png'});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'بطاقتي الذكية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
+exportAction('#download',async(snapshot,iso,preset)=>{await socialDownload(snapshot,iso,preset);say('تم تجهيز الصورة بالتنسيق والمقاس المختار.');});
+exportAction('#download-4k',async(snapshot,iso,preset)=>{await socialDownload(snapshot,iso,preset,2);say('تم تجهيز الصورة بجودة عالية حسب المقاس المختار.');});
+exportAction('#share',async(snapshot,iso,preset)=>{const c=await socialCanvas(snapshot,iso),format=socialFormat(),file=new File([await exportBlob(c,format)],`calendar-${iso}-${preset}-${socialSize()}.${format}`,{type:format==='jpeg'?'image/jpeg':'image/'+format});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'بطاقتي الذكية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
 function updateLanguageBrand(){
  const brand=getLanguage()==='en'?(config?.brand?.nameEn||'Saudi Calendar'):(config?.brand?.name?.trim()||'رزنامة السعودية');
  const b=document.querySelector('#brand-title'),f=document.querySelector('#footer-brand');
