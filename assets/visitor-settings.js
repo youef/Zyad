@@ -1,6 +1,6 @@
 /* Visitor settings: persisted local preferences, no login required. */
 const KEY_THEME='zyad-appearance',KEY_LANG='zyad-language';
-const settingsRoot=document.getElementById('app-settings');
+const settingsRoot=document.getElementById('settings');
 const dictionary={
  ar:{
   settings:'الإعدادات',settingsDesc:'خصّص طريقة عرض رزنامة السعودية على جهازك.',
@@ -14,6 +14,7 @@ const dictionary={
   todayTitle:'يومك بين يديك',plannerTitle:'تقويمك… كل المواعيد',galleryTitle:'تصميم لكل يوم',
   archiveTitle:'أرشيف بطاقاتك',favoritesTitle:'تصاميمي المفضلة',
   save:'حفظ البطاقة',share:'مشاركة',highQuality:'جودة عالية 4K',
+  greeting:'كل يوم، بداية جميلة',introTag:'رزنامتك اليومية',introTitle:'مواعيدك، بكل وضوح.',introDesc:'اطّلع على المواعيد والمناسبات والبطاقات المنشورة، دون الحاجة إلى إنشاء حساب.',galleryIntro:'تصفح التصاميم، اختر المفضل لديك، واحفظه مباشرة دون حساب.',galleryPick:'اختر بطاقتك',calendarAll:'التقويم الكامل',upcoming:'مواعيدك القادمة',archiveDesc:'صورة كل يوم محفوظة للرجوع إليها.',spotlight:'أقرب موعد',selectedDesign:'التصميم المختار حاليًا',searchDesign:'ابحث باسم التصميم أو المناسبة',favoriteFirst:'المفضلة أولاً',
   search:'ابحث عن موعد…',all:'الكل',dues:'الاستحقاقات',
   hint:'يتم حفظ اللغة والمظهر في هذا المتصفح، ولا يتغير تصميم البطاقة المنشورة.',
   titleNote:'اللغة الإنجليزية متاحة لواجهة التطبيق. أسماء المناسبات والنصوص المنشورة تبقى بلغتها الأصلية.'
@@ -30,6 +31,7 @@ const dictionary={
   todayTitle:'Your day at a glance',plannerTitle:'Your calendar · All events',galleryTitle:'A design for every day',
   archiveTitle:'Your card archive',favoritesTitle:'Favorite designs',
   save:'Save card',share:'Share',highQuality:'High quality 4K',
+  greeting:'Every day, a fresh start',introTag:'Your daily calendar',introTitle:'Your schedule, made clear.',introDesc:'Explore upcoming payments, events and public cards without creating an account.',galleryIntro:'Browse designs, choose a favorite and save it instantly without an account.',galleryPick:'Choose your card',calendarAll:'Full calendar',upcoming:'Upcoming events',archiveDesc:'Browse and revisit cards from earlier days.',spotlight:'Next event',selectedDesign:'Currently selected design',searchDesign:'Search designs or occasions',favoriteFirst:'Favorites first',
   search:'Search events…',all:'All',dues:'Payments',
   hint:'Language and theme are stored in this browser. Published card artwork is unchanged.',
   titleNote:'English covers the app interface. Published event names and card content remain in their original language.'
@@ -47,11 +49,24 @@ const localized=[
  ['.visitor-tabs a[href="#favorites"] .tab-label','favorites'],
  ['.visitor-tabs a[href="#settings"] .tab-label','settings'],
  ['#brand-title','brand'],
+ ['#app-greeting','greeting'],
+ ['.ios-home-intro-copy .ios-overline','introTag'],
+ ['.ios-home-intro-copy h2','introTitle'],
+ ['.ios-home-intro-copy p','introDesc'],
+ ['#template-gallery .gallery-head-copy p','galleryIntro'],
+ ['#template-gallery .gallery-head h2','galleryPick'],
+ ['.agenda-panel .panel-title h2','upcoming'],
+ ['#archive .section-head p','archiveDesc'],
+ ['#spotlight-caption','spotlight'],
+ ['.gallery-selected-copy small','selectedDesign'],
+ ['#calendar-search','searchDesign'],
+ ['#gallery-sort option[value="favorites"]','favoriteFirst'],
  ['#today','today'],
  ['#poster-section .panel-title h2','poster'],
- ['#template-gallery .gallery-head h2','designs'],
+
  ['#archive .section-head h2','archive'],
  ['#agenda-search','search'],
+ ['.ios-home-view-calendar','calendarAll'],
  ['#agenda-filters [data-filter="all"]','all'],
  ['#agenda-filters [data-filter="wallet"]','dues'],
  ['#agenda-filters [data-filter="favorites"]','favorites'],
