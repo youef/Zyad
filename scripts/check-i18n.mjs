@@ -34,7 +34,7 @@ for(const c of translated.counters){
 }
 assert.equal(config.counters.find(x=>x.id==='salary').label,'الراتب','Arabic config changed unexpectedly');
 assert.equal(translated.card.disclaimer,'Estimated dates; verify with official sources');
-const day=dailyContent(config,'2026-11-11');
+const day=dailyContent({...config,content:{...config.content,showHadith:true,showDua:true}},'2026-11-11');
 assert(day.hadith?.textEn&&day.hadith.text===day.hadith.textEn);
 assert(day.dua?.textEn&&day.dua.text===day.dua.textEn);
 storage.set('zyad-language','ar');
