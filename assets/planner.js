@@ -172,7 +172,7 @@ export function mountPlanner(config,selected=saToday()){
     select.onchange=()=>{kind=select.value;render();};categoryBox.append(select);
     attach(filters,searchBox,categoryBox);right.append(filters);
     const list=elem('div','planner-list');list.id='planner-list';right.append(list);
-    attach(content,aside,right);const sectionTitle=elem('div','planner-months-heading');sectionTitle.append(elem('h3','','الشهور'),range);attach(container,heading,sectionTitle,months,content);
+    attach(content,aside,right);const sectionTitle=elem('div','planner-months-heading');sectionTitle.append(elem('h3','','الشهور'),range);const monthSection=elem('section','planner-months-section');monthSection.append(sectionTitle,months);attach(container,heading,monthSection,content);
     dialog=elem('dialog','planner-dialog');document.body.append(dialog);
     container.dataset.initialized='true';
   }
