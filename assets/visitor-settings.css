@@ -45,3 +45,25 @@ html[dir="ltr"] .visitor-more .vs-more-chevron{transform:rotate(180deg)}
 .visitor-settings .vs-back span:first-child{font-size:22px;line-height:1}
 html[dir="ltr"] .visitor-settings .vs-back span:first-child{transform:rotate(180deg)}
 @media(max-width:550px){.visitor-more .vs-more-link{padding:12px;gap:11px;min-height:75px}.visitor-more .vs-more-icon{width:44px;height:44px}.visitor-more .vs-more-copy strong{font-size:14px}}
+
+/* Bidirectional UI: English uses LTR grids and readings, Arabic keeps RTL.
+   Preserve intentional LTR phone/account numbers regardless of language. */
+html[lang="en"][dir="ltr"] body.visitor-only :is(
+ .app-sidebar,.side-links,.app-workspace,.app-header,.app-date-strip,.date-summary,
+ .day-workspace,.agenda-panel,.card-panel,.inspiration-panel,.home-stats,
+ .event-row,.event-main,.premium-gallery,.gallery-head,.gallery-controls,
+ .gallery-selected,.gallery-selected-copy,.visitor-settings,.visitor-more,
+ .planner-heading,.planner-content,.planner-calendar,.planner-results,
+ .planner-event,.planner-event-line,.planner-event-copy,.planner-field,
+ .planner-event-date,.planner-months,.planner-filters,.visitor-readonly-note
+ ){direction:ltr!important;text-align:left!important}
+html[lang="en"][dir="ltr"] body.visitor-only .app-tabs.visitor-tabs,
+html[lang="en"][dir="ltr"] body.visitor-only .app-tabs.visitor-tabs > a{direction:ltr!important}
+html[lang="en"][dir="ltr"] body.visitor-only :is(
+ .event-main,.planner-event,.planner-event-copy,.gallery-head-copy,
+ .ios-home-intro-copy,.ios-spotlight-content,.agenda-search,
+ .planner-results-heading,.planner-calendar-head
+ ){text-align:left!important}
+html[lang="en"][dir="ltr"] body.visitor-only .visitor-settings .vs-more-chevron{transform:rotate(180deg)}
+html[lang="ar"][dir="rtl"] body.visitor-only :is(.visitor-settings,.visitor-more){direction:rtl}
+body.visitor-only :is(input[type="tel"],[dir="ltr"]){unicode-bidi:isolate}
