@@ -1,5 +1,5 @@
-import {getLanguage} from './locale.js?v=locale2';
-import {CONTENT_LIBRARY} from './content-library.js';
+import {getLanguage} from './locale.js?v=i18n4';
+import {CONTENT_LIBRARY} from './content-library.js?v=i18n4';
 import {selectTemplate} from './rules.js';
 export {CONTENT_LIBRARY};
 export const dayNumber=iso=>Math.floor(Date.parse(iso+'T12:00:00Z')/86400000);
