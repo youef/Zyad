@@ -96,7 +96,7 @@ export function renderPremium(ctx,cfg,iso,tools){
  if(next&&des.highlightNext!==false)label(ctx,'الأقرب: '+next.label,72,830+lift,20,dark?'#e3c68f':soft,444,'left');
  const rows=Math.max(1,Math.ceil(items.length/4)),compact=des.density==='compact'||rows>4;
  const h=Math.min(compact?116:155,Math.floor((1515-(883+lift))/rows)-11),space=compact?10:14;
- items.forEach((item,i)=>counter(ctx,item,780-i%4*240,885+lift+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false));
+ items.forEach((item,i)=>counter(ctx,item,(getLanguage()==='en'?70+i%4*240:780-i%4*240),885+lift+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false));
  if(!items.length)label(ctx,'لا توجد مواعيد مضافة',540,1170,46,dark?'#fff':soft);
  // Shared transparent footer is rendered by drawCombinedFooter().
 }
