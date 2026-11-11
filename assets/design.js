@@ -1,3 +1,4 @@
+import {getLanguage,translate,localeDate} from './locale.js?v=locale1';
 
 /* Saudi premium calendar templates rendered offline on Canvas. */
 import {drawHangingLogo} from './brand-art.js';
@@ -8,9 +9,9 @@ const FONT='"Cairo",Tahoma,Arial,sans-serif';
 function rgba(hex,alpha){const c=/^#[a-f\d]{6}$/i.test(hex)?hex:'#064b43';return 'rgba('+[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)).join(',')+','+alpha+')';}
 function round(c,x,y,w,h,r,fill,stroke=null,size=1){c.beginPath();c.roundRect(x,y,w,h,r);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=size;c.strokeStyle=stroke;c.stroke();}}
 function label(c,value,x,y,sz,color,max=0,align='center',weight='800'){
- c.save();c.direction='rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;
+ c.save();c.direction=getLanguage()==='en'?'ltr':'rtl';c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;
  while(true){c.font=weight+' '+sz+'px '+FONT;if(!max||c.measureText(String(value)).width<=max||sz<15)break;sz--;}
- c.fillText(String(value||''),x,y);c.restore();
+ c.fillText(String(translate(value)||''),x,y);c.restore();
 }
 function star(c,x,y,r,color,opacity=1){c.save();c.globalAlpha=opacity;c.translate(x,y);c.rotate(Math.PI/8);c.beginPath();for(let i=0;i<16;i++){const a=i*Math.PI/8,v=i%2?r*.68:r;if(i)c.lineTo(Math.cos(a)*v,Math.sin(a)*v);else c.moveTo(Math.cos(a)*v,Math.sin(a)*v);}c.closePath();c.strokeStyle=color;c.lineWidth=2;c.stroke();c.restore();}
 function mosaic(c,color,a){for(let y=28;y<1920;y+=116)for(let x=40+(Math.floor(y/116)%2)*58;x<1100;x+=116){star(c,x,y,30,color,a);}}
