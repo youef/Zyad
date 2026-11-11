@@ -1,4 +1,4 @@
-import {getLanguage,translate} from './locale.js?v=locale1';
+import {getLanguage,translate} from './locale.js?v=i18n4';
 /* Shared Saudi Calendar footer: image advertisement ABOVE editable follow-up block.
  * Drawn into the source canvas before any export, never an HTML overlay. */
 import './vendor/qrcode.js';
