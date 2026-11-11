@@ -11,7 +11,7 @@ function real(iso){if(!re.test(iso))return false;const d=new Date(iso+'T12:00:00
 const maxDay=(y,m)=>new Date(Date.UTC(y,m,0)).getUTCDate();
 export const dayLabel=iso=>localeDate(iso,{day:'numeric',month:'long',year:'numeric'});
 export const monthLabel=key=>localeDate(key+'-01',{month:'long',year:'numeric'});
-export const eventType=i=>i.mode==='monthly'?'شهري':i.mode==='hijri'?'هجري':i.mode==='manual'?'يدوي':i.repeat==='yearly'?'سنوي':'مرة واحدة';
+export const eventType=i=>translate(i.mode==='monthly'?'شهري':i.mode==='hijri'?'هجري':i.mode==='manual'?'يدوي':i.repeat==='yearly'?'سنوي':'مرة واحدة');
 export const remainingLabel=n=>getLanguage()==='en'?(n===0?'Today':n===1?'Tomorrow':'In '+n+' days'):n===0?'اليوم':n===1?'غدًا':'بعد '+n+' يوم';
 export function nextEventDates(item,fromIso,months=12){
   if(!item||item.enabled===false||item.mode==='manual'||!real(fromIso))return [];
