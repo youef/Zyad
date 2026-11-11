@@ -1,0 +1,8 @@
+/* The homepage banner mirrors the advertisement configured for daily cards. */
+#today-app .home-advertisement{margin:24px 0 8px;padding:clamp(14px,3vw,22px);overflow:hidden}
+#today-app .home-advertisement[hidden]{display:none!important}
+#today-app .home-advertisement-header{margin-bottom:12px}
+#today-app .home-advertisement-header h2{margin:0;font-size:clamp(16px,2vw,20px);font-weight:800}
+#today-app .home-advertisement-image{width:100%;border-radius:14px;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:64px}
+#today-app .home-advertisement-image img{display:block;width:100%;height:auto;max-height:220px;object-fit:contain}
+@media(max-width:600px){#today-app .home-advertisement{margin:18px 0 8px;padding:12px;border-radius:18px}#today-app .home-advertisement-image{border-radius:10px}#today-app .home-advertisement-image img{max-height:140px}}
