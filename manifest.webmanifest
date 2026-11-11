@@ -1,7 +1,7 @@
 {
   "id": "./",
-  "name": "رزنامة السعودية | SAUDI CALENDAR",
-  "short_name": "رزنامة السعودية",
+  "name": "أوان السعودية | SAUDI CALENDAR",
+  "short_name": "أوان السعودية",
   "lang": "ar",
   "dir": "rtl",
   "start_url": "./",
@@ -11,13 +11,13 @@
   "theme_color": "#073f34",
   "icons": [
     {
-      "src": "assets/app-192.png",
+      "src": "assets/branding/awan-icon.svg",
       "sizes": "192x192",
-      "type": "image/png",
+      "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "assets/app-512.png",
+      "src": "assets/branding/awan-icon.svg",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
