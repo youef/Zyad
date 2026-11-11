@@ -2,6 +2,7 @@ import {localizedConfig,localeDate,getLanguage,translate} from './locale.js?v=i1
 import {nextPaymentDate} from './payment-schedule.js?v=pay2';
 import {renderPremium} from './design.js?v=i18n4';
 import {bannerForPoster} from './advertising.js?v=working24';
+import {drawInspirationCard} from './inspiration-card.js?v=1';
 import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=i18n4';
 import {renderHeritage} from './heritage-premium.js?v=i18n4';
 import {presetInfo} from './templates.js';
@@ -179,7 +180,8 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
-  if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
+  if(definition.inspiration){drawInspirationCard(ctx,config,iso,definition.inspiration);}
+  else if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if((config.design?.preset||'royal')==='heritage'){renderHeritage(ctx,config,iso,{logo,qr,remaining,hijriDate,hijriPanel,weekday});}
   else {renderPremium(ctx,config,iso,{logo,qr,remaining,hijriDate});}
