@@ -1,8 +1,8 @@
-import {getLanguage,translate,localeDate} from './locale.js?v=locale1';
+import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 /* A clean, print-first Saudi heritage card. All content is live and editable. */
 import {drawHangingLogo} from './brand-art.js';
-import {drawDailyPanel} from './daily-panel.js';
-import {hasCardMessage} from './daily.js';
+import {drawDailyPanel} from './daily-panel.js?v=i18n4';
+import {hasCardMessage} from './daily.js?v=i18n4';
 const W=1080,H=1920;
 const C={deep:'#073f34',deepest:'#032e29',green:'#0c624b',gold:'#c7a05b',goldLight:'#f4dfaa',paper:'#faf6ed',ivory:'#fffdf8',ink:'#173e35',muted:'#67796c',line:'#e3d5b7'};
 const fallbackFont='"Cairo",Tahoma,Arial,sans-serif';
