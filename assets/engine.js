@@ -1,7 +1,7 @@
-import {getLanguage,translate,localeDate} from './locale.js?v=locale2';
+import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {fontStack,loadTypeface} from './typography.js';
 import {bannerForDesign} from './advertising.js?v=working24';
-import {buildFollowQr,drawCombinedFooter,getPublishedFollow,footerGeometry} from './follow-panel.js?v=glass20261110';
+import {buildFollowQr,drawCombinedFooter,getPublishedFollow,footerGeometry} from './follow-panel.js?v=i18n4';
 import {drawHangingLogo} from './brand-art.js';
 import {validImage} from './storage.js';
 const cache=new Map();
