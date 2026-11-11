@@ -22,3 +22,10 @@ body.visitor-only .visitor-settings{max-width:860px;margin:0 auto;padding:18px 1
 html[dir="ltr"] body.visitor-only .app-workspace,html[dir="ltr"] body.visitor-only .visitor-settings{text-align:left}
 html[dir="ltr"] body.visitor-only .visitor-tabs{direction:ltr}
 @media(max-width:550px){body.visitor-only .visitor-settings{padding:12px 4px 110px}.visitor-settings .vs-surface{padding:9px}.visitor-settings .vs-options{gap:7px}.visitor-settings .vs-choice{padding:12px 4px;min-height:92px;font-size:12px}}
+
+/* Five equally sized destinations in the existing glass bottom dock. */
+@media(max-width:800px){
+ body.visitor-only .app-tabs.visitor-tabs{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link{padding-inline:0!important;min-width:0!important}
+ body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link .tab-label{font-size:9px!important;letter-spacing:0!important}
+}
