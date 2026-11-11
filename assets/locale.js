@@ -145,7 +145,9 @@ export function localizedConfig(config,lang=getLanguage()){
  c.counters=(config.counters||[]).map(i=>({
   ...i,label:eventLabel(i,'en'),
   summary:i.summaryEn||translate(i.summary||'','en'),
-  details:i.detailsEn||translate(i.details||'','en')
+  details:i.detailsEn||translate(i.details||'','en'),
+  notes:i.notesEn||translate(i.notes||'','en'),
+  category:i.categoryEn||translate(i.category||'','en')
  }));
  c.brand.name=c.brand.nameEn||'Saudi Calendar';
  c.brand.subtitle=c.brand.subtitleEn||'Your daily calendar';
