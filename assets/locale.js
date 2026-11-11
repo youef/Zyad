@@ -50,6 +50,72 @@ const map={
  'مواعيدك، بكل وضوح.':'Your dates, made clear.',
  'عند انتهاء':'At the End','يوم':'Day','يومان':'Two Days'
 };
+
+// Public catalogue: English names for every built-in daily and list template.
+export const ENGLISH_PRESET_NAMES=Object.freeze({
+ royal:'Saudi Royal',modern:'Modern',night:'Night',desert:'Royal Desert',pearl:'Pearl',heritage:'Heritage',
+ 'saudi-emerald':'Saudi Emerald','royal-gold':'Royal Gold','islamic-geometry':'Harmony',
+ 'ivory-modern':'Ivory Modern','midnight':'After Dark','desert-sands':'Sand & Light',
+ najdi:'Najdi Story','national-day':'Our Homeland','founding-day':'Deep Roots',
+ ramadan:'Ramadan Nights',eid:'Eid Joy',friday:'Friday Light',remembrance:'Reflection',
+ salary:'Your Next Date',school:'Learning Journey',graduation:'A Dream Achieved',
+ wedding:'A Beautiful Promise',newborn:'Welcome Little One',success:'Achievement',
+ business:'Brand Signature',winter:'Winter Warmth',summer:'Sunny Days',
+ countdown:'Countdown Moment','personal-story':'Daily Journal',
+ 'blue-agenda':'Blue Agenda','mint-schedule':'Mint Schedule','rainbow-brush':'Colors of the Day',
+ 'saudi-list':'Saudi Schedule','financial-table':'Payments Ledger','metro-timeline':'Events Timeline',
+ 'magazine-columns':'Daily Window','week-journal':'Weekly Journal','postcard-calendar':'Daily Postcard',
+ 'mono-calendar':'Ink & Numbers','lilac-agenda':'Lilac Agenda','desert-journal':'Desert Journal'
+});
+export function presetName(p,lang=getLanguage()){
+ return lang==='en'?(ENGLISH_PRESET_NAMES[p?.id]||translate(p?.name||'',lang)):p?.name||'';
+}
+export function presetDescription(p,lang=getLanguage()){
+ if(lang!=='en')return p?.description||'';
+ if(p?.descriptionEn)return p.descriptionEn;
+ return ({
+  royal:'Emerald green with gold details',modern:'Clean shapes and clear contrast',
+  night:'Deep colors with golden accents',desert:'Sandy tones with copper details',
+  pearl:'Ivory and mint palette',heritage:'Classic medallions and heritage motifs'
+ })[p?.id]||'A beautifully composed daily calendar card';
+}
+Object.assign(map,{
+ 'المواعيد القادمة':'Upcoming Dates','الأيام المتبقية':'Days Remaining',
+ 'الأيام المميزة تحتوي على مواعيد.':'Highlighted days contain events.',
+ 'الفترة المعروضة':'Displayed Period','مواعيد الشهر':'Events This Month',
+ 'اختر الموعد لعرض التفاصيل':'Select an event to view its details',
+ 'عرض كامل الشهر':'Show Full Month','ابحث عن موعد':'Search Events','الفئة':'Category',
+ 'إجمالي المواعيد':'Total Events','الموعد القادم':'Next Event','الوقت المتبقي':'Time Remaining',
+ 'تقويمك، كل المواعيد':'Your Calendar, All Events',
+ 'تابع المناسبات والاستحقاقات في تقويم واضح، واعرف ما ينتظرك يومًا بيوم.':'Track dates, payments and events in one clear calendar.',
+ 'رزنامة السعودية · المواعيد':'Saudi Calendar · Events',
+ 'مواعيدك المفضلة':'Favorite Events','المواعيد القادمة':'Upcoming Events',
+ 'المواعيد التقديرية تخضع للجهات الرسمية':'Estimated dates; check official sources',
+ 'الأيام المتبقية':'Days Left','الأيام':'Days',
+ 'لا توجد مواعيد مضافة بعد':'No events yet',
+ 'التاريخ الهجري':'Hijri Date','التقويم الهجري':'Hijri Calendar',
+ 'يومًا إلى ':'Days to ','مواعيدك المهمة':'Important Events',
+ 'من جذورنا… إلى يومنا':'From Our Roots to Today',
+ 'تفاصيل يوم تستحق أن تُحفظ':'A day worth remembering',
+ 'تقويمك ومواعيدك على مدار العام':'Your Calendar Throughout the Year',
+ 'المواعيد تقديرية، ويُرجع للجهات الرسمية للتأكد من مواعيد الصرف':'Dates are estimates; verify with official sources',
+ 'الراعي':'Sponsor','إعلان':'Advertisement',
+ 'رزنامة السعودية':'Saudi Calendar','بطاقات منشورة للجميع':'Public Cards',
+ 'تاريخ اليوم':'Today’s Date','تاريخ البطاقة':'Card Date',
+ 'بطاقتك اليومية':'Daily Card','التقويم الكامل':'Full Calendar',
+ 'أرشيف البطاقات':'Card Archive','المفضلة':'Favorites',
+ 'الحفظ':'Save','حفظ الصورة ↓':'Save Image ↓','جارٍ الحفظ…':'Saving…',
+ 'معاينة التصميم':'Design Preview','جاهز للعرض':'Ready to View',
+ 'المختار':'Selected','✓ المختار':'✓ Selected',
+ 'التقويم الكلاسيكي':'Classic Calendar','قوائم وأجندات':'Lists & Agendas',
+ 'سعودي':'Saudi','ملكي':'Royal','إسلامي':'Islamic','عصري':'Modern',
+ 'ليلي':'Night','صحراوي':'Desert','تراث':'Heritage','وطني':'National',
+ 'تأسيس':'Founding Day','رمضان':'Ramadan','عيد':'Eid','جمعة':'Friday',
+ 'عبارات':'Quotes','مدرسة':'School','تخرج':'Graduation','زواج':'Wedding',
+ 'مولود':'Newborn','نجاح':'Success','تجاري':'Business','شتاء':'Winter',
+ 'صيف':'Summer','عد تنازلي':'Countdown','شخصي':'Personal'
+});
+
 const byLabel=Object.fromEntries(Object.entries(names).map(([id,n])=>[id,n]));
 export function getLanguage(){
  try{return typeof localStorage!=='undefined'&&localStorage.getItem('zyad-language')==='en'?'en':'ar';}
