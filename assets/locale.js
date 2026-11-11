@@ -69,6 +69,15 @@ export const ENGLISH_PRESET_NAMES=Object.freeze({
 });
 Object.assign(map,{
  'يومك بين يديك':'Your Day at a Glance','تقويمك… كل المواعيد':'Calendar · All Events',
+ 'من حديث النبي ﷺ':'From the Prophet’s Hadith',
+ 'دعاء مأثور':'Reported Supplication','دعاء عام':'General Supplication',
+ 'دعاء عام غير منسوب إلى حديث':'General Supplication (not attributed to a hadith)',
+ 'كلمة اليوم':'Thought of the Day','رسالة اليوم':'Today’s Message',
+ 'لحظة إلهام وطمأنينة':'A Moment of Inspiration',
+ 'حديث ودعاء يتجددان مع تاريخ البطاقة.':'A daily hadith and supplication for your selected date.',
+ 'نسخ':'Copy','نُسخ النص مع مصدره':'Text and source copied',
+ 'لا توجد مواعيد مضافة بعد':'No events added yet',
+
  'تصميم لكل يوم':'A Design for Every Day','أرشيف بطاقاتك':'Card Archive',
  'تصاميمي المفضلة':'Favorite Designs','التصميم المختار حاليًا':'Selected Design',
  'جاهز للعرض والحفظ':'Ready to View & Save',
