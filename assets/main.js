@@ -1,8 +1,8 @@
-import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=locale2';
+import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=20261104r4';
-import {mountPlanner} from './planner.js?v=calendar20261110';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=glass20261110';
-import {dailyTemplate} from './daily.js';
+import {mountPlanner} from './planner.js?v=i18n4';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=i18n4';
+import {dailyTemplate} from './daily.js?v=i18n4';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
