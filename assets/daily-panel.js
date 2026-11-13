@@ -1,4 +1,5 @@
 import {getLanguage} from './locale.js?v=i18n4';
+import {fitText,formatCounter} from './text-layout.js?v=2';
 export function drawDailyPanel(c,cfg,x,y,w,h,p){
  if(!cfg.daily)return false;
  const en=getLanguage()==='en',friday=cfg.daily.special==='friday';
@@ -11,14 +12,9 @@ export function drawDailyPanel(c,cfg,x,y,w,h,p){
  const font=c.zyadFont||'Cairo',rh=h/rows.length;
  rows.forEach((r,index)=>{
   const top=y+index*rh;
-  c.fillStyle=p.gold;c.font=`700 18px ${font}`;c.fillText(r.title,x+w/2,top+22,w-75);
-  let fs=31,lines=[];
-  const wrap=()=>{c.font=`600 ${fs}px ${font}`;lines=[];let acc='';
-   for(const word of String(r.text||'').split(/\s+/)){const next=acc?acc+' '+word:word;if(acc&&c.measureText(next).width>w-84){lines.push(acc);acc=word;}else acc=next;}if(acc)lines.push(acc);};
-  wrap();while(lines.length*fs*1.5>rh-62&&fs>21){fs--;wrap();}
-  c.fillStyle=p.ink;const cy=top+rh*.52;
-  lines.forEach((s,i)=>c.fillText(s,x+w/2,cy+(i-(lines.length-1)/2)*fs*1.5,w-80));
-  c.font=`500 15px ${font}`;c.fillText(r.type==='general'?(en?'General supplication':'غير منسوب إلى حديث'):(r.reference||''),x+w/2,top+rh-17,w-80);
+  fitText(c,r.title,{x:x+22,y:top+5,w:w-44,h:24,size:18,minSize:13,maxLines:1,weight:750,color:p.gold,direction:en?'ltr':'rtl'});
+  fitText(c,r.text,{x:x+31,y:top+32,w:w-62,h:Math.max(19,rh-54),size:Math.min(30,rh*.26),minSize:16,maxLines:3,weight:650,color:p.ink,direction:en?'ltr':'rtl'});
+  fitText(c,r.type==='general'?(en?'General supplication':'غير منسوب إلى حديث'):(r.reference||''),{x:x+34,y:top+rh-22,w:w-68,h:17,size:14,minSize:11,maxLines:1,weight:500,color:p.ink,direction:en?'ltr':'rtl'});
   if(index<rows.length-1){c.beginPath();c.moveTo(x+45,top+rh);c.lineTo(x+w-45,top+rh);c.strokeStyle=p.gold+'66';c.lineWidth=1;c.stroke();}
  });
  c.restore();return true;

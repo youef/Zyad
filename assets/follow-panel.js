@@ -1,4 +1,5 @@
 import {getLanguage,translate} from './locale.js?v=i18n4';
+import {fitText,formatCounter} from './text-layout.js?v=2';
 /* Shared Saudi Calendar footer: image advertisement ABOVE editable follow-up block.
  * Drawn into the source canvas before any export, never an HTML overlay. */
 import './vendor/qrcode.js';
@@ -249,7 +250,7 @@ function followBlock(c,cfg,qr,r,kind){
    const freeRight=middle.x+middle.w-iconSize-24*unit;
    const valueCenter=(middle.x+7*unit+freeRight)/2;
    const valueWidth=Math.max(28,freeRight-(middle.x+18*unit));
-   line(c,value,valueCenter,cy,20*unit,textColor,valueWidth,850,'center','ltr');
+   fitText(c,value,{x:valueCenter-valueWidth/2,y:ry+3*unit,w:valueWidth,h:rowHeight-6*unit,size:20*unit,minSize:10,maxLines:1,color:textColor,weight:850,direction:'ltr'});
   });
  }
  // Separate glass block for the subscription heading on the RIGHT.
@@ -258,14 +259,9 @@ function followBlock(c,cfg,qr,r,kind){
   glassPanel(c,title.x,title.y,title.w,title.h,radius,dark);
   const max=title.w-24*unit;
   if(f.showTitle&&f.title){
-   const setting=titleLines(c,f.title,max,21*unit,2),rows=setting.lines;
-   const lineHeight=Math.max(19*unit,setting.size*1.3);
-   const subtitleVisible=Boolean(f.subtitle),headingH=rows.length*lineHeight;
-   const firstY=title.y+(title.h-headingH-(subtitleVisible?18*unit:0))/2+lineHeight/2;
-   rows.forEach((row,i)=>line(c,row,title.x+title.w/2,firstY+i*lineHeight,
-    setting.size,textColor,max,850,'center'));
-   if(subtitleVisible)line(c,f.subtitle,title.x+title.w/2,
-     firstY+headingH,10*unit,subColor,max,600,'center');
+   const subtitleVisible=Boolean(f.subtitle),headHeight=subtitleVisible?title.h*.7:title.h*.92;
+   fitText(c,f.title,{x:title.x+12*unit,y:title.y+3*unit,w:max,h:headHeight-3*unit,size:21*unit,minSize:11,maxLines:2,color:textColor,weight:850});
+   if(subtitleVisible)fitText(c,f.subtitle,{x:title.x+12*unit,y:title.y+title.h*.72,w:max,h:title.h*.22,size:12*unit,minSize:9,maxLines:1,color:subColor,weight:600});
   }else{
    line(c,f.subtitle,title.x+title.w/2,title.y+title.h/2,
      15*unit,textColor,max,700,'center');

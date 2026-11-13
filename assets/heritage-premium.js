@@ -1,4 +1,5 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
+import {fitText,formatCounter} from './text-layout.js?v=2';
 /* A clean, print-first Saudi heritage card. All content is live and editable. */
 import {drawHangingLogo} from './brand-art.js';
 import {drawDailyPanel} from './daily-panel.js?v=friday1';
@@ -109,7 +110,7 @@ function medal(c,cx,cy,r,n,small){
   const g=c.createLinearGradient(cx-r,cy-r,cx+r,cy+r);
   g.addColorStop(0,'#0e7056');g.addColorStop(.7,C.deep);g.addColorStop(1,'#032e2a');
   scallop(c,cx,cy,r-4,g,'#e5bf6b');
-  txt(c,String(n??0).padStart(2,'0'),cx,cy-(small?3:6),small?42:61,'#ffffff',r*1.68,'900',29,'ltr');
+  fitText(c,formatCounter(n),{x:cx-r*.83,y:cy-r*.65,w:r*1.66,h:r*1.26,size:small?42:61,minSize:22,color:'#ffffff',maxLines:1,weight:900,direction:'ltr'});
   if(!small)txt(c,'يوم',cx,cy+31,16,'#efd9a3',100,'700');
 }
 function countdown(c,cfg,iso,remaining){
@@ -130,7 +131,7 @@ function countdown(c,cfg,iso,remaining){
     if(best){rr(c,x+20,y+10,w-40,4,2,C.gold);}
     const compact=h<145,r=compact?Math.min(44,h*.31):54;
     medal(c,cx,y+(compact?h*.38:h*.39),r,remaining(item,iso),compact);
-    txt(c,item.label||'موعد',cx,y+h*(compact?.80:.82),compact?23:29,C.deep,w-15,'800',18);
+    fitText(c,item.label||'موعد',{x:x+7,y:y+h*.64,w:w-14,h:h*.34,size:compact?22:29,minSize:14,maxLines:2,color:C.deep,weight:800});
   });
   if(!items.length)txt(c,'لا توجد مواعيد مضافة بعد',540,1120,43,C.muted,890,'800');
 }

@@ -1,4 +1,5 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
+import {fitText,formatCounter} from './text-layout.js?v=2';
 
 /* Saudi premium calendar templates rendered offline on Canvas. */
 import {drawHangingLogo} from './brand-art.js';
@@ -32,10 +33,10 @@ function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
  round(c,x,y,w,h,edge,fill,best?gold:(dark?'#31564b':'#e4eadf'),best?2.5:1);c.restore();
  round(c,x+w-7,y+14,3,h-28,2,best?gold:soft);
  if(best)label(c,'✦',x+21,y+22,19,gold);
- label(c,String(n??0).padStart(2,'0'),x+w/2,y+h*(compact?.39:.40),compact?44:56,dark?'#fff7de':green,w-24,'center','900');
+ fitText(c,formatCounter(n),{x:x+15,y:y+h*.09,w:w-30,h:h*.52,size:compact?44:56,minSize:22,color:dark?'#fff7de':green,maxLines:1,weight:900});
  if(showUnit&&!compact)label(c,item.mode==='manual'?'قيمة':n===0?'اليوم':'يوم',x+w/2,y+h*.63,16,best?gold:soft);
  c.fillStyle=dark?'#476458':'#e8ede8';c.fillRect(x+24,y+h*.74,w-48,1);
- label(c,item.label||'موعد',x+w/2,y+h*.86,compact?20:23,dark?'#e9efe5':ink,w-18);
+ fitText(c,item.label||'موعد',{x:x+10,y:y+h*.74,w:w-20,h:h*.24,size:compact?19:23,minSize:14,maxLines:2,color:dark?'#e9efe5':ink,weight:750});
 }
 export function renderPremium(ctx,cfg,iso,tools){
  const des=cfg.design||{},style=['royal','modern','night','desert','pearl'].includes(des.preset)?des.preset:'royal';
