@@ -1,5 +1,6 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {fitText,formatCounter} from './text-layout.js?v=2';
+import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 
 /* Saudi premium calendar templates rendered offline on Canvas. */
 import {drawHangingLogo} from './brand-art.js';
@@ -25,13 +26,14 @@ function clockText(iso){
  const fmt=(o)=>localeDate(iso,o);
  return {weekday:fmt({weekday:'long'}),date:fmt({day:'numeric',month:'long',year:'numeric'})};
 }
-function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight){
+function counter(c,item,x,y,w,h,colors,n,nearest,compact,showUnit,highlight,cfg){
  const {green,gold,ink,soft,dark}=colors;const best=highlight&&nearest!==null&&item.mode!=='manual'&&n===nearest;
  c.save();c.shadowColor='rgba(5,44,33,.10)';c.shadowBlur=15;c.shadowOffsetY=5;
  const edge=colors.style==='modern'?10:colors.style==='pearl'?30:colors.style==='desert'?25:18;
  const fill=dark?(best?'#285047':'#16352f'):best?'#fff5df':colors.style==='desert'?'#fffbf3':'#ffffff';
  round(c,x,y,w,h,edge,fill,best?gold:(dark?'#31564b':'#e4eadf'),best?2.5:1);c.restore();
  round(c,x+w-7,y+14,3,h-28,2,best?gold:soft);
+ if(cfg?.design?.showIcons!==false)drawIconBadge(c,item,x+w-27,y+27,Math.min(40,h*.29),{style:cfg?.design?.iconStyle||'glass',accent:gold,contrast:green,light:dark,featured:best});
  if(best)label(c,'✦',x+21,y+22,19,gold);
  fitText(c,formatCounter(n),{x:x+15,y:y+h*.09,w:w-30,h:h*.52,size:compact?44:56,minSize:22,color:dark?'#fff7de':green,maxLines:1,weight:900});
  if(showUnit&&!compact)label(c,item.mode==='manual'?'قيمة':n===0?'اليوم':'يوم',x+w/2,y+h*.63,16,best?gold:soft);
@@ -97,7 +99,7 @@ export function renderPremium(ctx,cfg,iso,tools){
  if(next&&des.highlightNext!==false)label(ctx,'الأقرب: '+next.label,72,830+lift,20,dark?'#e3c68f':soft,444,'left');
  const rows=Math.max(1,Math.ceil(items.length/4)),compact=des.density==='compact'||rows>4;
  const h=Math.min(compact?116:155,Math.floor((1515-(883+lift))/rows)-11),space=compact?10:14;
- items.forEach((item,i)=>counter(ctx,item,(getLanguage()==='en'?70+i%4*240:780-i%4*240),885+lift+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false));
+ items.forEach((item,i)=>counter(ctx,item,(getLanguage()==='en'?70+i%4*240:780-i%4*240),885+lift+Math.floor(i/4)*(h+space),220,h,color,tools.remaining(item,iso),nearest,compact,des.showUnit!==false,des.highlightNext!==false,cfg));
  if(!items.length)label(ctx,'لا توجد مواعيد مضافة',540,1170,46,dark?'#fff':soft);
  // Shared transparent footer is rendered by drawCombinedFooter().
 }

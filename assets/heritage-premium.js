@@ -1,5 +1,6 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {fitText,formatCounter} from './text-layout.js?v=2';
+import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 /* A clean, print-first Saudi heritage card. All content is live and editable. */
 import {drawHangingLogo} from './brand-art.js';
 import {drawDailyPanel} from './daily-panel.js?v=friday1';
@@ -130,6 +131,7 @@ function countdown(c,cfg,iso,remaining){
     rr(c,x,y,w,h,17,best?'#fffcf3':'#fffefb',best?C.gold:C.line,best?3:1.5);c.restore();
     if(best){rr(c,x+20,y+10,w-40,4,2,C.gold);}
     const compact=h<145,r=compact?Math.min(44,h*.31):54;
+    if(cfg.design?.showIcons!==false)drawIconBadge(c,item,x+w-25,y+25,Math.min(38,h*.30),{style:cfg.design?.iconStyle||'royal',accent:C.gold,contrast:C.deep,featured:best});
     medal(c,cx,y+(compact?h*.38:h*.39),r,remaining(item,iso),compact);
     fitText(c,item.label||'موعد',{x:x+7,y:y+h*.64,w:w-14,h:h*.34,size:compact?22:29,minSize:14,maxLines:2,color:C.deep,weight:800});
   });

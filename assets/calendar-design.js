@@ -1,5 +1,6 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {fitText,formatCounter} from './text-layout.js?v=2';
+import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 // Print-resolution calendar art. Dates, quotes, counters, branding and QR stay live.
 import {drawHangingLogo} from './brand-art.js';
 import {hasCardMessage} from './daily.js?v=friday1';
@@ -74,7 +75,7 @@ function tile(c,item,n,r,p,s,nearest,cfg){
  case 'diamonds':poly(c,cx,cy,w*.49,h*.48,8,fill,edge);break;
  case 'stars':poly(c,cx,cy,w*.49,h*.49,16,fill,edge,.82);numberSize*=.88;break;
  case 'columns':line(c,x+w,y+8,x+w,y+h-8,edge,2);line(c,x+15,y+h-2,x+w-15,y+h-2,edge);ny=y+h*.33;ly=y+h*.77;break;
- case 'swiss':box(c,x,y,w,h,0,fill);box(c,x,y,7,h,0,green);fitText(c,formatCounter(n),{x:x+14,y:y+h*.12,w:w*.46,h:h*.46,size:numberSize,minSize:20,color:green,align:'left'});fitText(c,item.label||'موعد',{x:x+w*.37,y:y+h*.55,w:w*.57,h:h*.40,size:22,minSize:14,maxLines:2,color:ink,align:'right'});c.restore();return;
+ case 'swiss':box(c,x,y,w,h,0,fill);box(c,x,y,7,h,0,green);fitText(c,formatCounter(n),{x:x+14,y:y+h*.12,w:w*.46,h:h*.46,size:numberSize,minSize:20,color:green,align:'left'});fitText(c,item.label||'موعد',{x:x+w*.37,y:y+h*.55,w:w*.57,h:h*.40,size:22,minSize:14,maxLines:2,color:ink,align:'right'});if(cfg.design?.showIcons!==false)drawIconBadge(c,item,x+w-Math.min(25,w*.13),y+Math.min(25,h*.22),Math.min(38,Math.max(18,h*.25)),{style:cfg.design?.iconStyle||'glass',accent:gold,contrast:green,light:dark,featured:best});c.restore();return;
  case 'orbits':box(c,x+4,y+2,w-8,h-4,h*.45,fill,edge);circle(c,x+w-24,y+24,5,gold);break;
  case 'eclipse':box(c,x,y,w,h,16,fill,edge);circle(c,x+23,y+23,13,rgba(gold,.45));circle(c,x+30,y+18,12,fill);break;
  case 'waves':box(c,x,y,w,h,8,fill);c.beginPath();c.moveTo(x+10,y+h-15);c.bezierCurveTo(x+w*.3,y+h-33,x+w*.7,y+h+3,x+w-10,y+h-15);c.strokeStyle=edge;c.lineWidth=3;c.stroke();break;
@@ -86,7 +87,7 @@ function tile(c,item,n,r,p,s,nearest,cfg){
  case 'gifts':box(c,x,y,w,h,18,fill,edge);line(c,x+17,y+10,x+17,y+h-10,gold,3);line(c,x+8,y+h*.67,x+w-8,y+h*.67,rgba(gold,.4));break;
  case 'arches':arch(c,x+6,y+3,w-12,h-6,fill,edge);ny=y+h*.45;ly=y+h*.83;unit=false;break;
  case 'minimal':line(c,cx-24,y+8,cx+24,y+8,gold,3);ny=y+h*.39;numberSize*=1.1;break;
- case 'ledger':box(c,x,y,w,h,4,fill,edge);line(c,x+w*.58,y+12,x+w*.58,y+h-12,rgba(gold,.45));fitText(c,formatCounter(n),{x:x+10,y:y+h*.12,w:w*.47,h:h*.70,size:numberSize,minSize:20,color:ink});fitText(c,item.label||'موعد',{x:x+w*.60,y:y+h*.15,w:w*.36,h:h*.72,size:22,minSize:14,maxLines:3,color:ink});c.restore();return;
+ case 'ledger':box(c,x,y,w,h,4,fill,edge);line(c,x+w*.58,y+12,x+w*.58,y+h-12,rgba(gold,.45));fitText(c,formatCounter(n),{x:x+10,y:y+h*.12,w:w*.47,h:h*.70,size:numberSize,minSize:20,color:ink});fitText(c,item.label||'موعد',{x:x+w*.60,y:y+h*.15,w:w*.36,h:h*.72,size:22,minSize:14,maxLines:3,color:ink});if(cfg.design?.showIcons!==false)drawIconBadge(c,item,x+w-Math.min(25,w*.13),y+Math.min(25,h*.22),Math.min(38,Math.max(18,h*.25)),{style:cfg.design?.iconStyle||'glass',accent:gold,contrast:green,light:dark,featured:best});c.restore();return;
  case 'notebook':box(c,x,y,w,h,4,fill,edge);for(let yy=y+32;yy<y+h;yy+=28)line(c,x+8,yy,x+w-8,yy,rgba(gold,.15));line(c,x+w-20,y+5,x+w-20,y+h-5,rgba(green,.35));break;
  case 'badges':poly(c,cx,cy,w*.49,h*.48,6,fill,edge);numberSize*=.9;break;
  case 'petals':box(c,x,y,w,h,Math.min(w,h)*.32,fill,edge);for(const [xx,yy]of [[x+19,y+19],[x+w-19,y+h-19]]){circle(c,xx,yy,8,null,gold);circle(c,xx+9,yy,5,null,gold);}break;
@@ -100,7 +101,8 @@ function tile(c,item,n,r,p,s,nearest,cfg){
  case 'pearls':box(c,x+2,y+2,w-4,h-4,32,fill,edge);circle(c,x+18,y+17,4,gold);circle(c,x+w-18,y+h-17,4,gold);break;
  default:box(c,x,y,w,h,18,fill,edge);
  }
- if(best)circle(c,x+w-19,y+19,4,gold);
+ if(cfg.design?.showIcons!==false)drawIconBadge(c,item,x+w-Math.min(25,w*.13),y+Math.min(25,h*.22),Math.min(38,Math.max(18,h*.25)),{style:cfg.design?.iconStyle||'glass',accent:gold,contrast:green,light:dark,featured:best});
+ if(best)circle(c,x+18,y+18,4,gold);
  fitText(c,formatCounter(n),{x:x+w*.105,y:ny-h*.24,w:w*.79,h:h*.47,size:numberSize,minSize:21,maxLines:1,color:dark?ink:green});
  if(unit&&h>125&&cfg.design?.showUnit!==false)text(c,item.mode==='manual'?'قيمة':n===0?'اليوم':'يوم',cx,y+h*.60,16,dark?ink:p.greenLight,w*.8,'center',500);
  fitText(c,item.label||'موعد',{x:x+w*.09,y:y+h*.66,w:w*.82,h:h*.30,size:Math.min(24,h*.22),minSize:14,maxLines:2,color:ink,weight:750});c.restore();
@@ -117,6 +119,7 @@ export function renderCalendar(c,cfg,iso,tools,definition){
  const ad=footerGeometry([W,H],'calendar').ad;
  const paperBottom=Math.round(ad.y+ad.h+14);
  box(c,33,103,1014,paperBottom-103,28,field);
+ drawCardFiligree(c,33,103,1014,paperBottom-103,{gold:p.gold,opacity:dark?.20:.14,large:true});
  header(c,cfg,iso,tools,p,s);
  const density=(cfg.counters||[]).filter(i=>i.enabled!==false).length;
  const visible=hasCardMessage(cfg),quoteY=s.headerHeight+30,quoteH=visible?(cfg.daily?(density>=18?212:294):(density>=18?190:244)):0;

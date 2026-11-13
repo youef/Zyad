@@ -1,10 +1,11 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {fitText,formatCounter} from './text-layout.js?v=2';
+import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 import {drawListHeader} from './list-header.js';
 import {drawHangingLogo} from './brand-art.js';
 import {hasCardMessage} from './daily.js?v=friday1';
 import {hasBanner} from './advertising.js?v=img1';
-import {box,text,paragraph,line,circle,rgba} from './calendar-design.js?v=friday1';import {drawIcon,eventIcon,EVENT_COLORS} from './event-icons.js';import {drawDailyPanel} from './daily-panel.js?v=friday1';
+import {box,text,paragraph,line,circle,rgba} from './calendar-design.js?v=friday1';import {EVENT_COLORS} from './event-icons.js';import {drawDailyPanel} from './daily-panel.js?v=friday1';
 export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme,s=definition.calendar,style=s.listStyle,items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),date=new Date(iso+'T12:00:00Z'),weekday=localeDate(iso,{weekday:'long'}),greg=localeDate(iso,{dateStyle:'long'}),hijri=tools.hijriDate(iso,cfg);c.fillStyle=p.cream;c.fillRect(0,0,1080,1920);
  drawListHeader(c,{cfg,style,p,iso,weekday,greg,hijri});drawHangingLogo(c,tools.logo,{x:48,y:20,width:172,height:114,light:['saudi','brush'].includes(style)});
  let top=367;if(hasCardMessage(cfg)){const h=cfg.daily?268:184;box(c,52,top,976,h,22,rgba('#ffffff',.85),rgba(p.gold,.4));if(!drawDailyPanel(c,cfg,52,top,976,h,p)){paragraph(c,cfg.card?.quote||'',540,top+h*.44,872,h-70,p.ink,29);text(c,cfg.card?.attribution||'',540,top+h-25,18,p.ink,860);}top+=h+28;}
@@ -16,12 +17,13 @@ export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme
   if(style==='week')for(let j=0;j<4;j++)box(c,x+19+j*18,y-4,7,12,3,p.gold);
   const number=item.mode==='manual'?formatCounter(n):n===0?'اليوم':n===1?'غدًا':formatCounter(n);
   if(columns>=3){
+   if(cfg.design?.showIcons!==false)drawIconBadge(c,item,x+rw-23,y+Math.min(23,rh*.25),Math.min(36,rh*.28),{style:cfg.design?.iconStyle||'glass',accent:p.gold,contrast:color,featured:best});
    fitText(c,number,{x:x+14,y:y+rh*.13,w:rw-28,h:rh*.45,size:Math.min(48,rh*.42),minSize:19,maxLines:1,color,weight:900});
    fitText(c,item.label||'موعد',{x:x+10,y:y+rh*.61,w:rw-20,h:rh*.36,size:Math.min(23,rh*.20),minSize:14,maxLines:2,color:p.ink,weight:750});
    continue;
   }
   const iconSize=Math.min(45,rh*.54),iconX=x+rw-57,iconY=y+rh/2-iconSize/2;
-  if(style!=='timeline'&&cfg.design?.showIcons!==false){circle(c,iconX+iconSize/2,iconY+iconSize/2,iconSize*.62,rgba(color,.11));drawIcon(c,eventIcon(item),iconX,iconY,iconSize,color);}
+  if(cfg.design?.showIcons!==false)drawIconBadge(c,item,iconX+iconSize/2,iconY+iconSize/2,iconSize,{style:cfg.design?.iconStyle||'glass',accent:p.gold,contrast:color,featured:best});
   const labelX=style==='timeline'?x+rw-76:x+rw-85,labelWidth=columns===2?rw*.48:rw*.65;
   const hasDates=columns===1&&rh>=95&&cfg.design?.showEventDates!==false&&item.mode!=='manual';
   fitText(c,item.label||'موعد',{x:labelX-labelWidth,y:y+rh*(hasDates?.14:.23),w:labelWidth,h:rh*(hasDates?.44:.57),size:Math.min(31,rh*.32),minSize:15,maxLines:2,color:p.ink,align:'right'});
