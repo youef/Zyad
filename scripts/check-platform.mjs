@@ -5,6 +5,7 @@ import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
 import {CARD_PRESETS} from '../assets/templates.js';
 import {SOCIAL_SIZES} from '../assets/social-sizes.js';
+import {familyFor,CARD_FAMILIES} from '../assets/card-style-families.js';
 // This project is visitor-only; studio/library/settings URLs intentionally redirect to the public app.
 const server=await serve(),origin='http://127.0.0.1:'+server.address().port;
 const target=join(root,'images/verification');await mkdir(target,{recursive:true});
@@ -37,6 +38,13 @@ try{
   await page.evaluate(()=>location.hash='#template-gallery');
   await page.locator('#template-gallery').waitFor({state:'visible'});
   assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
+  const supported=CARD_FAMILIES.filter(f=>CARD_PRESETS.some(p=>familyFor(p)===f));
+  assert.equal(await page.locator('#gallery-family-filters button[data-family]').count(),supported.length+1);
+  await page.locator('#gallery-family-filters button[data-family="heritage"]').click();
+  assert.equal(await page.locator('.public-template-card:visible').count(),
+   CARD_PRESETS.filter(p=>familyFor(p)==='heritage').length,'Heritage shape filter');
+  await page.locator('#gallery-family-filters button[data-family="all"]').click();
+  assert.equal(await page.locator('.public-template-card:visible').count(),CARD_PRESETS.length,'Reset shape filter');
   await page.evaluate(()=>location.hash='#today-app');
   await page.locator('#today-app').waitFor({state:'visible'});
   await page.locator('#social-output-size').selectOption('instagram-square');
