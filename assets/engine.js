@@ -1,5 +1,6 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {fontStack,loadTypeface} from './typography.js';
+import {fitText} from './text-layout.js?v=2';
 import {bannerForDesign} from './advertising.js?v=working24';
 import {buildFollowQr,drawCombinedFooter,getPublishedFollow,footerGeometry} from './follow-panel.js?v=i18n4';
 import {drawHangingLogo} from './brand-art.js';
@@ -43,11 +44,15 @@ export async function renderDesign(canvas,d,{scale=1,guides=false,selection=null
   }else if(l.type==='shape'){
    c.beginPath();if(l.shape==='circle')c.ellipse(x,y,bw/2,bh/2,0,0,Math.PI*2);else c.roundRect(box.x,box.y,bw,bh,16);c.fill();if(l.border)c.stroke();
   }else{
-   c.direction=getLanguage()==='en'?'ltr':'rtl';c.textBaseline='middle';c.textAlign=l.align||'center';let size=l.size*Math.min(w/1080,h/1350);const text=layerText(l,d),words=text.split(/\s+/);let lines=[];
-   const wrap=()=>{lines=[];let line='';c.font=`${l.weight||700} ${size}px ${fontStack(l.font)}`;for(const word of words){const next=line?line+' '+word:word;if(line&&c.measureText(next).width>bw){lines.push(line);line=word;}else line=next;}if(line)lines.push(line);};
-   wrap();while((lines.length>4||lines.length*size*(l.lineHeight||1.6)>h*.18||lines.some(s=>c.measureText(s).width>bw))&&size>14){size-=2;wrap();}
-   const lineHeight=size*(l.lineHeight||1.6),th=Math.max(size,lines.length*lineHeight),tx=l.align==='right'?x+bw/2:l.align==='left'?x-bw/2:x;
-   lines.forEach((s,i)=>c.fillText(s,tx,y+(i-(lines.length-1)/2)*lineHeight,bw));box={id:l.id,x:x-bw/2,y:y-th/2,w:bw,h:th};
+   const direction=getLanguage()==='en'?'ltr':'rtl',size=Math.max(14,l.size*Math.min(w/1080,h/1350));
+   const actualWidth=Math.min(w-32,bw),actualHeight=Math.max(28,Math.min(h*.28,bh));
+   const textLeft=Math.max(16,Math.min(w-16-actualWidth,x-actualWidth/2));
+   const floor=Math.max(20,footer.ad.y-Math.max(22,h*.022));
+   const textTop=Math.max(15,Math.min(floor-actualHeight,y-actualHeight/2));
+   const value=layerText(l,d);
+   fitText(c,value,{x:textLeft,y:textTop,w:actualWidth,h:Math.max(20,Math.min(actualHeight,floor-textTop)),size,minSize:Math.max(12,Math.min(20,size*.55)),maxLines:4,
+    font:fontStack(l.font),weight:l.weight||700,color:l.color||'#123f35',align:l.align||'center',direction,lineHeight:l.lineHeight||1.35});
+   box={id:l.id,x:textLeft,y:textTop,w:actualWidth,h:Math.max(20,Math.min(actualHeight,floor-textTop))};
   }
   bounds.push(box);c.restore();
  }
