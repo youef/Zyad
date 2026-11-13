@@ -1,14 +1,15 @@
 import {localizedConfig,localeDate,getLanguage,translate} from './locale.js?v=i18n4';
 import {nextPaymentDate} from './payment-schedule.js?v=pay2';
-import {renderPremium} from './design.js?v=friday1';
+import {renderPremium} from './design.js?v=layout3';
 import {bannerForPoster} from './advertising.js?v=working24';
 import {drawInspirationCard} from './inspiration-card.js?v=friday1';
-import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=i18n4';
-import {renderHeritage} from './heritage-premium.js?v=friday1';
+import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=layout3';
+import {renderHeritage} from './heritage-premium.js?v=layout3';
 import {presetInfo} from './templates.js';
-import {renderCalendar} from './calendar-design.js?v=friday1';
-import {renderListCalendar} from './list-calendar.js?v=friday1';
-import {drawDailyPanel} from './daily-panel.js?v=friday1';
+import {renderCalendar} from './calendar-design.js?v=layout3';
+import {renderListCalendar} from './list-calendar.js?v=layout3';
+import {drawDailyPanel} from './daily-panel.js?v=layout3';
+import {renderResponsiveCard} from './responsive-card.js?v=3';
 import {resolveContent} from './daily.js?v=friday1';
 import {fontStack,loadTypeface} from './typography.js';
 import './vendor/qrcode.js';
@@ -171,7 +172,9 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const root=options.rootPrefix || 'assets/';
   const imageSrc=String(config.brand?.logo||'');
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg|svg)$/i.test(imageSrc);
-  const definition=presetInfo(config.design?.preset),art=options.preview?definition.calendar?.background:definition.calendar?.original;
+  const dimensions=Array.isArray(options.dimensions)&&options.dimensions.length===2&&options.dimensions.every(x=>Number.isInteger(x)&&x>100&&x<6000)?options.dimensions:[W,H];
+  const nativeSize=dimensions[0]!==W||dimensions[1]!==H;
+  const definition=presetInfo(config.design?.preset),art=nativeSize?null:(options.preview?definition.calendar?.background:definition.calendar?.original);
   const [logo,qr,background,banner]=await Promise.all([
     safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,
     buildFollowQr(config),art?fetchImage(new URL('../'+art,import.meta.url).href):null,bannerForPoster(config)]);
@@ -180,6 +183,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
+  if(nativeSize){canvas.width=dimensions[0]*scale;canvas.height=dimensions[1]*scale;ctx.setTransform(scale,0,0,scale,0,0);renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr});return canvas;}
   if(definition.inspiration){drawInspirationCard(ctx,config,iso,definition.inspiration);}
   else if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}

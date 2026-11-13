@@ -276,13 +276,13 @@ export function footerGeometry(dimensions,kind='calendar'){
  const inset=Math.max(16,Math.round(w*(landscape?.035:.038)));
  const outerX=inset,outerW=w-inset*2;
  const noteY=h-Math.max(25,Math.round(h*.025));
- const followHeight=landscape?Math.max(74,Math.min(110,h*.16)):
+ const followHeight=landscape?Math.max(78,Math.min(108,h*.14)):
    Math.max(92,Math.min(126,h*.084));
- const bottomAir=Math.max(24,Math.min(55,h*.03));
+ const bottomAir=landscape?Math.max(12,Math.min(19,h*.025)):Math.max(24,Math.min(55,h*.03));
  const followY=noteY-bottomAir-followHeight;
- const adHeight=landscape?Math.max(66,Math.min(125,h*.18)):
+ const adHeight=landscape?Math.max(48,Math.min(88,h*.10)):
    Math.max(86,Math.min(150,h*.083));
- const between=Math.max(19,Math.min(27,h*.014));
+ const between=landscape?Math.max(12,Math.min(17,h*.016)):Math.max(19,Math.min(27,h*.014));
  const adY=followY-between-adHeight;
  const followInset=Math.max(10,Math.min(19,w*.016));
  const followW=outerW-2*followInset;

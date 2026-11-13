@@ -1,8 +1,8 @@
-import {SOCIAL_SIZES,getSocialSize,adaptPoster,exportBlob,socialControls} from './social-sizes.js?v=1';
+import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-sizes.js?v=1';
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=friday1';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=layout3';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
@@ -12,9 +12,9 @@ document.querySelector('#poster-section .action-buttons')?.before(socialPanel);
 const socialSize=()=>document.getElementById('social-output-size')?.value||'whatsapp';
 const socialFormat=()=>document.getElementById('social-output-format')?.value||'png';
 async function socialCanvas(cfg,date,quality=1){
- const original=document.createElement('canvas');
- await renderPoster(original,cfg,date,{scale:quality===2?2:1});
- return adaptPoster(original,socialSize(),{quality});
+ const output=document.createElement('canvas'),size=getSocialSize(socialSize());
+ await renderPoster(output,cfg,date,{scale:quality===2?2:1,dimensions:[size.width,size.height]});
+ return output;
 }
 async function socialDownload(cfg,date,preset,quality=1){
  const output=await socialCanvas(cfg,date,quality),format=socialFormat();
@@ -140,9 +140,9 @@ function renderGallery(){
    if(image.complete&&image.naturalWidth){image.classList.add('is-loaded');card.dataset.previewState='ready';continue;}
    try{
     const art=card.querySelector('.public-template-art');
-    const temp=document.createElement('canvas');await renderPoster(temp,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35});const adapted=adaptPoster(temp,socialSize());art.width=adapted.width;art.height=adapted.height;art.getContext('2d').drawImage(adapted,0,0);
+    const temp=document.createElement('canvas'),size=getSocialSize(socialSize());await renderPoster(temp,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35,dimensions:[size.width,size.height]});art.width=temp.width;art.height=temp.height;art.getContext('2d').drawImage(temp,0,0);
     if(revision!==galleryRevision)break;
-    art.hidden=false;image.classList.remove('is-loaded');image.classList.add('is-error');card.querySelector('.public-template-fallback').hidden=true;
+    art.style.aspectRatio=size.width+'/'+size.height;art.hidden=false;image.classList.remove('is-loaded');image.classList.add('is-error');card.querySelector('.public-template-fallback').hidden=true;
     card.querySelector('.preview-date').textContent='معاينة البطاقة';
     card.dataset.previewState='ready';
    }catch(error){
@@ -180,7 +180,7 @@ function renderGallery(){
   const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
   const heading=document.createElement('strong');heading.textContent=presetName(preset);
   const desc=document.createElement('small');desc.textContent=presetDescription(preset);
-  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';img.src='images/templates/'+preset.id+'.webp';
+  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';if(getSocialSize(socialSize()).height===1920)img.src='images/templates/'+preset.id+'.webp';
   const frame=document.createElement('span');frame.className='gallery-card-frame';frame.append(img,fallback,art,badge,chosen);select.append(frame,heading,desc,previewDate);
   select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});filterCalendarGallery();await refresh();say('تم اختيار تصميم '+preset.name+'، يمكنك عرضه وحفظه من بطاقة اليوم.');};
   const actions=document.createElement('div');actions.className='visitor-template-actions';const favorite=document.createElement('button');favorite.className='visitor-template-fav';favorite.type='button';favorite.textContent=isFavorite(preset.id)?'♥':'♡';favorite.setAttribute('aria-label',isFavorite(preset.id)?'إزالة من المفضلة':'إضافة إلى المفضلة');favorite.setAttribute('aria-pressed',String(isFavorite(preset.id)));favorite.onclick=()=>favoriteTemplate(preset.id);const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
@@ -193,7 +193,7 @@ async function refresh(){
  if(!config)return;const id=++renderId;syncQuickDays();say('جارٍ توليد البطاقة...');
  try{
   const temp=document.createElement('canvas'),snapshot=JSON.parse(JSON.stringify(config));
-  await renderPoster(temp,snapshot,dateInput.value,{displayScale:.65});const socialPreview=adaptPoster(temp,socialSize());
+  const size=getSocialSize(socialSize());await renderPoster(temp,snapshot,dateInput.value,{displayScale:.65,dimensions:[size.width,size.height]});const socialPreview=temp;
   if(id!==renderId)return;
   canvas.width=socialPreview.width;canvas.height=socialPreview.height;canvas.getContext('2d').drawImage(socialPreview,0,0);
   mountPlanner(config,dateInput.value);
