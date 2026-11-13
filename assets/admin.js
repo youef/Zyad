@@ -1,4 +1,5 @@
 import {PAYMENT_RULE_LABELS,paymentRule,nextPaymentDate} from './payment-schedule.js?v=pay2';
+import {CARD_ICON_NAMES,drawIconBadge} from './card-icons.js?v=awan1';
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {prepareBanner,compactBanner} from './advertising.js?v=banner25';
 import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=glass20261110';
@@ -129,16 +130,26 @@ function tab(name){
 document.querySelectorAll('.tab').forEach(el=>el.addEventListener('click',()=>tab(el.dataset.tab)));
 function inputField(label,value,type='text',onChange){const box=document.createElement('label');box.className='field';box.append(document.createTextNode(label));const el=document.createElement('input');el.type=type;el.value=value??'';el.addEventListener('input',()=>onChange(type==='number'?Number(el.value):el.value));box.append(el);return box;}
 function selectField(label,value,choices,onChange){const box=document.createElement('label');box.className='field';box.append(document.createTextNode(label));const select=document.createElement('select');for(const [key,label] of choices){const op=document.createElement('option');op.value=key;op.textContent=label;select.append(op);}select.value=value||choices[0][0];select.addEventListener('change',()=>onChange(select.value));box.append(select);return box;}
+const EVENT_ICON_LABELS={ 'calendar-days':'تقويم ومواعيد','wallet':'محفظة ورواتب','banknote':'مستحقات مالية','coins':'نقود ومدخرات',
+ 'graduation-cap':'تخرج وجامعة','book-open':'تعليم وقراءة','school':'مدارس','house':'منزل وسكن','moon-star':'هلال ومناسبات إسلامية',
+ 'sun':'شمس وصيف','cloud-rain':'أمطار','snowflake':'شتاء','tree-palm':'نخيل','gift':'هدية وعيد','party-popper':'احتفال وإجازة',
+ 'heart':'زواج وحب','baby':'مولود','trophy':'إنجاز وفوز','shield-check':'حماية وأمان','clock-3':'موعد ووقت',
+ 'flag':'مناسبة وطنية','briefcase-business':'عمل ووظيفة','sparkles':'لمسات وإشراقة','flower-2':'ورد وربيع',
+ 'star':'نجمة','alarm-clock':'تنبيه','users':'مجتمع وأسرة','receipt':'فاتورة وسداد' };
+const EVENT_ICON_OPTIONS=[['auto','✦ اختيار تلقائي حسب المناسبة'],...CARD_ICON_NAMES.map(id=>[id,EVENT_ICON_LABELS[id]||id])];
 function buildCounters(){const root=$('#counter-list');root.replaceChildren();(config.counters||[]).forEach((item,i)=>{
   const article=document.createElement('div');article.className='counter-editor';
   const bar=document.createElement('div');bar.className='counter-top';const title=document.createElement('strong');title.textContent=`${i+1}. ${item.label||'موعد جديد'}`;
   const actions=document.createElement('div');actions.className='counter-top-actions';
   for(const [label,move] of [['↑',-1],['↓',1]]){const button=document.createElement('button');button.type='button';button.textContent=label;button.title=move===-1?'تحريك لأعلى':'تحريك لأسفل';button.disabled=(i+move<0||i+move>=config.counters.length);button.addEventListener('click',()=>{[config.counters[i],config.counters[i+move]]=[config.counters[i+move],config.counters[i]];buildCounters();changed();});actions.append(button);}
   const del=document.createElement('button');del.type='button';del.className='danger';del.textContent='حذف';del.addEventListener('click',()=>{if(!confirm('حذف هذا العدّاد من التصميم؟'))return;config.counters.splice(i,1);buildCounters();changed();});actions.append(del);
-  bar.append(title,actions);article.append(bar);
+  const iconPreview=document.createElement('canvas');iconPreview.width=46;iconPreview.height=46;iconPreview.className='counter-icon-preview';iconPreview.setAttribute('role','img');iconPreview.setAttribute('aria-label','معاينة أيقونة المناسبة');
+  const paintIcon=()=>{const context=iconPreview.getContext('2d');context.clearRect(0,0,46,46);drawIconBadge(context,item,23,23,40,{style:config.design?.iconStyle||'glass',accent:config.theme?.gold||'#b99255',contrast:config.theme?.green||'#155241'});};
+  paintIcon();bar.append(iconPreview,title,actions);article.append(bar);
   const fields=document.createElement('div');fields.className='counter-fields';
   fields.append(inputField('العنوان',item.label,'text',v=>{item.label=v.slice(0,35);title.textContent=`${i+1}. ${item.label}`;changed();}));
   fields.append(inputField('English title',item.labelEn||'','text',v=>{item.labelEn=v.slice(0,100);changed();}));
+  fields.append(selectField('أيقونة المناسبة داخل البطاقة',item.icon||'auto',EVENT_ICON_OPTIONS,v=>{item.icon=v==='auto'?'':v;paintIcon();changed();}));
   fields.append(selectField('طريقة الحساب',item.mode,[['monthly','شهري'],['date','تاريخ محدد'],['hijri','هجري متكرر'],['manual','رقم يدوي']],v=>{item.mode=v;buildCounters();changed();}));
   if(item.mode==='monthly')fields.append(inputField('يوم الشهر (1–31)',item.day||1,'number',v=>{item.day=Math.max(1,Math.min(31,Math.floor(v)||1));changed();}));
   if(item.mode==='monthly'){

@@ -317,7 +317,8 @@
     "autoRotate": true,
     "fontFamily": "amiri",
     "showIcons": true,
-    "showEventDates": true
+    "showEventDates": true,
+    "iconStyle": "glass"
   },
   "savedDesigns": [
     {
