@@ -278,7 +278,7 @@ export function footerGeometry(dimensions,kind='calendar'){
  const noteY=h-Math.max(25,Math.round(h*.025));
  const followHeight=landscape?Math.max(78,Math.min(108,h*.14)):
    Math.max(92,Math.min(126,h*.084));
- const bottomAir=landscape?Math.max(12,Math.min(19,h*.025)):Math.max(24,Math.min(55,h*.03));
+ const bottomAir=landscape?Math.max(29,Math.min(39,h*.042)):Math.max(24,Math.min(55,h*.03));
  const followY=noteY-bottomAir-followHeight;
  const adHeight=landscape?Math.max(48,Math.min(88,h*.10)):
    Math.max(86,Math.min(150,h*.083));
