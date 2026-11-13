@@ -2,7 +2,7 @@ import {localizedConfig,localeDate,getLanguage,translate} from './locale.js?v=i1
 import {nextPaymentDate} from './payment-schedule.js?v=pay2';
 import {renderPremium} from './design.js?v=awan-icons1';
 import {bannerForPoster} from './advertising.js?v=working24';
-import {drawInspirationCard} from './inspiration-card.js?v=awan-icons1';
+import {drawInspirationCard} from './inspiration-card.js?v=cardsafe1';
 import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=layout3';
 import {renderHeritage} from './heritage-premium.js?v=awan-icons1';
 import {presetInfo} from './templates.js';
@@ -186,7 +186,16 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
-  if(nativeSize){canvas.width=Math.round(dimensions[0]*scale);canvas.height=Math.round(dimensions[1]*scale);ctx.setTransform(canvas.width/dimensions[0],0,0,canvas.height/dimensions[1],0,0);ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr,definition});return canvas;}
+  if(nativeSize){
+    canvas.width=Math.round(dimensions[0]*scale);canvas.height=Math.round(dimensions[1]*scale);
+    ctx.setTransform(canvas.width/dimensions[0],0,0,canvas.height/dimensions[1],0,0);
+    ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
+    if(definition.inspiration){
+      drawInspirationCard(ctx,config,iso,definition.inspiration,{dimensions});
+      drawCombinedFooter(ctx,config,banner,qr,{kind:'premium',dimensions});
+    }else renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr,definition});
+    return canvas;
+  }
   if(premiumCard){
     const result=renderAwanPremiumCard(ctx,config,iso,{logo,qr,remaining,hijriDate},definition);
     const footerConfig={...config,theme:{...config.theme,ink:result.footerInk}};

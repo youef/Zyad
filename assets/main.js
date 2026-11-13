@@ -3,7 +3,7 @@ import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
 import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=families4';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=families4';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=cardsafe1';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
@@ -176,15 +176,14 @@ async function exportPreset(id){
 function renderGallery(){
  const revision=++galleryRevision;galleryObserver?.disconnect();
  const grid=$('#public-template-grid');if(!grid)return;grid.replaceChildren();
- // Paint the live redesigned layout on demand, rather than show an obsolete WebP preview.
+ // Render every card live, using selected date and size; never load stale screenshots.
  const queue=[];let working=false;
  async function processQueue(){
   if(working)return;working=true;
   while(queue.length&&revision===galleryRevision){
    const card=queue.shift();
    if(!card?.isConnected||card.hidden||card.dataset.previewState==='ready')continue;
-   const image=card.querySelector('img');
-   if(image.complete&&image.naturalWidth){image.classList.add('is-loaded');card.dataset.previewState='ready';continue;}
+   const image=card.querySelector('.gallery-template-image');
    try{
     const art=card.querySelector('.public-template-art');
     const temp=document.createElement('canvas'),size=getSocialSize(socialSize());await renderPoster(temp,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35,dimensions:[size.width,size.height]});art.width=temp.width;art.height=temp.height;art.getContext('2d').drawImage(temp,0,0);
@@ -206,12 +205,7 @@ function renderGallery(){
    if(!entry.isIntersecting)continue;
    const card=entry.target;galleryObserver.unobserve(card);
    if(card.dataset.previewState==='ready')continue;
-   const image=card.querySelector('img');
-   if(image.complete&&!image.naturalWidth){queue.push(card);void processQueue();}
-   else if(image.complete&&image.naturalWidth){image.classList.add('is-loaded');card.dataset.previewState='ready';}
-   else{
-    image.addEventListener('error',()=>{if(revision===galleryRevision){queue.push(card);void processQueue();}},{once:true});
-   }
+   queue.push(card);void processQueue();
   }
  },{rootMargin:'120px'});
  for(const preset of CARD_PRESETS){
@@ -220,15 +214,17 @@ function renderGallery(){
   const select=document.createElement('button');select.type='button';select.className='public-template-select';
   select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
   const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='gallery-template-image';img.alt='بطاقة قالب '+preset.name;
-  img.addEventListener('error',()=>{img.classList.remove('is-loaded');img.classList.add('is-error');previewDate.textContent='جارٍ تجهيز معاينة البطاقة';});
+  // The thumbnail is painted on canvas, so it cannot show stale downloaded artwork.
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">'+translate('أوان السعودية')+'</span><span class="visitor-preview-date">'+translate('بطاقة اليوم')+'</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
-  img.addEventListener('load',()=>{img.classList.add('is-loaded');img.classList.remove('is-error');fallback.hidden=true;item.dataset.previewState='ready';previewDate.textContent='جاهز للعرض';});const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
+  const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
   const badge=document.createElement('span');badge.className='gallery-card-badge';badge.textContent=translate(preset.category||'تصميم');
   const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
   const heading=document.createElement('strong');heading.textContent=presetName(preset);
   const desc=document.createElement('small');desc.textContent=presetDescription(preset);
-  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';if(preset.inspiration&&getSocialSize(socialSize()).height===1920)img.src='images/templates/'+preset.id+'.webp';
-  const frame=document.createElement('span');frame.className='gallery-card-frame';const previewSize=getSocialSize(socialSize());frame.style.aspectRatio=previewSize.width+'/'+previewSize.height;frame.style.setProperty('--poster-ratio',previewSize.width+'/'+previewSize.height);frame.append(img,fallback,art,badge,chosen);select.append(frame,heading,desc,previewDate);
+  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';
+  const frame=document.createElement('span');frame.className='gallery-card-frame';const previewSize=getSocialSize(socialSize());frame.style.aspectRatio=previewSize.width+'/'+previewSize.height;frame.style.setProperty('--poster-ratio',previewSize.width+'/'+previewSize.height);frame.append(img,fallback,art);
+  const meta=document.createElement('span');meta.className='gallery-card-meta';meta.append(badge,chosen);
+  select.append(frame,heading,meta,desc,previewDate);
   select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});filterCalendarGallery();await refresh();};
   const actions=document.createElement('div');actions.className='visitor-template-actions';const favorite=document.createElement('button');favorite.className='visitor-template-fav';favorite.type='button';favorite.textContent=isFavorite(preset.id)?'♥':'♡';favorite.setAttribute('aria-label',isFavorite(preset.id)?'إزالة من المفضلة':'إضافة إلى المفضلة');favorite.setAttribute('aria-pressed',String(isFavorite(preset.id)));favorite.onclick=()=>favoriteTemplate(preset.id);const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
   download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ الحفظ…';try{await exportPreset(preset.id);}catch(e){say('تعذر حفظ التصميم: '+e.message);}finally{download.disabled=false;download.textContent='حفظ الصورة ↓';}};

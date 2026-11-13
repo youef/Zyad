@@ -187,3 +187,43 @@ body.visitor-only .public-template-card .gallery-card-frame .public-template-art
 .gallery-family-chip:is(:hover,:focus-visible){border-color:#b79860;outline-offset:2px}
 .gallery-family-chip.active{background:#0a5947;border-color:#0a5947;color:#fff}
 @media(max-width:700px){.gallery-family-filters{margin-inline:-1px;padding:10px 8px}.gallery-family-chip{padding:9px 12px}}
+
+/* Card artwork stays clear of overlay chips; all labels sit outside the preview. */
+body.visitor-only .public-template-card .gallery-card-meta{
+ display:flex!important;align-items:center;justify-content:space-between;gap:6px;
+ width:100%;min-width:0;min-height:22px;margin:1px 1px 0;
+}
+body.visitor-only .public-template-card .gallery-card-meta .gallery-card-badge{
+ position:static!important;display:block;z-index:auto!important;flex:1 1 auto;min-width:0;
+ max-width:100%!important;padding:3px 7px!important;border-radius:7px!important;
+ color:#315d50;background:#eaf2ed;backdrop-filter:none;
+ overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:9px!important;font-weight:800;
+ text-align:start;
+}
+body.visitor-only .public-template-card .gallery-card-meta .gallery-card-chosen{
+ position:static!important;z-index:auto!important;flex:0 0 auto;
+ padding:4px 6px!important;border-radius:7px!important;font-size:9px!important;
+}
+body.visitor-only .public-template-card .gallery-card-frame{outline:1px solid rgba(15,73,53,.10);outline-offset:-1px}
+body.visitor-only .public-template-card .gallery-card-frame .public-template-art:not([hidden]){
+ width:100%!important;height:100%!important;object-fit:contain!important;
+}
+body.visitor-only .public-template-card .public-template-select strong{
+ overflow-wrap:anywhere;word-break:normal;
+}
+body.visitor-only .public-template-card .public-template-select small:not(.preview-date){
+ display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+ overflow:hidden;min-height:0;max-height:3.2em;
+}
+body.visitor-only #template-gallery.premium-gallery{
+ padding-bottom:calc(160px + env(safe-area-inset-bottom,0px))!important;
+ scroll-margin-bottom:130px;
+}
+body.visitor-only #template-gallery .public-template-grid{padding-bottom:14px!important}
+@media (display-mode:standalone) and (max-width:800px){
+ body.visitor-only::before{
+  content:"";position:fixed;inset:0 0 auto 0;
+  height:env(safe-area-inset-top,0px);background:var(--ios-bg,#f8faf7);
+  z-index:90;pointer-events:none;
+ }
+}
