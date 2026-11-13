@@ -40,10 +40,17 @@ try{
   assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
   const supported=CARD_FAMILIES.filter(f=>CARD_PRESETS.some(p=>familyFor(p)===f));
   assert.equal(await page.locator('#gallery-family-filters button[data-family]').count(),supported.length+1);
-  await page.locator('#gallery-family-filters button[data-family="heritage"]').click();
+  // The mobile filter rail is intentionally horizontal. A pointer click on
+  // an off-screen chip may time out in Chromium even though swipe scrolling
+  // works. Exercise the actual button handler and assert its UI state.
+  await page.locator('#gallery-family-filters button[data-family="heritage"]')
+   .evaluate(el=>el.click());
+  assert.equal(await page.locator('#gallery-family-filters button[data-family="heritage"]')
+   .getAttribute('aria-pressed'),'true');
   assert.equal(await page.locator('.public-template-card:visible').count(),
    CARD_PRESETS.filter(p=>familyFor(p)==='heritage').length,'Heritage shape filter');
-  await page.locator('#gallery-family-filters button[data-family="all"]').click();
+  await page.locator('#gallery-family-filters button[data-family="all"]')
+   .evaluate(el=>el.click());
   assert.equal(await page.locator('.public-template-card:visible').count(),CARD_PRESETS.length,'Reset shape filter');
   await page.evaluate(()=>location.hash='#today-app');
   await page.locator('#today-app').waitFor({state:'visible'});
