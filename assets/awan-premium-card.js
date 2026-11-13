@@ -8,6 +8,7 @@ import {drawHangingLogo} from './brand-art.js';
 import {footerGeometry} from './follow-panel.js?v=layout3';
 import {getLanguage,localeDate} from './locale.js?v=i18n4';
 import {hasCardMessage} from './daily.js?v=friday1';
+import {familyFor,familyPalette,familyBackdrop,familyHeader,familyQuote,familyTile,familyColumns} from './card-style-families.js?v=1';
 
 const WIDTH=1080,HEIGHT=1920;
 const clamp=(value,low,high)=>Math.max(low,Math.min(high,value));
@@ -186,7 +187,7 @@ function eventTile(c,item,value,bounds,{p,featured=false,compact=false,showIcons
  blockText(c,item.label|| (en?'Event':'موعد'),x+10,stripY+2,w-20,Math.max(20,Math.min(stripH,h-(stripY-y)-4)-3),
   clamp(h*.18,15,25),p.ink,{weight:750,lines:2,en,min:12});
 }
-function events(c,cfg,iso,tools,p,startY,endY){
+function events(c,cfg,iso,tools,p,startY,endY,family){
  const en=getLanguage()==='en';
  const all=(cfg.counters||[]).filter(item=>item.enabled!==false).slice(0,24);
  const items=all.map(item=>({item,n:tools.remaining(item,iso)}));
@@ -197,28 +198,36 @@ function events(c,cfg,iso,tools,p,startY,endY){
  if(current&&cfg.design?.highlightNext!==false){
   blockText(c,(en?'Next: ':'الأقرب: ')+current.item.label,82,startY+2,335,43,20,p.secondary,{weight:600,align:'left',en,min:13,lines:1});
  }
- const cols=4,gap=13,rows=Math.max(1,Math.ceil(items.length/cols)),gridY=startY+57,available=endY-gridY;
+ const cols=familyColumns(family,items.length),gap=13,rows=Math.max(1,Math.ceil(items.length/cols)),gridY=startY+57,available=endY-gridY;
  const cardW=(932-(cols-1)*gap)/cols,cardH=(available-(rows-1)*gap)/rows;
  const limitedH=clamp(cardH,73,168);
  items.forEach(({item,n},i)=>{
   const column=en?i%cols:cols-1-i%cols,row=Math.floor(i/cols);
-  eventTile(c,item,n,{
+  familyTile(c,family,item,n,{
    x:74+column*(cardW+gap),y:gridY+row*(limitedH+gap),w:cardW,h:limitedH
   },{p,featured:cfg.design?.highlightNext!==false&&item.mode!=='manual'&&n===nearest,
-   compact:limitedH<112,showIcons:cfg.design?.showIcons!==false,
+   showIcons:cfg.design?.showIcons!==false,
    showUnit:cfg.design?.showUnit!==false,iconStyle:cfg.design?.iconStyle||'duotone',en});
  });
  if(!items.length)blockText(c,en?'No events added yet':'لا توجد مواعيد مضافة',140,gridY+30,800,100,38,p.secondary,{en,weight:730,lines:1});
 }
 export function renderAwanPremiumCard(c,cfg,iso,tools,definition){
- const p=palette(cfg,definition),g=footerGeometry([WIDTH,HEIGHT],'calendar');
+ const family=familyFor(definition),p=familyPalette(palette(cfg,definition),family);
+ const g=footerGeometry([WIDTH,HEIGHT],'calendar');
  const id=definition?.id||cfg.design?.preset||'royal',seed=seedFor(id),variant=seed%6;
  background(c,p,g,variant,seed);
- header(c,cfg,iso,tools,p,seed);
- const rows=contentRows(cfg,getLanguage()==='en'),reading=rows.length>0;
+ familyBackdrop(c,family,{x:53,y:92,w:974,h:g.ad.y+g.ad.h+19-92,p});
+ const en=getLanguage()==='en';
+ familyHeader(c,family,{
+  x:111,y:138,w:858,h:326,day:localeDate(iso,{weekday:'long'}),
+  greg:localeDate(iso,{day:'numeric',month:'long',year:'numeric'}),
+  hijri:tools.hijriDate(iso,cfg),p,en
+ });
+ if(tools.logo)drawHangingLogo(c,tools.logo,{x:75,y:95,width:114,height:102,light:family==='night'});
+ const rows=contentRows(cfg,en),reading=rows.length>0;
  const quoteY=502,quoteH=reading?(rows.length>1?267:238):0;
- if(reading)message(c,cfg,rows,quoteY,quoteH,p);
+ if(reading)familyQuote(c,family,rows,{x:75,y:quoteY,w:930,h:quoteH,p,en});
  const sectionY=reading?quoteY+quoteH+32:513;
- events(c,cfg,iso,tools,p,sectionY,g.ad.y-18);
- return {background:'#dce6da',footerInk:p.ink,footerGeometry:g,variant};
+ events(c,cfg,iso,tools,p,sectionY,g.ad.y-18,family);
+ return {background:p.sage,footerInk:p.ink,footerGeometry:g,variant,family};
 }
