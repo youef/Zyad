@@ -75,8 +75,12 @@ export function familyFor(def){
 }
 export const CARD_FAMILIES=Object.freeze(['royal','modern','heritage','night','desert','botanical','geometric','ramadan','editorial','journal','timeline']);
 export function familyColumns(f,count){
- // Preserve all 24 events while allowing wide editorial rows for smaller sets.
- return (f==='editorial'||f==='timeline'||f==='journal')&&count<=18?3:4;
+ // Layout density is part of each family's personality, not a fixed 4-column
+ // grid. Tall posters always fit 24 counters in six rows when necessary.
+ if(count<=6&&['modern','editorial','journal','timeline'].includes(f))return 2;
+ if(count<=18&&['modern','editorial','journal','timeline'].includes(f))return 3;
+ if(count<=12&&['botanical','desert'].includes(f))return 3;
+ return 4;
 }
 export function familyPalette(p,f){
  const q={...p};
