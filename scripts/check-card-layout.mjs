@@ -5,6 +5,8 @@ import {CARD_ICON_NAMES,eventGlyph,CARD_ICON_STYLES} from '../assets/card-icons.
 import {SOCIAL_SIZES} from '../assets/social-sizes.js';
 import {footerGeometry} from '../assets/follow-panel.js';
 import {renderResponsiveCard} from '../assets/responsive-card.js';
+import {inspirationLayout} from '../assets/inspiration-card.js';
+import {CARD_PRESETS} from '../assets/templates.js';
 import {remaining,hijriDate} from '../assets/card.js';
 import {resolveContent} from '../assets/daily.js';
 const config=JSON.parse(await readFile(new URL('../data/config.json',import.meta.url),'utf8'));
@@ -51,4 +53,17 @@ for(const preset of SOCIAL_SIZES){
  assert.equal(invalid.length,0,'Out-of-bounds text on '+preset.id);
  assert(labels.length>10);
 }
-console.log('PASS: 13 social dimensions, footer constraints, bounded labels and Friday card');
+const inspirationIds=['inspire-botanical','inspire-royal','inspire-pearl'];
+for(const id of inspirationIds){
+ assert(CARD_PRESETS.some(p=>p.id===id&&p.inspiration),'Missing inspiration template: '+id);
+}
+for(const preset of SOCIAL_SIZES){
+ const layout=inspirationLayout([preset.width,preset.height]),footer=layout.footer;
+ const end=layout.secondary?layout.secondary.y+layout.secondary.h:layout.quote.y+layout.quote.h;
+ assert(layout.quote.y>=layout.dates.y+layout.dates.h,'Inspiration quote covers date '+preset.id);
+ assert(layout.quote.h>=70,'Inspiration quote height too small '+preset.id);
+ assert(end<=footer.ad.y-layout.gap+1,'Inspiration text overlaps banner: '+preset.id);
+ assert(footer.ad.y+footer.ad.h<footer.follow.y,'Ad overlaps subscription: '+preset.id);
+ assert(footer.follow.y+footer.follow.h<footer.noteY,'Subscription overlaps disclaimer: '+preset.id);
+}
+console.log('PASS: 13 social dimensions, no inspiration text/ad collisions, all three distinct inspiration presets, Friday card');
