@@ -4,12 +4,12 @@ import {fitText,formatCounter} from './text-layout.js?v=2';
 import {drawIconBadge} from './card-icons.js?v=awan1';
 
 const MAP={
- royal:'royal',crown:'royal',crest:'royal',laurel:'royal',
+ royal:'royal',crown:'royal',crest:'royal',laurel:'royal','inspire-royal':'royal',
  modern:'modern',swiss:'modern',statement:'modern',brand:'modern',
  heritage:'heritage',najdi:'heritage',roots:'heritage',dome:'heritage',
  night:'night',moon:'night',eclipse:'night',frost:'night',
  desert:'desert',dunes:'desert',landscape:'desert',polaroid:'desert',
- pearl:'botanical',invitation:'botanical',cloud:'botanical',pearl:'botanical',
+ pearl:'botanical',invitation:'botanical',cloud:'botanical','inspire-botanical':'botanical','inspire-pearl':'botanical',
  geometry:'geometric',flag:'geometric',celebration:'geometric',sun:'geometric',sunburst:'geometric',
  lantern:'ramadan',arch:'ramadan',ramadan:'ramadan',
  editorial:'editorial',ledger:'editorial',notebook:'editorial',spotlight:'editorial',

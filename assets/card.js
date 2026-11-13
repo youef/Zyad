@@ -9,8 +9,8 @@ import {presetInfo} from './templates.js';
 import {renderCalendar} from './calendar-design.js?v=awan-icons1';
 import {renderListCalendar} from './list-calendar.js?v=awan-icons1';
 import {drawDailyPanel} from './daily-panel.js?v=layout3';
-import {renderResponsiveCard} from './responsive-card.js?v=awan-premium2';
-import {renderAwanPremiumCard} from './awan-premium-card.js?v=2';
+import {renderResponsiveCard} from './responsive-card.js?v=families2';
+import {renderAwanPremiumCard} from './awan-premium-card.js?v=families2';
 import {resolveContent} from './daily.js?v=friday1';
 import {fontStack,loadTypeface} from './typography.js';
 import './vendor/qrcode.js';
@@ -186,7 +186,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
-  if(nativeSize){canvas.width=Math.round(dimensions[0]*scale);canvas.height=Math.round(dimensions[1]*scale);ctx.setTransform(canvas.width/dimensions[0],0,0,canvas.height/dimensions[1],0,0);ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr});return canvas;}
+  if(nativeSize){canvas.width=Math.round(dimensions[0]*scale);canvas.height=Math.round(dimensions[1]*scale);ctx.setTransform(canvas.width/dimensions[0],0,0,canvas.height/dimensions[1],0,0);ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr,definition});return canvas;}
   if(premiumCard){
     const result=renderAwanPremiumCard(ctx,config,iso,{logo,qr,remaining,hijriDate},definition);
     const footerConfig={...config,theme:{...config.theme,ink:result.footerInk}};
