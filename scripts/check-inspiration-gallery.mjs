@@ -29,7 +29,8 @@ try{
   assert(report.canvas[0]>300&&report.canvas[1]>500,'Invalid canvas preview '+id);
  }
  const box=await page.evaluate(()=>{
-  scrollTo(0,document.documentElement.scrollHeight);
+  document.documentElement.style.scrollBehavior='auto';
+  window.scrollTo(0,document.documentElement.scrollHeight);
   const cards=[...document.querySelectorAll('.public-template-card:not([hidden])')];
   const last=cards.at(-1).getBoundingClientRect(),dock=document.querySelector('.app-tabs.visitor-tabs').getBoundingClientRect();
   return {lastBottom:last.bottom,dockTop:dock.top,viewport:innerHeight};
