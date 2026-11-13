@@ -128,7 +128,22 @@ try{
   await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
   const beforeColor=await colorAt();
   await admin.locator('[data-bind="theme.green"]').evaluate(el=>{el.value='#f63344';el.dispatchEvent(new Event('input',{bubbles:true}));});
-  await admin.waitForFunction(()=>document.querySelector('#template-preview-state')?.textContent?.includes('المعاينة جاهزة: الصحراء الملكية'));
+  // The previous ready-state string can still be present while the new render
+  // is in flight. Wait for pixels, not the stale status message.
+  await admin.waitForFunction(before=>{
+    const c=document.querySelector('#poster');
+    if(!c?.width||!c?.height)return false;
+    const sample=document.createElement('canvas');sample.width=36;sample.height=64;
+    sample.getContext('2d').drawImage(c,0,0,36,64);
+    const pixels=sample.getContext('2d').getImageData(0,0,36,64).data;
+    let hash=2166136261;
+    for(let i=0;i<pixels.length;i+=4){
+      hash=Math.imul(hash^pixels[i],16777619);
+      hash=Math.imul(hash^pixels[i+1],16777619);
+      hash=Math.imul(hash^pixels[i+2],16777619);
+    }
+    return (hash>>>0).toString(16)!==before;
+  },beforeColor,{timeout:20000});
   const afterColor=await colorAt();
   if(afterColor===beforeColor)throw Error('Color picker did not update desert Canvas');
   await admin.locator('#layout-name').fill('اختبار حفظ قالب');
