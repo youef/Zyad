@@ -11,7 +11,8 @@ try{
  await page.waitForFunction(()=>Boolean(window.__posterReady),{timeout:30000});
  await page.locator('#template-gallery').waitFor({state:'visible'});
  const category=page.locator('#gallery-categories [data-category="بطاقات يومية فاخرة"]');
- await category.click();
+ await category.evaluate(button=>button.click()); // Scrollable category chips may be outside the narrow viewport.
+ assert.equal(await category.getAttribute('aria-pressed'),'true');
  for(const id of ['inspire-botanical','inspire-royal','inspire-pearl']){
   const card=page.locator('[data-preset="'+id+'"]');
   await card.scrollIntoViewIfNeeded();
