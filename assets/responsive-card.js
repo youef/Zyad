@@ -6,7 +6,7 @@ import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 import {footerGeometry,drawCombinedFooter} from './follow-panel.js?v=layout3';
 import {getLanguage,localeDate} from './locale.js?v=i18n4';
 import {hasCardMessage} from './daily.js?v=friday1';
-import {familyFor,familyPalette,familyBackdrop,familyHeader,familyQuote,familyTile,familyColumns} from './card-style-families.js?v=1';
+import {familyFor,familyPalette,familyBackdrop,familyHeader,familyQuote,familyTile,familyColumns} from './card-style-families.js?v=families4';
 
 const limit=(v,min,max)=>Math.max(min,Math.min(max,v));
 const safeColor=(v,defaultValue)=>/^#[0-9a-f]{6}$/i.test(String(v||''))?v:defaultValue;

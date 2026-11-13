@@ -8,7 +8,7 @@ import {drawHangingLogo} from './brand-art.js';
 import {footerGeometry} from './follow-panel.js?v=layout3';
 import {getLanguage,localeDate} from './locale.js?v=i18n4';
 import {hasCardMessage} from './daily.js?v=friday1';
-import {familyFor,familyPalette,familyBackdrop,familyHeader,familyQuote,familyTile,familyColumns} from './card-style-families.js?v=1';
+import {familyFor,familyPalette,familyBackdrop,familyHeader,familyQuote,familyTile,familyColumns} from './card-style-families.js?v=families4';
 
 const WIDTH=1080,HEIGHT=1920;
 const clamp=(value,low,high)=>Math.max(low,Math.min(high,value));
