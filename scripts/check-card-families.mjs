@@ -44,9 +44,16 @@ for(const family of CARD_FAMILIES){
   assert(texts.some(t=>t.includes('17')),'Counter missing '+family);
   assert(texts.some(t=>t.includes('ما نقصت')),'Quote missing '+family);
   assert(ops.length>6,'Shapes missing '+family);
-  if(!compact)distinct.add(family+':'+ops.filter(x=>x!=='begin').join(','));
+  if(!compact)distinct.add(ops.filter(x=>x!=='begin').join(','));
+  assert(texts.join(' ').includes('إجازة منتصف العام الدراسي'),
+   'Arabic event name was clipped in '+family+' at '+width+'x'+height);
  }
  assert(familyColumns(family,24)===4,'24 counters must use four columns for readability');
 }
 assert.equal(distinct.size,CARD_FAMILIES.length,'Families must draw genuinely separate shape systems');
+for(const name of ['night','desert']){
+ const before=familyPalette(p0,name),after=familyPalette({...p0,main:'#e7234f'},name);
+ assert.notEqual(before.main,after.main,'Theme color has no effect on '+name+' title');
+ assert.notEqual(before.sage,after.sage,'Theme color has no effect on '+name+' background');
+}
 console.log('PASS:',CARD_PRESETS.length,'live designs across',found.size,'layout families; headings, hadith, long names, numbers and two aspect ratios');
