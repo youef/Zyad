@@ -21,6 +21,12 @@ const LIST={
  notes:'botanical',sand:'desert'
 };
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function tone(from,to,fraction){
+ const rgb=v=>[1,3,5].map(i=>parseInt(v.slice(i,i+2),16));
+ if(!/^#[0-9a-f]{6}$/i.test(String(from))||!/^#[0-9a-f]{6}$/i.test(String(to)))return from;
+ const one=rgb(from),two=rgb(to);
+ return '#'+one.map((v,i)=>Math.round(v*(1-fraction)+two[i]*fraction).toString(16).padStart(2,'0')).join('');
+}
 function rgba(hex,opacity){
  const value=/^#[0-9a-f]{6}$/i.test(String(hex||''))?hex:'#114c3f';
  return 'rgba('+[1,3,5].map(i=>parseInt(value.slice(i,i+2),16)).join(',')+','+opacity+')';
@@ -76,10 +82,13 @@ export function familyPalette(p,f){
  const q={...p};
  if(f==='night'){
   q.paper='#0e2d36';q.sage='#0b252e';q.ivory='#173944';q.ink='#f7f2e7';
-  q.secondary='#c4d8cf';q.main='#0b665e';q.deep='#064b49';q.gold='#d5bc83';
+  q.secondary='#c4d8cf';
+  q.main=tone(p.main,'#09675a',.18);q.deep=tone(q.main,'#052d33',.32);
+  q.gold=tone(p.gold,'#e1c694',.16);
  }else if(f==='desert'){
   q.paper='#fbf2df';q.sage='#f0d8b4';q.ivory='#fffaf0';q.ink='#684b34';q.secondary='#86684a';
-  q.main='#8c6042';q.deep='#6f482c';q.gold='#c59a5a';
+  q.main=tone(p.main,'#926c4c',.18);q.deep=tone(q.main,'#523625',.27);
+  q.gold=tone(p.gold,'#c59a5a',.13);
  }else if(f==='modern'){
   q.paper='#fcfcfa';q.sage='#e8f0ed';q.ivory='#ffffff';q.ink='#173c3b';q.secondary='#66817f';
  }else if(f==='botanical'){
@@ -264,7 +273,7 @@ export function familyQuote(c,f,rows,{x,y,w,h,p,en=false}){
 export function familyTile(c,f,item,n,{x,y,w,h},{p,featured=false,en=false,showIcons=true,showUnit=true,iconStyle='duotone'}={}){
  if(!(w>16&&h>28))return;
  const isDark=f==='night',edge=featured?p.gold:rgba(p.main,.25),ink=p.ink;
- const small=h<88,mid=h<115;
+ const small=h<88,verySmall=h<63;
  c.save();
  c.shadowColor=isDark?'rgba(0,0,0,.23)':'rgba(24,58,46,.09)';c.shadowBlur=small?4:9;c.shadowOffsetY=small?2:3;
  switch(f){
@@ -310,29 +319,26 @@ export function familyTile(c,f,item,n,{x,y,w,h},{p,featured=false,en=false,showI
    style:iconStyle,accent:p.gold,contrast:isDark?p.gold:p.deep,light:isDark,featured
   });
  }
- const horizontal=f==='editorial'||f==='modern'||f==='timeline';
- let numX=x+8,numW=w*.68,numY=y+h*.09,numH=h*.39;
- let labelY=y+h*.67,labelH=h*.28,labelX=x+9,labelW=w-18;
- if(horizontal&&h>90){
-  // Whole-word Arabic event names need a full-width lower label strip.
-  // The editorial/timeline visual identity comes from their ruling and sidebars,
-  // not from squeezing the label into half a cell.
-  numX=x+w*.08;numW=w*.62;numY=y+h*.09;numH=h*.42;
-  labelX=x+w*.08;labelW=w*.84;labelY=y+h*.665;labelH=h*.31;
- }else if(f==='geometric'||f==='heritage'||f==='ramadan'){
-  numX=x+w*.14;numW=w*.60;labelX=x+w*.13;labelW=w*.74;labelY=y+h*.68;labelH=h*.27;
- }
+ // Dedicated stacked zones keep icon, number, unit and long Arabic label separate.
+ const shaped=f==='geometric'||f==='heritage'||f==='ramadan';
+ const inset=shaped?w*.12:w*.055;
+ const numX=x+inset,numW=w-inset*2-(showIcons?Math.min(32,w*.14):0);
+ const numY=y+h*.065,numH=h*(verySmall?.42:.37);
  const number=Number.isFinite(Number(n))?formatCounter(n):'—';
- heading(c,number,numX,numY,numW,numH,clamp(h*.38,22,52),f==='night'?p.gold:p.deep,
-   {weight:900,maxLines:1,minSize:small?16:20});
- if(showUnit&&h>70){
+ heading(c,number,numX,numY,numW,numH,clamp(h*.36,18,53),f==='night'?p.gold:p.deep,
+  {weight:900,maxLines:1,minSize:verySmall?13:19});
+ if(showUnit&&h>68){
   const unit=n===0?(en?'Today':'اليوم'):item.mode==='manual'?(en?'Value':'قيمة'):(en?'days':'يوم');
-  heading(c,unit,x+10,y+h*.46,w*.58,h*.18,clamp(h*.14,11,17),p.secondary,{weight:550,en,maxLines:1,minSize:10});
+  heading(c,unit,x+w*.15,y+h*.417,w*.63,h*.14,clamp(h*.13,10,17),p.secondary,{weight:570,en,maxLines:1,minSize:10});
  }
+ const labelX=x+(shaped?w*.125:10),labelW=w-(shaped?w*.25:20);
+ const labelY=y+h*(verySmall?.52:.57);
+ const labelH=Math.max(17,h-(labelY-y)-3);
  if(f!=='editorial'&&f!=='modern'&&f!=='timeline'){
   const bg=f==='night'?rgba(p.gold,.14):f==='desert'?rgba(p.gold,.14):rgba(p.main,.045);
-  box(c,labelX-3,labelY,labelW+6,Math.min(labelH,h-(labelY-y)-3),Math.min(11,h*.11),bg);
+  box(c,labelX-3,labelY,labelW+6,labelH,Math.min(11,h*.11),bg);
  }
- heading(c,item.label||'موعد',labelX,labelY,labelW,Math.max(16,Math.min(labelH,h-(labelY-y)-2)),
-   clamp(h*.185,14,24),ink,{weight:760,en,maxLines:2,minSize:11});
+ const multiLine=labelH>=26?2:1;
+ heading(c,item.label||'موعد',labelX,labelY,labelW,labelH,
+  clamp(h*.17,verySmall?11:13,24),ink,{weight:770,en,maxLines:multiLine,minSize:verySmall?10:11});
 }
