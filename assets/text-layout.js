@@ -21,7 +21,16 @@ export function fitText(c,value,{x=0,y=0,w=100,h=30,size=26,minSize=13,maxLines=
  const family=font||c.zyadFont||'"Cairo",Tahoma,Arial,sans-serif',width=Math.max(4,w),height=Math.max(4,h),smallest=Math.max(9,Math.min(size,minSize));
  c.save();c.direction=direction;c.textAlign=align;c.textBaseline='middle';c.fillStyle=color;
  let point=size,lines=[];
- while(point>=smallest){c.font=`${weight} ${point}px ${family}`;lines=breakLines(c,content,width-6);if(lines.length<=maxLines&&lines.length*point*lineHeight<=height-4)break;point--;}
+ while(point>=smallest){
+  c.font=`${weight} ${point}px ${family}`;
+  // Keep a single Arabic word intact whenever it can fit by reducing font size.
+  // Formerly the wrapping algorithm split "التأمينات" mid-word at a large font.
+  const oversized=content.split(/\s+/).some(word=>c.measureText(word).width>width-6);
+  if(oversized&&point>smallest){point--;continue;}
+  lines=breakLines(c,content,width-6);
+  if(lines.length<=maxLines&&lines.length*point*lineHeight<=height-4)break;
+  point--;
+ }
  if(point<smallest){point=smallest;c.font=`${weight} ${point}px ${family}`;lines=breakLines(c,content,width-6);}
  const clipped=lines.length>maxLines;
  if(clipped){const keep=lines.slice(0,Math.max(1,maxLines)),last=keep.length-1,chars=Array.from(lines.slice(last).join(' '));while(chars.length&&c.measureText(chars.join('')+'…').width>width-6)chars.pop();keep[last]=(chars.join('').trim()||'')+'…';lines=keep;}
