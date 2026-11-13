@@ -183,7 +183,7 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const ctx=canvas.getContext('2d',{alpha:false});canvas.width=W*scale;canvas.height=H*scale;
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
-  if(nativeSize){canvas.width=dimensions[0]*scale;canvas.height=dimensions[1]*scale;ctx.setTransform(scale,0,0,scale,0,0);renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr});return canvas;}
+  if(nativeSize){canvas.width=Math.round(dimensions[0]*scale);canvas.height=Math.round(dimensions[1]*scale);ctx.setTransform(canvas.width/dimensions[0],0,0,canvas.height/dimensions[1],0,0);ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr});return canvas;}
   if(definition.inspiration){drawInspirationCard(ctx,config,iso,definition.inspiration);}
   else if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
