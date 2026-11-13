@@ -40,7 +40,9 @@ try{
    const cfg=duplicateForPreset(config,'salary'),c=document.createElement('canvas');
    cfg.design.showIcons=true;cfg.design.iconStyle=style;
    await renderPoster(c,cfg,'2026-11-13',{preview:true,scale:.25});
-   styles.push({style,fingerprint:c.toDataURL('image/webp',.6).slice(-240)});
+   const pixels=c.getContext('2d').getImageData(0,0,c.width,c.height).data;
+   const digest=await crypto.subtle.digest('SHA-256',pixels);
+   styles.push({style,fingerprint:Array.from(new Uint8Array(digest)).map(x=>x.toString(16).padStart(2,'0')).join('')});
   }
   return {samples,styles,iconCount:LUCIDE_CARD_NAMES.length,uiCount:CARD_ICON_NAMES.length,salaryGlyph:eventGlyph({label:'الراتب'}),ramadanGlyph:eventGlyph({label:'رمضان'})};
  });
