@@ -101,6 +101,23 @@ const FAMILY_NAMES={
  desert:'صحراوي',botanical:'ورود ونباتات',geometric:'هندسي',
  ramadan:'إسلامي',editorial:'تحريري',journal:'دفاتر ومذكرات',timeline:'خط زمني'
 };
+const FAMILY_NAMES_EN={
+ royal:'Royal',modern:'Minimal',heritage:'Najdi Heritage',night:'Night',desert:'Desert',
+ botanical:'Botanical',geometric:'Geometric',ramadan:'Islamic',editorial:'Editorial',
+ journal:'Journal',timeline:'Timeline'
+};
+function updateFamilyFilterLabels(){
+ const wrap=document.getElementById('gallery-family-filters');if(!wrap)return;
+ const english=getLanguage()==='en';
+ wrap.querySelector('.gallery-family-caption').textContent=english?'Choose a card shape':'اختر شكل البطاقة';
+ for(const button of wrap.querySelectorAll('[data-family]')){
+  const id=button.dataset.family;
+  const count=id==='all'?CARD_PRESETS.length:CARD_PRESETS.filter(p=>familyFor(p)===id).length;
+  const name=id==='all'?(english?'All shapes':'جميع الأشكال'):
+   (english?FAMILY_NAMES_EN[id]:FAMILY_NAMES[id]);
+  button.textContent=name+' · '+count;
+ }
+}
 function setupFamilyFilters(){
  const categories=document.querySelector('#gallery-categories');
  if(!categories)return;
@@ -121,6 +138,7 @@ function setupFamilyFilters(){
   rail.append(button);
  }
  wrap.append(heading,rail);categories.parentElement?.after(wrap);
+ updateFamilyFilterLabels();
 }
 setupGalleryControls();
 setupFamilyFilters();
@@ -275,7 +293,7 @@ function updateLanguageBrand(){
  if(b)b.textContent=brand;if(f)f.textContent=brand;
  document.title=brand+' | '+(getLanguage()==='en'?'Calendar & Events':'التقويم والمواعيد');
 }
-window.addEventListener('zyad-language-change',()=>{if(!config)return;updateLanguageBrand();renderGallery();void refresh();});
+window.addEventListener('zyad-language-change',()=>{updateFamilyFilterLabels();if(!config)return;updateLanguageBrand();renderGallery();void refresh();});
 window.zyadVisitorFavorites={read:readFavorites,toggle:favoriteTemplate};window.zyadCalendar={getConfig:()=>config?JSON.parse(JSON.stringify(config)):null,getDate:()=>dateInput.value,setDate,automatic:()=>automatic,rotate:()=>{automatic=true;localStorage.setItem('zyad-template-mode','auto');setDate(dateInput.value);}};
 async function loadArchive(){try{const r=await fetch('data/history.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('not found');const list=await r.json();const grid=$('#archive-grid');if(!Array.isArray(list)||!list.length)return;grid.replaceChildren();for(const rec of list.slice(0,24)){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)||!/^images\/[\w.-]+\.png$/.test(rec.path))continue;
