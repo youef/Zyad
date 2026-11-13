@@ -147,16 +147,20 @@ try{
   if(await page.locator('.public-template-card.active').count()!==1)throw Error('Public template selection failed');
   const publicSelection=await page.locator('.public-template-card.active').getAttribute('data-preset');
   if(publicSelection!=='pearl')throw Error('Public selected template does not match Canvas');
-  await page.evaluate(()=>location.hash='poster-section');await page.locator('#poster-section').waitFor({state:'visible'});const shortcut=page.locator('[data-quick-day="7"]');
-  await shortcut.click();
-  await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
-  const picked=await page.locator('#chosen-date').inputValue();
+  // The current visitor-first UI uses the native date field, not legacy quick-day controls.
+  await page.evaluate(()=>location.hash='#today-app');
+  await page.locator('#today-app').waitFor({state:'visible'});
   const d=new Date(today+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+7);
-  if(picked!==d.toISOString().slice(0,10))throw Error('Quick future-day card picker failed');
-  await page.locator('[data-quick-day="0"]').click();
-  await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
-  // Return site to the published default for its daily generated image.
-  await page.locator('#daily-style').click();
+  const weekLater=d.toISOString().slice(0,10);
+  await page.locator('#chosen-date').fill(weekLater);
+  await page.locator('#chosen-date').dispatchEvent('change');
+  await page.waitForFunction(target=>window.zyadCalendar?.getDate()===target&&document.querySelector('#page-status')?.textContent?.includes('جاهزة'),weekLater);
+  if(await page.locator('#chosen-date').inputValue()!==weekLater)throw Error('Future-day date picker failed');
+  await page.locator('#chosen-date').fill(today);
+  await page.locator('#chosen-date').dispatchEvent('change');
+  await page.waitForFunction(target=>window.zyadCalendar?.getDate()===target&&document.querySelector('#page-status')?.textContent?.includes('جاهزة'),today);
+  // Return to the currently published automatic template rather than a hidden legacy control.
+  await page.evaluate(()=>window.zyadCalendar.rotate());
   await page.waitForFunction(()=>document.querySelector('#page-status')?.textContent?.includes('جاهزة'));
 
   const dataUrl=await page.locator('#poster').evaluate(canvas=>canvas.toDataURL('image/png'));
