@@ -7,7 +7,8 @@ const files=[
  'assets/main.js','assets/home.js','assets/card.js','assets/engine.js',
  'assets/calendar-design.js','assets/list-calendar.js','assets/design.js',
  'assets/heritage-premium.js','assets/follow-panel.js','assets/daily-panel.js',
- 'assets/responsive-card.js','assets/text-layout.js','assets/inspiration-card.js',
+ 'assets/responsive-card.js','assets/text-layout.js','assets/card-icons.js',
+ 'assets/vendor/lucide-canvas.js','assets/inspiration-card.js',
  'assets/daily.js','sw.js'
 ];
 for(const file of files){

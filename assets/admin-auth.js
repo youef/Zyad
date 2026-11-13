@@ -23,7 +23,7 @@ async function unlock(){
  document.querySelector('#zyad-private').removeAttribute('aria-hidden');
  document.querySelector('#zyad-auth-screen').hidden=true;
  try{
-  await import('../assets/admin.js?v=i18n4');
+  await import('../assets/admin.js?v=awan-icons1');
   await window.__adminReady;
   await import('../assets/admin-plus.js?v=secure-20261109');
   await import('../assets/admin-settings.js?v=secure-20261109');

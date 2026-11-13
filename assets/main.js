@@ -2,7 +2,7 @@ import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-siz
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=layout3';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=awan-icons1';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);

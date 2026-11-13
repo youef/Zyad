@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {fitText,formatCounter} from '../assets/text-layout.js';
+import {CARD_ICON_NAMES,eventGlyph,CARD_ICON_STYLES} from '../assets/card-icons.js';
 import {SOCIAL_SIZES} from '../assets/social-sizes.js';
 import {footerGeometry} from '../assets/follow-panel.js';
 import {renderResponsiveCard} from '../assets/responsive-card.js';
@@ -29,6 +30,14 @@ for(const phrase of ['إجازة منتصف العام الدراسي','منحة
  const t=fitText(context,phrase,{x:7,y:12,w:160,h:90,size:30,minSize:14,maxLines:2});
  assert(t.lines.length<=2);assert.equal(invalid.length,0);
 }
+assert.equal(CARD_ICON_NAMES.length,28,'All Lucide icons must remain locally bundled');
+assert.equal(CARD_ICON_STYLES.length,4);
+assert.equal(eventGlyph({label:'الراتب'}),'wallet');
+assert.equal(eventGlyph({label:'شهر رمضان'}),'moon-star');
+assert.equal(eventGlyph({label:'التخرج من الجامعة'}),'graduation-cap');
+assert.equal(eventGlyph({label:'الإجازة الصيفية'}),'sun');
+assert.equal(eventGlyph({label:'عيد الفطر'}),'gift');
+assert.equal(eventGlyph({label:'موعد جديد',icon:'trophy'}),'trophy');
 assert.equal(SOCIAL_SIZES.length,13);
 for(const preset of SOCIAL_SIZES){
  const [w,h]=[preset.width,preset.height],g=footerGeometry([w,h],'calendar');
