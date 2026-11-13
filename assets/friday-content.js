@@ -3,7 +3,7 @@ export const FRIDAY_HADITHS=Object.freeze([
  {id:'fj-h01',text:'خير يوم طلعت عليه الشمس يوم الجمعة',textEn:'The best day on which the sun has risen is Friday.',reference:'صحيح مسلم 854a',referenceEn:'Sahih Muslim 854a',url:'https://sunnah.com/muslim:854a',excerpt:true},
  {id:'fj-h02',text:'فأكثروا علي من الصلاة فيه فإن صلاتكم معروضة علي',textEn:'Send more blessings upon me on Friday, for your blessings are presented to me.',reference:'سنن أبي داود 1047 — صحيح',referenceEn:'Sunan Abi Dawud 1047 — Sahih',url:'https://sunnah.com/abudawud:1047',excerpt:true},
  {id:'fj-h03',text:'إذا قلت لصاحبك يوم الجمعة أنصت والإمام يخطب فقد لغوت',textEn:'If you tell someone to be quiet while the Friday sermon is being delivered, you have engaged in idle talk.',reference:'صحيح البخاري 934',referenceEn:'Sahih al-Bukhari 934',url:'https://sunnah.com/bukhari:934',excerpt:true},
- {id:'fj-h04',text:'من صلى علي واحدة صلى الله عليه بها عشرا',textEn:'Whoever sends one blessing upon me, Allah sends ten blessings upon him.',reference:'صحيح مسلم 408',referenceEn:'Sahih Muslim 408',url:'https://sunnah.com/muslim:408',excerpt:true}
+ {id:'fj-h04',text:'من صلى علي واحدة صلى الله عليه عشرا',textEn:'Whoever sends one blessing upon me, Allah sends ten blessings upon him.',reference:'صحيح مسلم 408',referenceEn:'Sahih Muslim 408',url:'https://sunnah.com/muslim:408',excerpt:true}
 ]);
 export const FRIDAY_DHIKR=Object.freeze([
  {id:'fj-z01',text:'سبحان الله وبحمده',textEn:'Glory and praise be to Allah.'},
