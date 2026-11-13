@@ -37,10 +37,9 @@ try{
   await page.evaluate(()=>location.hash='#template-gallery');
   await page.locator('#template-gallery').waitFor({state:'visible'});
   assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
-  const chosen=page.locator('#social-output-size');
-  await chosen.selectOption('instagram-square');
   await page.evaluate(()=>location.hash='#today-app');
   await page.locator('#today-app').waitFor({state:'visible'});
+  await page.locator('#social-output-size').selectOption('instagram-square');
   await page.waitForFunction(()=>{const c=document.querySelector('#poster');return c?.width>0&&c?.width===c?.height;});
   const preview=await page.locator('#poster').evaluate(c=>[c.width,c.height]);
   assert.equal(preview[0],preview[1],'Square preview is stretched');
