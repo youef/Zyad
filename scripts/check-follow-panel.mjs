@@ -52,7 +52,7 @@ try {
  assert(info.region.follow.h<=130,'Follow bar must be compact');
  assert(info.region.noteY-info.region.follow.y-info.region.follow.h>=29,'Footer caption needs breathing room');
  for(const item of info.sizes){
-  assert.deepEqual(item.canvas,[item.dimensions[0]/4,item.dimensions[1]/4]);
+  assert.deepEqual(item.canvas,[Math.floor(item.dimensions[0]/4),Math.floor(item.dimensions[1]/4)],'Canvas dimensions must be whole pixels');
   assert(item.footer.follow.y>item.footer.ad.y+item.footer.ad.h,'Footer collision on '+item.dimensions);
   assert(item.footer.follow.y+item.footer.follow.h<=item.dimensions[1],'Panel outside image on '+item.dimensions);
   assert(item.layout.qr.x+item.layout.qr.size<item.layout.middle.x,'QR must remain in the LEFT column');
