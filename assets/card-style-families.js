@@ -314,8 +314,11 @@ export function familyTile(c,f,item,n,{x,y,w,h},{p,featured=false,en=false,showI
  let numX=x+8,numW=w*.68,numY=y+h*.09,numH=h*.39;
  let labelY=y+h*.67,labelH=h*.28,labelX=x+9,labelW=w-18;
  if(horizontal&&h>90){
-  numX=x+w*.04;numW=w*.44;numY=y+h*.19;numH=h*.48;
-  labelX=x+w*.49;labelW=w*.46;labelY=y+h*.35;labelH=h*.42;
+  // Whole-word Arabic event names need a full-width lower label strip.
+  // The editorial/timeline visual identity comes from their ruling and sidebars,
+  // not from squeezing the label into half a cell.
+  numX=x+w*.08;numW=w*.62;numY=y+h*.09;numH=h*.42;
+  labelX=x+w*.08;labelW=w*.84;labelY=y+h*.665;labelH=h*.31;
  }else if(f==='geometric'||f==='heritage'||f==='ramadan'){
   numX=x+w*.14;numW=w*.60;labelX=x+w*.13;labelW=w*.74;labelY=y+h*.68;labelH=h*.27;
  }
