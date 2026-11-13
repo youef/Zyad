@@ -4,7 +4,7 @@
  */
 import {fitText} from './text-layout.js?v=2';
 import {footerGeometry} from './follow-panel.js?v=layout3';
-import {drawCardFiligree} from './card-icons.js?v=awan1';
+import {drawCardFiligree,drawIconBadge} from './card-icons.js?v=awan1';
 import {getLanguage,localeDate} from './locale.js?v=i18n4';
 
 const clamp=(n,low,high)=>Math.max(low,Math.min(high,n));
@@ -80,6 +80,13 @@ function header(c,L,p,preset,cfg,day,en){
  const dark=preset==='royal',base=dark?p.deep:preset==='botanical'?p.accent:p.panel;
  rounded(c,r.x,r.y,r.w,r.h,clamp(r.h*.22,19,46),base,dark?p.gold:p.gold+'a5',dark?2.5:1.6);
  if(dark)rounded(c,r.x+7,r.y+7,r.w-14,r.h-14,clamp(r.h*.19,15,40),null,'rgba(242,221,167,.27)',1.2);
+ // Native vector symbol, opt-in via the existing icon settings.
+ // Keep it in the quiet outer corner, away from the Arabic weekday/title.
+ if(cfg.design?.showIcons!==false&&!wide&&r.h>145){
+  drawIconBadge(c,{icon:preset==='botanical'?'flower-2':preset==='royal'?'sparkles':'star'},
+   r.x+r.w*.91,r.y+r.h*.24,Math.min(68,r.h*.28),
+   {style:cfg.design?.iconStyle||'duotone',accent:p.gold,contrast:p.deep,featured:true});
+ }
  const brand=cfg.brand?.[en?'nameEn':'name']|| (en?'Awan Saudi':'أوان السعودية');
  const mainColor=dark?'#fff9e9':p.deep,subColor=dark?'#e3cca0':p.soft;
  if(wide){
