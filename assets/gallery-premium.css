@@ -164,3 +164,18 @@ body.visitor-only .public-template-card .gallery-card-frame .public-template-art
 @media(prefers-reduced-motion:reduce){
  body.visitor-only .public-template-card .gallery-card-frame .gallery-template-image{transition:none}
 }
+
+/* Awan premium preview: the tile frame follows its actual export ratio.
+   Override the old hard-coded 9:16 catalog skin for square and landscape. */
+body.visitor-only .gallery-card-frame{
+ aspect-ratio:var(--poster-ratio,9/16)!important;
+ background:#e8eee6;
+}
+body.visitor-only .public-template-card .gallery-card-frame :is(img,canvas,.public-template-fallback){
+ aspect-ratio:var(--poster-ratio,9/16)!important;
+ object-fit:contain!important;
+}
+body.visitor-only .public-template-card .gallery-card-frame .public-template-art:not([hidden]){
+ display:block!important;
+ background:#e8eee6;
+}
