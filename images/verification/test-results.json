@@ -1,20 +1,13 @@
 {
   "status": "passed",
-  "checks": [
-    "home 390",
-    "admin 390",
-    "text editing, undo, redo, keyboard movement 390",
-    "exported QR decoded 390",
-    "12 format/size exports 390",
-    "persisted design + offline reopen 390",
-    "library uploaded assets 390",
-    "home 1440",
-    "admin 1440",
-    "24 distinct real previews",
-    "text editing, undo, redo, keyboard movement 1440",
-    "exported QR decoded 1440",
-    "12 format/size exports 1440",
-    "persisted design + offline reopen 1440",
-    "library uploaded assets 1440"
+  "verified": [
+    "studio redirect 390",
+    "library redirect 390",
+    "settings redirect 390",
+    "responsive cards 390",
+    "studio redirect 1440",
+    "library redirect 1440",
+    "settings redirect 1440",
+    "responsive cards 1440"
   ]
 }

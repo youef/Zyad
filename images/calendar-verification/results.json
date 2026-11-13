@@ -336,15 +336,39 @@
       "height": 960,
       "allCounters": true,
       "dateChange": true
+    },
+    {
+      "id": "inspire-botanical",
+      "name": "إشراقة الورد",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "inspire-royal",
+      "name": "الرسالة الملكية",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
+    },
+    {
+      "id": "inspire-pearl",
+      "name": "يوم من نور",
+      "width": 540,
+      "height": 960,
+      "allCounters": true,
+      "dateChange": true
     }
   ],
   "checks": [
-    "42 distinct layouts",
-    "42 distinct counter styles",
+    "Unique calendar and inspiration layouts",
+    "Distinct calendar counter styles",
     "all configured counters",
     "24-counter capacity",
-    "selected date updates every preview",
-    "five exported QR codes decoded",
+    "date selection updates public state across pages",
+    "six exported QR codes decoded",
     "public PNG export",
     "admin selection + persistence",
     "mobile + desktop without JS errors"
