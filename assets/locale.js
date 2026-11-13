@@ -65,7 +65,8 @@ export const ENGLISH_PRESET_NAMES=Object.freeze({
  'blue-agenda':'Blue Agenda','mint-schedule':'Mint Schedule','rainbow-brush':'Colors of the Day',
  'saudi-list':'Saudi Schedule','financial-table':'Payments Ledger','metro-timeline':'Events Timeline',
  'magazine-columns':'Daily Window','week-journal':'Weekly Journal','postcard-calendar':'Daily Postcard',
- 'mono-calendar':'Ink & Numbers','lilac-agenda':'Lilac Agenda','desert-journal':'Desert Journal'
+ 'mono-calendar':'Ink & Numbers','lilac-agenda':'Lilac Agenda','desert-journal':'Desert Journal',
+ 'inspire-botanical':'Floral Inspiration','inspire-royal':'Royal Message','inspire-pearl':'A Day of Light'
 });
 Object.assign(map,{
  'يومك بين يديك':'Your Day at a Glance','تقويمك… كل المواعيد':'Calendar · All Events',
