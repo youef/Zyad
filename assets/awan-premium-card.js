@@ -166,14 +166,14 @@ function message(c,cfg,rows,y,h,p){
   });
  }
 }
-function eventTile(c,item,value,bounds,{p,featured=false,compact=false,showIcons=true,showUnit=true,en=false}={}){
+function eventTile(c,item,value,bounds,{p,featured=false,compact=false,showIcons=true,showUnit=true,iconStyle='duotone',en=false}={}){
  const {x,y,w,h}=bounds;
  c.save();c.shadowColor='rgba(23,53,43,.105)';c.shadowBlur=9;c.shadowOffsetY=4;
  rounded(c,x,y,w,h,20,p.ivory,featured?p.gold:alpha(p.main,.17),featured?2.3:1.3);c.restore();
  if(featured)rounded(c,x+w*.28,y+3,w*.44,3,2,p.gold);
  const badge=Math.min(48,Math.max(29,h*.345));
  if(showIcons)drawIconBadge(c,item,x+w-37,y+Math.max(26,h*.27),badge,{
-  style:'duotone',accent:p.gold,contrast:p.deep,light:false,featured
+  style:iconStyle,accent:p.gold,contrast:p.deep,light:false,featured
  });
  const n=formatCounter(value);
  const valueSize=clamp(h*.335,29,56);
@@ -206,7 +206,7 @@ function events(c,cfg,iso,tools,p,startY,endY){
    x:74+column*(cardW+gap),y:gridY+row*(limitedH+gap),w:cardW,h:limitedH
   },{p,featured:cfg.design?.highlightNext!==false&&item.mode!=='manual'&&n===nearest,
    compact:limitedH<112,showIcons:cfg.design?.showIcons!==false,
-   showUnit:cfg.design?.showUnit!==false,en});
+   showUnit:cfg.design?.showUnit!==false,iconStyle:cfg.design?.iconStyle||'duotone',en});
  });
  if(!items.length)blockText(c,en?'No events added yet':'لا توجد مواعيد مضافة',140,gridY+30,800,100,38,p.secondary,{en,weight:730,lines:1});
 }

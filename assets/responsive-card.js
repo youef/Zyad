@@ -107,7 +107,7 @@ export function renderResponsiveCard(c,cfg,iso,{dimensions,remaining,hijriDate,b
   if(best)panel(c,x+tileW*.30,y+3,tileW*.40,3,1.5,gold);
   const badge=Math.min(46,Math.max(24,tileH*.33));
   if(cfg.design?.showIcons!==false)drawIconBadge(c,item,x+tileW-31,y+Math.max(21,tileH*.275),badge,
-   {style:'duotone',accent:gold,contrast:deep,featured:best});
+   {style:cfg.design?.iconStyle||'duotone',accent:gold,contrast:deep,featured:best});
   text(c,formatCounter(n),x+8,y+tileH*.10,tileW*.68,tileH*.39,Math.min(52,tileH*.36),deep,{weight:900,maxLines:1,minSize:20});
   if(cfg.design?.showUnit!==false)text(c,n===0?(en?'Today':'اليوم'):(item.mode==='manual'?(en?'Value':'قيمة'):(en?'days':'يوم')),x+10,y+tileH*.445,tileW*.63,tileH*.17,Math.min(18,tileH*.13),muted,{weight:600,maxLines:1,minSize:10,en});
   const stripY=y+tileH*.70,stripH=Math.max(20,tileH*.275);

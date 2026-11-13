@@ -3,7 +3,7 @@ import {CARD_ICON_NAMES,drawIconBadge} from './card-icons.js?v=awan1';
 import {CARD_PRESETS,presetInfo,applyPreset,duplicateForPreset} from './templates.js?v=20261104r4';
 import {prepareBanner,compactBanner} from './advertising.js?v=banner25';
 import {FOLLOW_DEFAULTS,validateFollow} from './follow-panel.js?v=glass20261110';
-import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=awan-icons1';
+import {saToday,renderPoster,cloneConfig,downloadFile,getPngBlob,updateDeep,currentValue} from './card.js?v=awan-premium2';
 const $=s=>document.querySelector(s);
 const canvas=$('#poster'),dateField=$('#admin-date'),draftStatus=$('#draft-status'),pubStatus=$('#publish-status');
 const REPO='youef/Zyad',CONFIG_PATH='data/config.json',DRAFT_KEY='zyad-card-draft-v4';
@@ -193,7 +193,7 @@ function buildCounters(){const root=$('#counter-list');root.replaceChildren();(c
   sum.textContent='إدارة تفاصيل الحدث والمعلومات الإضافية';expander.append(sum,more);article.append(expander);
 const toggle=document.createElement('label');toggle.className='counter-toggle';const check=document.createElement('input');check.type='checkbox';check.checked=item.enabled!==false;check.addEventListener('change',()=>{item.enabled=check.checked;changed();});toggle.append(check,document.createTextNode('إظهار في البطاقة'));article.append(toggle);root.append(article);
 });}
-function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener(['checkbox','color','range'].includes(el.type)||el.tagName==='SELECT'?'change':'input',()=>{
+function setupForm(){document.querySelectorAll('[data-bind]').forEach(el=>el.addEventListener(el.type==='checkbox'||el.tagName==='SELECT'?'change':'input',()=>{
     const val=el.type==='checkbox'?el.checked:el.type==='number'||el.type==='range'?Number(el.value):el.value;
     if(el.dataset.bind==='follow.qrUrl'&&val){try{const u=new URL(val);if(!['https:','http:'].includes(u.protocol))throw Error();}catch{document.querySelector('#follow-settings-status').textContent='أدخل رابط QR صحيحًا يبدأ بـ https://';return;}}
     updateDeep(config,el.dataset.bind,val);syncFollowControls();changed();
