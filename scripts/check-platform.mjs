@@ -1,37 +1,63 @@
-import assert from 'node:assert/strict';import {chromium} from 'playwright';import {serve,root} from './serve.mjs';import {readFile,writeFile,mkdir} from 'node:fs/promises';import {join} from 'node:path';import {createHash} from 'node:crypto';import jsQR from 'jsqr';
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {serve,root} from './serve.mjs';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {join} from 'node:path';
 import {CARD_PRESETS} from '../assets/templates.js';
-const server=await serve(),origin='http://127.0.0.1:'+server.address().port;let browser;const checks=[];
-const output=join(root,'images/verification');await mkdir(output,{recursive:true});await mkdir(join(root,'images/catalog'),{recursive:true});
-try{browser=await chromium.launch();for(const viewport of [{width:390,height:844},{width:1440,height:1000}]){
- const context=await browser.newContext({viewport}),page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(origin);assert(await page.evaluate(()=>window.__posterReady));await page.evaluate(()=>navigator.serviceWorker.ready);await page.screenshot({path:join(output,`home-${viewport.width}.png`)});
- assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'Home overflow');checks.push('home '+viewport.width);
- const mockConfig=JSON.parse(await readFile(join(root,'data/config.json'),'utf8'));
- await page.route('**/api/zyad?action=*',async route=>{const action=new URL(route.request().url()).searchParams.get('action');const data=action==='status'?{ok:true,ready:true}:action==='login'?{ok:true,token:'test-session'}:action==='config'?{ok:true,config:mockConfig}:{ok:true};await route.fulfill({status:200,contentType:'application/json',headers:{'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET, POST, OPTIONS','Access-Control-Allow-Headers':'Authorization, Content-Type'},body:JSON.stringify(data)});});
- await page.goto(origin+'/admin/');
- assert(await page.locator('#zyad-login-form').isVisible(),'Login gate must be visible');
- await page.locator('#zyad-login-form [name=username]').fill('admin');
- await page.locator('#zyad-login-form [name=password]').fill('test-password');
- await page.locator('#zyad-login-button').click();
- await page.waitForFunction(()=>Boolean(window.zyadAdmin?.getConfig()));
- await page.locator('[data-tab="theme"]').click();await page.waitForFunction(n=>document.querySelectorAll('.admin-template-art').length===n,CARD_PRESETS.length);await page.locator('[data-preset="desert"]').click();await page.waitForFunction(()=>document.querySelector('#template-preview-state').textContent.includes('الصحراء'));await page.screenshot({path:join(output,`admin-${viewport.width}.png`)});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'Admin overflow');checks.push('admin '+viewport.width);
- await page.goto(origin+'/studio/?template=saudi-emerald');assert(await page.evaluate(()=>window.__studioReady));
- // Generate all preview files with exactly the same engine as full-size export.
- if(viewport.width===1440){const rendered=await page.evaluate(async()=>{const {templates,createDesign}=await import('/assets/catalog.js');const {renderDesign}=await import('/assets/engine.js');const rows=[];for(const t of templates){const c=document.createElement('canvas');await renderDesign(c,createDesign(t.id,'2026-11-04'),{scale:.25});rows.push({id:t.id,data:c.toDataURL('image/webp',.9).split(',')[1]});}return rows;});assert.equal(rendered.length,24);assert.equal(new Set(rendered.map(r=>createHash('sha256').update(r.data).digest('hex'))).size,24);for(const r of rendered)await writeFile(join(root,'images/catalog',r.id+'.webp'),Buffer.from(r.data,'base64'));checks.push('24 distinct real previews');}
- await page.locator('#label').fill('بطاقة اختبار عربية طويلة تحافظ على القراءة وتلتف تلقائيًا دون قص النص أو تمديده عند تغيير المقاس');await page.locator('#label').press('Tab');await page.locator('#save').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('حُفظ'));
- await page.locator('#add').click();assert.equal(await page.locator('#label').inputValue(),'اكتب شيئًا جميلًا');await page.locator('#undo').click();assert((await page.locator('#label').inputValue()).startsWith('بطاقة اختبار'));await page.locator('#redo').click();assert.equal(await page.locator('#label').inputValue(),'اكتب شيئًا جميلًا');
- await page.locator('#label').fill('طبقة قابلة للتحريك');await page.locator('#label').press('Tab');await page.locator('#center').click();const before=await page.locator('#card').evaluate(c=>c.toDataURL());await page.locator('#card').focus();await page.keyboard.press('ArrowRight');assert.notEqual(await page.locator('#card').evaluate(c=>c.toDataURL()),before);checks.push('text editing, undo, redo, keyboard movement '+viewport.width);
- await page.locator('#mode').click();await page.locator('#toggle-lock').click();assert(await page.locator('#label').isDisabled());await page.locator('#toggle-lock').click();await page.locator('#duplicate').click();await page.locator('#remove').click();
- const png=await readFile(join(root,'assets/app-192.png'));await page.locator('#upload').setInputFiles({name:'logo.png',mimeType:'image/png',buffer:png});await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('إضافة الصورة'));await page.locator('#add-qr').click();
- // Verify an actual exported QR layer decodes to the intended URL.
- const qr=await page.evaluate(async()=>{const {createDesign}=await import('/assets/catalog.js'),{renderDesign}=await import('/assets/engine.js');const d=createDesign();d.background={color:'#fff'};d.layers=[{id:'qr',type:'qr',text:'https://youef.github.io/Zyad/',x:.5,y:.5,width:.4}];const c=document.createElement('canvas');await renderDesign(c,d,{scale:.4});const size=Math.round(c.width*.4),margin=12,box=size+margin*2,q=document.createElement('canvas');q.width=box;q.height=box;q.getContext('2d').drawImage(c,(c.width-size)/2-margin,(c.height-size)/2-margin,box,box,0,0,box,box);const p=q.getContext('2d').getImageData(0,0,box,box);return {width:box,height:box,data:Array.from(p.data)};});assert.equal(jsQR(new Uint8ClampedArray(qr.data),qr.width,qr.height)?.data,'https://youef.github.io/Zyad/');checks.push('exported QR decoded '+viewport.width);
- for(const dimensions of ['1080,1920','1080,1080','1080,1350','1920,1080']){await page.locator('#size').selectOption(dimensions);for(const format of ['png','jpeg','webp']){await page.locator('#format').selectOption(format);const [dl]=await Promise.all([page.waitForEvent('download'),page.locator('#download').click()]);const file=await readFile(await dl.path());const actual=await page.evaluate(async({data,mime})=>{const b=await createImageBitmap(new Blob([new Uint8Array(data)],{type:mime}));return [b.width,b.height];},{data:[...file],mime:'image/'+format});assert.deepEqual(actual,dimensions.split(',').map(Number));if(viewport.width===1440&&format==='png'&&dimensions==='1080,1920')await writeFile(join(output,'export-with-qr.png'),file);} }checks.push('12 format/size exports '+viewport.width);
- await page.locator('#size').selectOption('1080,1920');await page.locator('#save').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('حُفظ'));await page.waitForTimeout(650);await page.reload();assert(await page.evaluate(()=>window.__studioReady));await page.locator('#open').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('فُتح'));
- await page.screenshot({path:join(output,`studio-${viewport.width}.png`)});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'Studio overflow');
- await context.setOffline(true);await page.reload();assert(await page.evaluate(()=>window.__studioReady));await page.locator('#open').click();await page.waitForFunction(()=>document.querySelector('#status').textContent.includes('فُتح'));await context.setOffline(false);checks.push('persisted design + offline reopen '+viewport.width);
- await page.goto(origin+'/library/');await page.waitForSelector('.design-card');await page.locator('#library-filters button').filter({hasText:'الصور'}).click();await page.waitForSelector('.design-card img');checks.push('library uploaded assets '+viewport.width);
- await page.goto(origin+'/templates/');await page.waitForSelector('.design-card');assert.equal(await page.locator('.design-card').count(),24);await page.locator('#template-search').fill('رمضان');await page.waitForFunction(()=>document.querySelectorAll('.design-card').length===1);await page.screenshot({path:join(output,`templates-${viewport.width}.png`)});assert.deepEqual(errors,[]);await context.close();
+import {SOCIAL_SIZES} from '../assets/social-sizes.js';
+// This project is visitor-only; studio/library/settings URLs intentionally redirect to the public app.
+const server=await serve(),origin='http://127.0.0.1:'+server.address().port;
+const target=join(root,'images/verification');await mkdir(target,{recursive:true});
+const browser=await chromium.launch({headless:true});const verified=[];
+try{
+ for(const viewport of [{width:390,height:844},{width:1440,height:1000}]){
+  const context=await browser.newContext({viewport,acceptDownloads:true}),page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(origin+'/?date=2026-11-13');
+  await page.waitForFunction(()=>Boolean(window.__posterReady));
+  assert(await page.evaluate(()=>window.__posterReady),'Card renderer initialization failed');
+  assert.equal(await page.locator('.visitor-tabs a.native-tab-link').count(),5);
+  assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
+  assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'Horizontal home overflow');
+  // Visual selections must respect exact social size rather than squeezing a tall poster.
+  const result=await page.evaluate(async()=>{
+   const {renderPoster}=await import('/assets/card.js');
+   const {SOCIAL_SIZES}=await import('/assets/social-sizes.js');
+   const cfg=await(await fetch('/data/config.json',{cache:'no-store'})).json();
+   const result=[];
+   for(const id of ['whatsapp','instagram-post','instagram-square','facebook','x-post']){
+    const preset=SOCIAL_SIZES.find(x=>x.id===id),canvas=document.createElement('canvas');
+    await renderPoster(canvas,cfg,'2026-11-13',{preview:true,scale:.25,dimensions:[preset.width,preset.height]});
+    result.push({id,pixels:[canvas.width,canvas.height],expected:[Math.round(preset.width*.25),Math.round(preset.height*.25)]});
+   }
+   return result;
+  });
+  for(const entry of result)assert.deepEqual(entry.pixels,entry.expected,'Incorrect canvas dimensions: '+entry.id);
+  assert.equal(SOCIAL_SIZES.length,13);
+  await page.evaluate(()=>location.hash='#template-gallery');
+  await page.locator('#template-gallery').waitFor({state:'visible'});
+  assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
+  const chosen=page.locator('#social-output-size');
+  await chosen.selectOption('instagram-square');
+  await page.evaluate(()=>location.hash='#today-app');
+  await page.locator('#today-app').waitFor({state:'visible'});
+  await page.waitForFunction(()=>{const c=document.querySelector('#poster');return c?.width>0&&c?.width===c?.height;});
+  const preview=await page.locator('#poster').evaluate(c=>[c.width,c.height]);
+  assert.equal(preview[0],preview[1],'Square preview is stretched');
+  await page.screenshot({path:join(target,'visitor-responsive-'+viewport.width+'.png')});
+  for(const slug of ['studio','library','settings']){
+   await page.goto(origin+'/'+slug+'/');
+   await page.waitForURL(url=>url.pathname==='/'&&url.hash==='#today-app',{timeout:12000});
+   assert.equal(await page.locator('.visitor-tabs a.native-tab-link').count(),5,slug+' is not visitor-only');
+   verified.push(slug+' redirect '+viewport.width);
+  }
+  assert.deepEqual(errors,[],'Visitor browser errors at '+viewport.width+': '+errors.join(' | '));
+  verified.push('responsive cards '+viewport.width);
+  await context.close();
  }
- const assetData=JSON.parse(await readFile(join(root,'data/assets.json'),'utf8'));assert.equal(assetData.filter(a=>a.type==='background').length,24);assert.equal(assetData.filter(a=>a.type==='decoration'&&a.transparent).length,8);
- await writeFile(join(output,'test-results.json'),JSON.stringify({status:'passed',checks},null,2));console.log('PASS: '+checks.length+' grouped checks; 24 distinct templates, 24 format/size exports, QR, persistence, offline, mobile and desktop.');
-}finally{await browser?.close();await new Promise(r=>server.close(r));}
+ await writeFile(join(target,'test-results.json'),JSON.stringify({status:'passed',verified},null,2));
+ console.log('PASS: Visitor-only pages, square preview, five real-size renders, 45 public cards and mobile/desktop layout.');
+}finally{
+ await browser.close();
+ await new Promise(resolve=>server.close(resolve));
+}
