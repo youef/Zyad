@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import {chromium} from 'playwright';
 import {serve} from './serve.mjs';
+import {CARD_PRESETS} from '../assets/templates.js';
 
 const server=await serve();
 const browser=await chromium.launch({headless:true});
@@ -67,7 +68,7 @@ try{
    sourceType:source.headers.get('content-type'),nativeSize:[image.naturalWidth,image.naturalHeight],
    legacyLoaded:!!legacy,freeformLegacyLoaded:!!freeLegacy,disabledLoaded:!!disabled};
  });
- assert.equal(result.calendar.length,42,'All 42 calendar cards must be checked');
+ assert.equal(result.calendar.length,CARD_PRESETS.length,'All gallery designs must be checked');
  assert.equal(result.freeform.length,24,'All 24 editable card templates must be checked');
  assert.equal(result.formats.length,4);
  assert.deepEqual(result.nativeSize,[2000,400],'Banner must be 2000×400');
@@ -78,7 +79,7 @@ try{
   assert(t.topArea<250,'Banner modified unrelated card content '+JSON.stringify(t));
  }
  assert.deepEqual(errors,[],'No browser errors allowed');
- console.log('PASS: Default banner loads (2000x400), all 42 calendar layouts, all 24 freeform templates, four export sizes, enabled/disabled modes and legacy saved-card fallback.');
+ console.log('PASS: Default banner loads (2000x400), all gallery layouts, all 24 freeform templates, four export sizes, enabled/disabled modes and legacy saved-card fallback.');
  console.log('Verified '+JSON.stringify({calendar:result.calendar.length,freeform:result.freeform.length,formats:result.formats.length,sourceType:result.sourceType,banner:result.defaultBanner}));
 }finally{
  await browser.close();
