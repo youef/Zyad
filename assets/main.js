@@ -2,7 +2,7 @@ import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-siz
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=awan-icons1';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=awan-premium1';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
@@ -130,7 +130,7 @@ async function exportPreset(id){
 function renderGallery(){
  const revision=++galleryRevision;galleryObserver?.disconnect();
  const grid=$('#public-template-grid');if(!grid)return;grid.replaceChildren();
- // Static WebP previews load immediately. Only missing previews are rendered on demand.
+ // Paint the live redesigned layout on demand, rather than show an obsolete WebP preview.
  const queue=[];let working=false;
  async function processQueue(){
   if(working)return;working=true;
@@ -181,8 +181,8 @@ function renderGallery(){
   const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
   const heading=document.createElement('strong');heading.textContent=presetName(preset);
   const desc=document.createElement('small');desc.textContent=presetDescription(preset);
-  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';if(getSocialSize(socialSize()).height===1920)img.src='images/templates/'+preset.id+'.webp';
-  const frame=document.createElement('span');frame.className='gallery-card-frame';const previewSize=getSocialSize(socialSize());frame.style.aspectRatio=previewSize.width+'/'+previewSize.height;frame.append(img,fallback,art,badge,chosen);select.append(frame,heading,desc,previewDate);
+  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';if(preset.inspiration&&getSocialSize(socialSize()).height===1920)img.src='images/templates/'+preset.id+'.webp';
+  const frame=document.createElement('span');frame.className='gallery-card-frame';const previewSize=getSocialSize(socialSize());frame.style.aspectRatio=previewSize.width+'/'+previewSize.height;frame.style.setProperty('--poster-ratio',previewSize.width+'/'+previewSize.height);frame.append(img,fallback,art,badge,chosen);select.append(frame,heading,desc,previewDate);
   select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});filterCalendarGallery();await refresh();};
   const actions=document.createElement('div');actions.className='visitor-template-actions';const favorite=document.createElement('button');favorite.className='visitor-template-fav';favorite.type='button';favorite.textContent=isFavorite(preset.id)?'♥':'♡';favorite.setAttribute('aria-label',isFavorite(preset.id)?'إزالة من المفضلة':'إضافة إلى المفضلة');favorite.setAttribute('aria-pressed',String(isFavorite(preset.id)));favorite.onclick=()=>favoriteTemplate(preset.id);const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
   download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ الحفظ…';try{await exportPreset(preset.id);}catch(e){say('تعذر حفظ التصميم: '+e.message);}finally{download.disabled=false;download.textContent='حفظ الصورة ↓';}};

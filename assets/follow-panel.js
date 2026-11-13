@@ -281,12 +281,12 @@ export function footerGeometry(dimensions,kind='calendar'){
  const bottomAir=landscape?Math.max(29,Math.min(39,h*.042)):Math.max(24,Math.min(55,h*.03));
  const followY=noteY-bottomAir-followHeight;
  const adHeight=landscape?Math.max(48,Math.min(88,h*.10)):
-   Math.max(86,Math.min(150,h*.083));
+   Math.max(86,Math.min(170,h*.09));
  const between=landscape?Math.max(12,Math.min(17,h*.016)):Math.max(19,Math.min(27,h*.014));
  const adY=followY-between-adHeight;
  const followInset=Math.max(10,Math.min(19,w*.016));
  const followW=outerW-2*followInset;
- const adW=Math.min(adHeight*5,followW);
+ const adW=Math.min(adHeight*5.38,followW);
  return {
   x:outerX,y:adY,w:outerW,h:h-adY,
   ad:{x:(w-adW)/2,y:adY,w:adW,h:adHeight},

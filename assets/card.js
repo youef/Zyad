@@ -10,6 +10,7 @@ import {renderCalendar} from './calendar-design.js?v=awan-icons1';
 import {renderListCalendar} from './list-calendar.js?v=awan-icons1';
 import {drawDailyPanel} from './daily-panel.js?v=layout3';
 import {renderResponsiveCard} from './responsive-card.js?v=awan-icons1';
+import {renderAwanPremiumCard} from './awan-premium-card.js?v=1';
 import {resolveContent} from './daily.js?v=friday1';
 import {fontStack,loadTypeface} from './typography.js';
 import './vendor/qrcode.js';
@@ -174,7 +175,9 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   const safeLogo=/^data:image\/(?:png|jpeg|webp);base64,/i.test(imageSrc) || /^assets\/[\w./-]+\.(?:png|webp|jpg|svg)$/i.test(imageSrc);
   const dimensions=Array.isArray(options.dimensions)&&options.dimensions.length===2&&options.dimensions.every(x=>Number.isInteger(x)&&x>100&&x<6000)?options.dimensions:[W,H];
   const nativeSize=dimensions[0]!==W||dimensions[1]!==H;
-  const definition=presetInfo(config.design?.preset),art=nativeSize?null:(options.preview?definition.calendar?.background:definition.calendar?.original);
+  const definition=presetInfo(config.design?.preset);
+  const premiumCard=!definition.inspiration&&config.design?.layoutVersion!=='legacy';
+  const art=(nativeSize||premiumCard)?null:(options.preview?definition.calendar?.background:definition.calendar?.original);
   const [logo,qr,background,banner]=await Promise.all([
     safeLogo?fetchImage(imageSrc.startsWith('assets/')?(options.basePrefix||'')+imageSrc:imageSrc):null,
     buildFollowQr(config),art?fetchImage(new URL('../'+art,import.meta.url).href):null,bannerForPoster(config)]);
@@ -184,6 +187,12 @@ export async function renderPoster(canvas, config, iso=saToday(), options={}) {
   ctx.scale(scale,scale);
   ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();
   if(nativeSize){canvas.width=Math.round(dimensions[0]*scale);canvas.height=Math.round(dimensions[1]*scale);ctx.setTransform(canvas.width/dimensions[0],0,0,canvas.height/dimensions[1],0,0);ctx.zyadFont=fontStack(config.design?.fontFamily);ctx.zyadLocale=getLanguage();renderResponsiveCard(ctx,config,iso,{dimensions,remaining,hijriDate,banner,qr});return canvas;}
+  if(premiumCard){
+    const result=renderAwanPremiumCard(ctx,config,iso,{logo,qr,remaining,hijriDate},definition);
+    const footerConfig={...config,theme:{...config.theme,ink:result.footerInk}};
+    drawCombinedFooter(ctx,footerConfig,banner,qr,{kind:'calendar',dimensions:[W,H]});
+    return canvas;
+  }
   if(definition.inspiration){drawInspirationCard(ctx,config,iso,definition.inspiration);}
   else if(definition.calendar?.layout==='list'){renderListCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
   else if(definition.calendar){renderCalendar(ctx,config,iso,{logo,qr,background,remaining,hijriDate},definition);}
