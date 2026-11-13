@@ -179,3 +179,11 @@ body.visitor-only .public-template-card .gallery-card-frame .public-template-art
  display:block!important;
  background:#e8eee6;
 }
+
+.gallery-family-filters{margin-block:13px 8px;padding:11px 13px 12px;border:1px solid rgba(20,78,64,.11);border-radius:18px;background:rgba(244,249,246,.82)}
+.gallery-family-caption{font-size:13px;font-weight:850;color:#22594b;margin-block-end:9px;text-align:start}
+.gallery-family-rail{display:flex;gap:8px;overflow-x:auto;max-width:100%;padding:2px 1px 7px;scrollbar-width:thin;scroll-snap-type:x proximity}
+.gallery-family-chip{flex:0 0 auto;scroll-snap-align:start;border:1px solid rgba(29,87,73,.17);border-radius:999px;background:#fffefa;color:#2b5548;padding:9px 13px;font-family:inherit;font-size:12px;font-weight:800;line-height:1.35;cursor:pointer;white-space:nowrap}
+.gallery-family-chip:is(:hover,:focus-visible){border-color:#b79860;outline-offset:2px}
+.gallery-family-chip.active{background:#0a5947;border-color:#0a5947;color:#fff}
+@media(max-width:700px){.gallery-family-filters{margin-inline:-1px;padding:10px 8px}.gallery-family-chip{padding:9px 12px}}

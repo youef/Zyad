@@ -1,6 +1,7 @@
 import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-sizes.js?v=1';
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
+import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=gallery3';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
 import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=families2';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
@@ -25,7 +26,7 @@ document.addEventListener('zyad-social-size-change',()=>{if(config){renderGaller
 let config=null,publishedConfig=null,activePreset='',renderId=0;
 let automatic=localStorage.getItem('zyad-template-mode')!=='manual';
 let galleryObserver=null,galleryRevision=0;
-let gallerySearch='',galleryCategory='الكل',gallerySort='default';
+let gallerySearch='',galleryCategory='الكل',galleryFamily='all',gallerySort='default';
 const favKey='zyad-visitor-template-favorites';
 const readFavorites=()=>{try{const value=JSON.parse(localStorage.getItem(favKey)||'[]');return Array.isArray(value)?value.filter(validPreset):[]}catch{return []}};
 const isFavorite=id=>readFavorites().includes(id);
@@ -70,7 +71,7 @@ function filterCalendarGallery(){
   if(!p)continue;
   const q=gallerySearch.toLocaleLowerCase('ar');
   const text=`${p.name} ${presetName(p)} ${p.description} ${presetDescription(p)} ${p.category||''}`.toLocaleLowerCase('ar');
-  const show=(!favoriteMode||fav.has(p.id))&&(galleryCategory==='الكل'||(p.category||'تصاميم متنوعة')===galleryCategory)&&(!q||text.includes(q));
+  const show=(!favoriteMode||fav.has(p.id))&&(galleryCategory==='الكل'||(p.category||'تصاميم متنوعة')===galleryCategory)&&(galleryFamily==='all'||familyFor(p)===galleryFamily)&&(!q||text.includes(q));
   card.hidden=!show;if(show)visible++;
  }
  const rank=card=>{
@@ -95,7 +96,34 @@ function filterCalendarGallery(){
  const label=$('#visitor-favorites-description');if(label)label.hidden=!favoriteMode;
  const selected=CARD_PRESETS.find(p=>p.id===activePreset);const selectedName=$('#gallery-selected-name');if(selectedName)selectedName.textContent=selected?.name||'بطاقة اليوم';const selectedCategory=$('#gallery-selected-category');if(selectedCategory)selectedCategory.textContent=selected?.category||'تصميم يومي';
 }
+const FAMILY_NAMES={
+ royal:'ملكي فاخر',modern:'عصري بسيط',heritage:'تراثي نجدي',night:'ليلي',
+ desert:'صحراوي',botanical:'ورود ونباتات',geometric:'هندسي',
+ ramadan:'إسلامي',editorial:'تحريري',journal:'دفاتر ومذكرات',timeline:'خط زمني'
+};
+function setupFamilyFilters(){
+ const categories=document.querySelector('#gallery-categories');
+ if(!categories)return;
+ const wrap=document.createElement('section');wrap.id='gallery-family-filters';wrap.className='gallery-family-filters';
+ wrap.setAttribute('aria-label','فلترة حسب شكل البطاقة');
+ const heading=document.createElement('div');heading.className='gallery-family-caption';heading.textContent='اختر شكل البطاقة';
+ const rail=document.createElement('div');rail.className='gallery-family-rail';rail.setAttribute('role','group');rail.setAttribute('aria-label','أشكال القوالب');
+ const choices=[['all','جميع الأشكال',CARD_PRESETS.length],...CARD_FAMILIES.map(f=>[f,FAMILY_NAMES[f],CARD_PRESETS.filter(p=>familyFor(p)===f).length]).filter(x=>x[2]>0)];
+ for(const [id,name,count] of choices){
+  const button=document.createElement('button');button.type='button';button.dataset.family=id;
+  button.className='gallery-family-chip'+(id==='all'?' active':'');button.textContent=name+' · '+count;
+  button.setAttribute('aria-pressed',String(id==='all'));
+  button.onclick=()=>{
+   galleryFamily=id;
+   rail.querySelectorAll('button').forEach(node=>{const current=node.dataset.family===id;node.classList.toggle('active',current);node.setAttribute('aria-pressed',String(current));});
+   filterCalendarGallery();
+  };
+  rail.append(button);
+ }
+ wrap.append(heading,rail);categories.parentElement?.after(wrap);
+}
 setupGalleryControls();
+setupFamilyFilters();
 const sidebarCount=document.querySelector('.side-links a[href="#template-gallery"] small');if(sidebarCount)sidebarCount.textContent=String(CARD_PRESETS.length);
 $('#calendar-search').addEventListener('input',e=>{gallerySearch=e.target.value.trim();filterCalendarGallery();});
 $('#gallery-sort')?.addEventListener('change',e=>{gallerySort=e.target.value;filterCalendarGallery();});
