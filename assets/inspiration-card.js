@@ -1,72 +1,164 @@
-/* Premium daily inspiration cards: rendered as real, responsive canvas artwork. */
-import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
-const round=(c,x,y,w,h,r=26)=>{c.beginPath();c.roundRect(x,y,w,h,r);};
-function text(c,value,x,y,size,color,weight=700,max=900){
- c.fillStyle=color;c.textAlign='center';c.textBaseline='middle';c.direction='rtl';
- let n=size;c.font=weight+' '+n+'px "Cairo",Tahoma,Arial,sans-serif';
- while(c.measureText(value).width>max&&n>20){n-=2;c.font=weight+' '+n+'px "Cairo",Tahoma,Arial,sans-serif';}
- c.fillText(value,x,y,max);
+/* Awan Saudi — three independent inspiration card designs.
+ * Layout is measured against the shared advertisement/follow footer.
+ * The message panels NEVER enter the banner, QR, or subscription area.
+ */
+import {fitText} from './text-layout.js?v=2';
+import {footerGeometry} from './follow-panel.js?v=layout3';
+import {drawCardFiligree} from './card-icons.js?v=awan1';
+import {getLanguage,localeDate} from './locale.js?v=i18n4';
+
+const clamp=(n,low,high)=>Math.max(low,Math.min(high,n));
+function rounded(c,x,y,w,h,r,fill,edge=null,lw=1.4){
+ if(!(w>0&&h>0))return;
+ c.beginPath();c.roundRect(x,y,w,h,Math.min(r,w*.5,h*.5));
+ if(fill){c.fillStyle=fill;c.fill();}
+ if(edge){c.strokeStyle=edge;c.lineWidth=lw;c.stroke();}
 }
-function wrappedText(c,value,x,y,maxWidth=810,size=46,color='#173b38'){
- let fontSize=size,rows=[];
- const measure=()=>{c.font='800 '+fontSize+'px "Cairo",Tahoma,Arial,sans-serif';rows=[];let part='';for(const word of String(value||'').split(/\s+/)){const s=part?part+' '+word:word;if(part&&c.measureText(s).width>maxWidth){rows.push(part);part=word;}else part=s;}if(part)rows.push(part);};
- measure();while(rows.length>3&&fontSize>28){fontSize-=2;measure();}
- const gap=fontSize*1.55;rows.slice(0,3).forEach((line,i)=>text(c,line,x,y+(i-(Math.min(rows.length,3)-1)/2)*gap,fontSize,color,800,maxWidth));
+function rule(c,x,y,x2,y2,stroke,lw=1.6){
+ c.beginPath();c.moveTo(x,y);c.lineTo(x2,y2);c.strokeStyle=stroke;c.lineWidth=lw;c.stroke();
 }
-function panel(c,x,y,w,h,fill,stroke,r=27){
- c.fillStyle=fill;round(c,x,y,w,h,r);c.fill();c.strokeStyle=stroke;c.lineWidth=2;c.stroke();
+function writing(c,words,bounds,{size=34,minSize=15,maxLines=2,weight=760,color='#164c3f',align='center',en=false}={}){
+ if(!words)return;
+ return fitText(c,words,{...bounds,size,minSize,maxLines,weight,color,align,direction:en?'ltr':'rtl',lineHeight:1.25});
 }
-function bloom(c,x,y,color,scale=1){
- c.save();c.translate(x,y);c.scale(scale,scale);
- c.strokeStyle='#75977b';c.lineWidth=5;c.beginPath();c.moveTo(0,35);c.lineTo(0,165);c.stroke();
- for(let j=0;j<5;j++){const dx=(j-2)*27,dy=(j%2)*30;c.save();c.translate(dx,-dy);for(let i=0;i<6;i++){c.rotate(Math.PI/3);c.fillStyle=i%2?'#b0ced3':color;c.beginPath();c.ellipse(0,-22,14,27,0,0,Math.PI*2);c.fill();}c.fillStyle='#e6c178';c.beginPath();c.arc(0,0,9,0,Math.PI*2);c.fill();c.restore();}
- c.restore();
+function colors(preset,cfg){
+ const options={
+  botanical:{background:'#edf2e9',paper:'#fcfaf3',panel:'#fffefa',deep:'#125747',gold:'#b99755',soft:'#668376',quiet:'#e2ebe3',accent:'#daebe4'},
+  royal:{background:'#d6e2d9',paper:'#f8f3e7',panel:'#fffdf6',deep:'#08483a',gold:'#bf9851',soft:'#607c67',quiet:'#eff0e6',accent:'#e4ebdf'},
+  pearl:{background:'#eef3f0',paper:'#fffefa',panel:'#f6faf7',deep:'#286a61',gold:'#bea372',soft:'#6a8782',quiet:'#e5eee9',accent:'#e2f0eb'}
+ };
+ const p=options[preset]||options.botanical;
+ const main=cfg.theme?.green;
+ return {...p,deep:/^#[\da-f]{6}$/i.test(String(main||''))?main:p.deep};
 }
-export function drawInspirationCard(c,cfg,iso,preset){
- const palette={botanical:['#fffbf3','#07564f','#c59e5c'],royal:['#f9f1df','#073e38','#d3a94e'],pearl:['#fffdf8','#287168','#c8b080']}[preset]||['#fffbf3','#07564f','#c59e5c'];
- const [paper,green,gold]=palette,ink='#173b38';
- c.fillStyle=paper;c.fillRect(0,0,1080,1920);
- c.strokeStyle=gold;c.lineWidth=8;round(c,22,22,1036,1876,64);c.stroke();
- c.lineWidth=2;round(c,42,42,996,1834,52);c.stroke();
- const date=new Date(iso+'T12:00:00Z');
- const day=new Intl.DateTimeFormat('ar-SA',{weekday:'long',timeZone:'UTC'}).format(date);
- const hijri=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);
- const greg=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);
- panel(c,75,75,930,225,'#ffffffbc',gold,40);
- drawCardFiligree(c,75,75,930,225,{gold,opacity:.29,large:true});
- if(cfg.design?.showIcons!==false)drawIconBadge(c,{icon:preset==='botanical'?'flower-2':preset==='royal'?'sparkles':'star'},933,145,56,{style:cfg.design?.iconStyle||'royal',accent:gold,contrast:green,featured:true});
- text(c,cfg.brand?.name||'أوان السعودية',540,135,61,green,900,830);
- text(c,'إشراقة يومك · مناسبات ورسائل ملهمة',540,213,32,gold,700,830);
- text(c,day,540,352,105,green,900,900);
- panel(c,85,430,910,134,'#ffffffdd',gold,28);
- text(c,'هجري  |  '+hijri,540,474,37,ink,700,830);
- text(c,'ميلادي  |  '+greg,540,529,33,ink,700,830);
- panel(c,85,605,910,575,'#ffffffc9',gold,37);
- drawCardFiligree(c,85,605,910,575,{gold,opacity:.14,large:true});
- if(cfg.design?.showIcons!==false)drawIconBadge(c,{icon:cfg.daily?.special==='friday'?'moon-star':'sparkles'},936,700,56,{style:cfg.design?.iconStyle||'glass',accent:gold,contrast:green});
- text(c,cfg.daily?.special==='friday'?'✦ من هدي الجمعة ✦':'✦ رسالة اليوم ✦',540,690,49,green,900,800);
- c.strokeStyle=gold;c.lineWidth=2;c.beginPath();c.moveTo(235,750);c.lineTo(845,750);c.stroke();
- if(cfg.daily?.special==='friday'){
-  wrappedText(c,cfg.daily.hadith?.text||'أكثروا من الصلاة على النبي ﷺ',540,911,805,53,ink);
-  text(c,cfg.daily.hadith?.reference||'',540,1103,23,green,700,800);
- }else{
-  text(c,'ازرع أثرًا جميلًا،',540,836,66,ink,900,810);
-  text(c,'فالكلمة الطيبة تبقى',540,931,61,green,800,820);
-  text(c,'والخير يزهر في القلوب',540,1030,52,ink,800,820);
+export function inspirationLayout(dimensions=[1080,1920]){
+ const [w,h]=dimensions,wide=w/h>1.4;
+ const footer=footerGeometry(dimensions,'premium');
+ const m=clamp(w*.044,22,58),gap=clamp(h*.014,12,26);
+ const limit=footer.ad.y-gap;
+ const header={x:m,y:m,w:w-2*m,h:wide?clamp(h*.18,78,134):clamp(h*.15,125,285)};
+ const dates={x:m,y:header.y+header.h+gap,w:w-2*m,h:wide?44:clamp(h*.068,54,92)};
+ const quoteY=dates.y+dates.h+gap;
+ const available=limit-quoteY;
+ const hasSecond=!wide&&available>=310;
+ const secondaryHeight=hasSecond?clamp(available*.30,112,292):0;
+ const quoteHeight=Math.max(70,available-(hasSecond?secondaryHeight+gap:0));
+ const quote={x:m,y:quoteY,w:w-2*m,h:quoteHeight};
+ const secondary=hasSecond?{x:m,y:quoteY+quoteHeight+gap,w:w-2*m,h:secondaryHeight}:null;
+ return {w,h,m,gap,wide,header,dates,quote,secondary,footer,contentBottom:limit};
+}
+function bloom(c,cx,cy,r,p){
+ c.save();c.strokeStyle=p.soft;c.lineWidth=Math.max(1.2,r*.08);
+ c.beginPath();c.moveTo(cx,cy+r*.18);c.lineTo(cx,cy+r*1.45);c.stroke();
+ for(let a=0;a<7;a++){
+  const t=a*Math.PI*2/7;c.beginPath();
+  c.ellipse(cx+Math.cos(t)*r*.53,cy+Math.sin(t)*r*.53,r*.22,r*.43,t,0,Math.PI*2);
+  c.fillStyle=a%2?p.accent:'#f3dfb9';c.fill();
  }
- if(preset!=='pearl'){bloom(c,180,1090,'#80b5ca',.68);bloom(c,910,1110,'#9ccbd5',.52);}
- panel(c,85,1240,910,300,'#ffffffc9',gold,37);
- drawCardFiligree(c,85,1240,910,300,{gold,opacity:.14,large:true});
- if(cfg.daily?.special==='friday'){
-  text(c,'❖ ذكر وصلاة على النبي ﷺ ❖',540,1310,43,green,900,840);
-  text(c,cfg.daily.dhikr?.text||'',540,1400,38,ink,800,820);
-  text(c,cfg.daily.salawat?.text||'',540,1472,35,green,700,830);
- }else{
-  text(c,'❖ تأمل اليوم ❖',540,1310,46,green,900,800);
-  text(c,'اجعل يومك بدايةً لخيرٍ جديد',540,1400,52,ink,800,820);
-  text(c,'وتفاءل بما عند الله من جميل العطاء',540,1472,36,green,700,820);
+ c.beginPath();c.arc(cx,cy,r*.2,0,Math.PI*2);c.fillStyle=p.gold;c.fill();c.restore();
+}
+function makeBackground(c,L,p,preset){
+ const {w,h,m,footer}=L;
+ const gradient=c.createLinearGradient(0,0,w,h);
+ gradient.addColorStop(0,p.background);gradient.addColorStop(1,p.quiet);
+ c.fillStyle=gradient;c.fillRect(0,0,w,h);
+ const outer={x:m*.43,y:m*.52,w:w-m*.86,h:h-m*.9};
+ rounded(c,outer.x,outer.y,outer.w,outer.h,clamp(m*.72,18,46),'rgba(255,255,255,.33)','rgba(255,255,255,.7)',2);
+ const paperBottom=footer.ad.y+footer.ad.h+clamp(h*.012,8,23);
+ rounded(c,m*.65,m*.78,w-m*1.3,paperBottom-m*.78,clamp(m*.52,17,39),p.paper,p.gold+'65',1.6);
+ if(preset==='botanical'&&h>1100){
+  drawCardFiligree(c,m*.65,m*.78,w-m*1.3,paperBottom-m*.78,{gold:p.gold,opacity:.09,large:true});
  }
- panel(c,85,1590,910,165,green,green,38);
- text(c,'بطاقة يومية | '+day,540,1645,43,'#fff9e9',900,820);
- text(c,'حفظ ومشاركة · تصميم أوان السعودية',540,1712,28,'#fff9e9',600,830);
+ if(preset==='royal'){
+  rounded(c,m*.73,m*.86,Math.max(4,m*.09),Math.max(15,paperBottom-m*1.3),2,p.gold);
+ }else if(preset==='pearl'){
+  rounded(c,m*.95,m*.96,w-m*1.90,3,2,p.gold);
+ }
+}
+function header(c,L,p,preset,cfg,day,en){
+ const r=L.header,wide=L.wide;
+ const dark=preset==='royal',base=dark?p.deep:preset==='botanical'?p.accent:p.panel;
+ rounded(c,r.x,r.y,r.w,r.h,clamp(r.h*.22,19,46),base,dark?p.gold:p.gold+'a5',dark?2.5:1.6);
+ if(dark)rounded(c,r.x+7,r.y+7,r.w-14,r.h-14,clamp(r.h*.19,15,40),null,'rgba(242,221,167,.27)',1.2);
+ const brand=cfg.brand?.[en?'nameEn':'name']|| (en?'Awan Saudi':'أوان السعودية');
+ const mainColor=dark?'#fff9e9':p.deep,subColor=dark?'#e3cca0':p.soft;
+ if(wide){
+  writing(c,brand,{x:r.x+r.w*.53,y:r.y+r.h*.14,w:r.w*.40,h:r.h*.30},{size:clamp(r.h*.32,22,39),minSize:16,maxLines:1,color:mainColor,en,align:en?'left':'right',weight:850});
+  writing(c,day,{x:r.x+r.w*.07,y:r.y+r.h*.20,w:r.w*.43,h:r.h*.61},{size:clamp(r.h*.58,37,70),minSize:25,maxLines:1,color:mainColor,en,weight:900});
+ }else{
+  writing(c,brand,{x:r.x+r.w*.16,y:r.y+r.h*.10,w:r.w*.68,h:r.h*.24},{size:clamp(r.h*.24,22,39),minSize:17,maxLines:1,color:subColor,en,weight:800});
+  if(preset==='botanical'){
+   const bloomSize=Math.min(31,r.h*.13);bloom(c,r.x+r.w*.12,r.y+r.h*.30,bloomSize,p);
+  }else if(preset==='royal'){
+   rule(c,r.x+r.w*.18,r.y+r.h*.36,r.x+r.w*.82,r.y+r.h*.36,'rgba(226,193,114,.65)',2);
+  }else{
+   rounded(c,r.x+r.w*.35,r.y+r.h*.35,r.w*.30,4,2,p.gold);
+  }
+  writing(c,day,{x:r.x+r.w*.13,y:r.y+r.h*.42,w:r.w*.74,h:r.h*.49},{size:clamp(r.h*.49,53,109),minSize:28,maxLines:1,color:mainColor,en,weight:900});
+ }
+}
+function dates(c,L,p,iso,en){
+ const r=L.dates,ink=p.deep;
+ rounded(c,r.x,r.y,r.w,r.h,clamp(r.h*.28,12,25),p.panel,p.gold+'99',1.5);
+ const greg=localeDate(iso,{day:'numeric',month:'long',year:'numeric'});
+ const hijri=localeDate(iso,{day:'numeric',month:'long',year:'numeric'},'islamic-umalqura')+(en?' AH':' هـ');
+ rule(c,r.x+r.w*.50,r.y+r.h*.20,r.x+r.w*.50,r.y+r.h*.80,p.gold,1.7);
+ const pad=Math.max(7,r.w*.025),rw=r.w*.46;
+ writing(c,greg,{x:r.x+r.w*.53,y:r.y+5,w:rw-pad,h:r.h-10},{size:clamp(r.h*.42,19,34),minSize:13,maxLines:2,color:ink,en,weight:750});
+ writing(c,hijri,{x:r.x+pad,y:r.y+5,w:rw-pad,h:r.h-10},{size:clamp(r.h*.40,18,32),minSize:13,maxLines:2,color:ink,en,weight:730});
+}
+function chooseMessage(cfg,en,friday){
+ const daily=cfg.daily;
+ const hadith=cfg.content?.showHadith!==false&&daily?.hadith;
+ const primary=hadith?daily.hadith.text:cfg.settings?.showQuote!==false?cfg.card?.quote:'';
+ const source=hadith?daily.hadith.reference:cfg.card?.attribution||'';
+ const second=friday
+  ?[daily?.dhikr?.text,daily?.salawat?.text].filter(Boolean).join(' · ')
+  :cfg.content?.showDua!==false&&daily?.dua?.text?daily.dua.text
+   :(en?'A kind word leaves a lasting light.':'الكلمة الطيبة أثر جميل يبقى في القلوب');
+ return {
+  primary:primary||(friday?(en?'Send blessings upon the Prophet ﷺ':'أكثروا من الصلاة والسلام على النبي ﷺ'):(en?'A beautiful beginning for today':'اجعل يومك بدايةً لخير جميل')),
+  source,
+  heading:friday?(en?'Friday remembrance':'من هدي الجمعة'):(hadith?(en?'Authentic hadith':'مقتطف من حديث صحيح'):(en?'Daily inspiration':'رسالة اليوم')),
+  second,
+  secondTitle:friday?(en?'Remembrance & blessings':'ذكر وصلاة على النبي ﷺ'):(en?'Reflection of the day':'تأمل اليوم')
+ };
+}
+function quote(c,L,p,preset,entry,en){
+ const r=L.quote,short=r.h<215;
+ rounded(c,r.x,r.y,r.w,r.h,clamp(r.h*.09,16,35),p.panel,p.gold+'b5',1.8);
+ if(preset==='royal'){
+  rounded(c,r.x+r.w*.28,r.y+11,r.w*.44,Math.min(10,r.h*.045),5,p.gold);
+ }else if(preset==='pearl'){
+  rounded(c,r.x+r.w*.90,r.y+24,r.w*.008,Math.max(19,r.h-48),3,p.gold);
+ }
+ const titleH=clamp(r.h*.16,21,43),headingY=r.y+clamp(r.h*.06,5,20);
+ writing(c,entry.heading,{x:r.x+28,y:headingY,w:r.w-56,h:titleH},{size:clamp(r.h*.12,18,29),minSize:13,maxLines:1,color:p.gold,en,weight:850});
+ const bottomSource=entry.source&&r.h>165?clamp(r.h*.14,22,43):0;
+ const bodyY=headingY+titleH+clamp(r.h*.065,8,26),bodyH=Math.max(24,r.y+r.h-bodyY-bottomSource-18);
+ const maxFont=clamp(r.h*.118,short?25:34,65);
+ writing(c,entry.primary,{x:r.x+clamp(r.w*.055,17,52),y:bodyY,w:r.w-clamp(r.w*.11,34,104),h:bodyH},{size:maxFont,minSize:short?15:20,maxLines:short?3:5,color:p.deep,en,weight:850});
+ if(bottomSource){
+  writing(c,entry.source,{x:r.x+36,y:r.y+r.h-bottomSource-13,w:r.w-72,h:bottomSource},{size:clamp(r.h*.050,13,22),minSize:11,maxLines:1,color:p.soft,en,weight:550});
+ }
+}
+function secondPanel(c,L,p,preset,entry,en){
+ if(!L.secondary||!entry.second)return;
+ const r=L.secondary;
+ const fill=preset==='royal'?p.quiet:preset==='botanical'?'#f7faf4':p.accent;
+ rounded(c,r.x,r.y,r.w,r.h,clamp(r.h*.12,16,30),fill,p.gold+'8d',1.4);
+ const titleH=clamp(r.h*.22,22,43);
+ writing(c,entry.secondTitle,{x:r.x+25,y:r.y+clamp(r.h*.045,5,12),w:r.w-50,h:titleH},{size:clamp(r.h*.16,18,34),minSize:14,maxLines:1,color:p.deep,en,weight:850});
+ writing(c,entry.second,{x:r.x+33,y:r.y+titleH+clamp(r.h*.1,12,32),w:r.w-66,h:Math.max(25,r.h-titleH-clamp(r.h*.15,17,43))},{size:clamp(r.h*.16,23,42),minSize:16,maxLines:r.h>210?4:2,color:p.deep,en,weight:730});
+}
+export function drawInspirationCard(c,cfg,iso,preset,{dimensions=[1080,1920]}={}){
+ const L=inspirationLayout(dimensions),p=colors(preset,cfg),en=getLanguage()==='en';
+ const day=localeDate(iso,{weekday:'long'}),friday=cfg.daily?.special==='friday';
+ makeBackground(c,L,p,preset);
+ header(c,L,p,preset,cfg,day,en);
+ dates(c,L,p,iso,en);
+ const entry=chooseMessage(cfg,en,friday);
+ quote(c,L,p,preset,entry,en);
+ secondPanel(c,L,p,preset,entry,en);
+ return L;
 }
