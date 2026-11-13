@@ -81,12 +81,12 @@ export function familyColumns(f,count){
 export function familyPalette(p,f){
  const q={...p};
  if(f==='night'){
-  q.paper='#0e2d36';q.sage='#0b252e';q.ivory='#173944';q.ink='#f7f2e7';
+  q.paper=tone(p.main,'#0e2d36',.85);q.sage=tone(p.main,'#0b252e',.83);q.ivory='#173944';q.ink='#f7f2e7';
   q.secondary='#c4d8cf';
   q.main=tone(p.main,'#09675a',.18);q.deep=tone(q.main,'#052d33',.32);
   q.gold=tone(p.gold,'#e1c694',.16);
  }else if(f==='desert'){
-  q.paper='#fbf2df';q.sage='#f0d8b4';q.ivory='#fffaf0';q.ink='#684b34';q.secondary='#86684a';
+  q.paper=tone(p.main,'#fbf2df',.94);q.sage=tone(p.main,'#f0d8b4',.85);q.ivory='#fffaf0';q.ink='#684b34';q.secondary='#86684a';
   q.main=tone(p.main,'#926c4c',.18);q.deep=tone(q.main,'#523625',.27);
   q.gold=tone(p.gold,'#c59a5a',.13);
  }else if(f==='modern'){
