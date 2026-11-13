@@ -1,4 +1,5 @@
 /* Premium daily inspiration cards: rendered as real, responsive canvas artwork. */
+import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 const round=(c,x,y,w,h,r=26)=>{c.beginPath();c.roundRect(x,y,w,h,r);};
 function text(c,value,x,y,size,color,weight=700,max=900){
  c.fillStyle=color;c.textAlign='center';c.textBaseline='middle';c.direction='rtl';
@@ -32,6 +33,8 @@ export function drawInspirationCard(c,cfg,iso,preset){
  const hijri=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);
  const greg=new Intl.DateTimeFormat('ar-SA-u-ca-gregory',{day:'numeric',month:'long',year:'numeric',timeZone:'UTC'}).format(date);
  panel(c,75,75,930,225,'#ffffffbc',gold,40);
+ drawCardFiligree(c,75,75,930,225,{gold,opacity:.29,large:true});
+ if(cfg.design?.showIcons!==false)drawIconBadge(c,{icon:preset==='botanical'?'flower-2':preset==='royal'?'sparkles':'star'},933,145,56,{style:cfg.design?.iconStyle||'royal',accent:gold,contrast:green,featured:true});
  text(c,cfg.brand?.name||'أوان السعودية',540,135,61,green,900,830);
  text(c,'إشراقة يومك · مناسبات ورسائل ملهمة',540,213,32,gold,700,830);
  text(c,day,540,352,105,green,900,900);
@@ -39,6 +42,8 @@ export function drawInspirationCard(c,cfg,iso,preset){
  text(c,'هجري  |  '+hijri,540,474,37,ink,700,830);
  text(c,'ميلادي  |  '+greg,540,529,33,ink,700,830);
  panel(c,85,605,910,575,'#ffffffc9',gold,37);
+ drawCardFiligree(c,85,605,910,575,{gold,opacity:.14,large:true});
+ if(cfg.design?.showIcons!==false)drawIconBadge(c,{icon:cfg.daily?.special==='friday'?'moon-star':'sparkles'},936,700,56,{style:cfg.design?.iconStyle||'glass',accent:gold,contrast:green});
  text(c,cfg.daily?.special==='friday'?'✦ من هدي الجمعة ✦':'✦ رسالة اليوم ✦',540,690,49,green,900,800);
  c.strokeStyle=gold;c.lineWidth=2;c.beginPath();c.moveTo(235,750);c.lineTo(845,750);c.stroke();
  if(cfg.daily?.special==='friday'){
@@ -51,6 +56,7 @@ export function drawInspirationCard(c,cfg,iso,preset){
  }
  if(preset!=='pearl'){bloom(c,180,1090,'#80b5ca',.68);bloom(c,910,1110,'#9ccbd5',.52);}
  panel(c,85,1240,910,300,'#ffffffc9',gold,37);
+ drawCardFiligree(c,85,1240,910,300,{gold,opacity:.14,large:true});
  if(cfg.daily?.special==='friday'){
   text(c,'❖ ذكر وصلاة على النبي ﷺ ❖',540,1310,43,green,900,840);
   text(c,cfg.daily.dhikr?.text||'',540,1400,38,ink,800,820);

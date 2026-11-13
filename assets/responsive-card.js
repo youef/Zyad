@@ -1,5 +1,6 @@
 /* Native social compositions: square, 4:5 and landscape — never a shrunken 9:16 poster. */
 import {fitText,formatCounter} from './text-layout.js?v=2';
+import {drawIconBadge,drawCardFiligree} from './card-icons.js?v=awan1';
 import {footerGeometry,drawCombinedFooter} from './follow-panel.js?v=layout3';
 import {getLanguage,localeDate} from './locale.js?v=i18n4';
 function luminance(hex){
@@ -28,7 +29,10 @@ export function renderResponsiveCard(c,cfg,iso,{dimensions,remaining,hijriDate,b
  const gridTop=qEnd+(quoteEnabled?gap:0)+sectionH;
  const gridH=Math.max(50,contentEnd-gridTop);
  const grad=c.createLinearGradient(0,0,w,h);grad.addColorStop(0,bg);grad.addColorStop(1,dark?'#102c2a':'#e7eee5');c.fillStyle=grad;c.fillRect(0,0,w,h);
- panel(c,margin*.42,margin*.30,w-margin*.84,headerH-margin*.22,Math.min(28,headerH*.2),dark?'rgba(255,255,255,.08)':green,null);
+ // Layered gradient header with restrained gold foil corners.
+ c.save();c.shadowColor=dark?'rgba(0,0,0,.19)':'rgba(11,57,44,.23)';c.shadowBlur=small?10:22;c.shadowOffsetY=small?3:7;
+ panel(c,margin*.42,margin*.30,w-margin*.84,headerH-margin*.22,Math.min(28,headerH*.2),dark?'rgba(255,255,255,.08)':green,null);c.restore();
+ drawCardFiligree(c,margin*.42,margin*.30,w-margin*.84,headerH-margin*.22,{gold:gold,opacity:dark?.42:.32,large:!small});
  const day=localeDate(iso,{weekday:'long'}),greg=localeDate(iso,{day:'numeric',month:'long',year:'numeric'});
  const hijri=hijriDate(iso,cfg),brand=en?(cfg.brand?.nameEn||'Awan Saudi'):(cfg.brand?.name||'أوان السعودية');
  const innerY=margin*.30+9,innerH=headerH-margin*.22-18;
@@ -71,7 +75,12 @@ export function renderResponsiveCard(c,cfg,iso,{dimensions,remaining,hijriDate,b
   const row=Math.floor(i/cols),col=en?i%cols:cols-1-i%cols;
   const x=margin+col*(tileW+colGap),y=gridTop+row*(tileH+rowGap);
   const best=entry===closest;
-  panel(c,x,y,tileW,tileH,Math.min(18,tileH*.19),tileBg,best?gold:border);
+  c.save();c.shadowColor=dark?'rgba(0,0,0,.15)':'rgba(15,65,54,.09)';c.shadowBlur=small?5:12;c.shadowOffsetY=small?2:5;
+  panel(c,x,y,tileW,tileH,Math.min(18,tileH*.19),tileBg,best?gold:border);c.restore();
+  if(cfg.design?.showIcons!==false){
+   drawIconBadge(c,entry.item,x+tileW-Math.min(25,tileW*.13),y+Math.min(25,tileH*.20),
+    Math.min(46,Math.max(18,tileH*.27)),{style:cfg.design?.iconStyle||'glass',accent:gold,contrast:dark?'#fff9e6':green,light:dark,featured:best});
+  }
   if(best){c.fillStyle=gold;c.fillRect(x+tileW*.32,y+4,tileW*.36,3);}
   const value=entry.item.mode==='manual'?formatCounter(entry.value):entry.value===0?(en?'Today':'اليوم'):formatCounter(entry.value);
   fitText(c,value,{x:x+10,y:y+tileH*.12,w:tileW-20,h:tileH*.49,size:Math.min(small?42:53,tileH*.41),minSize:20,maxLines:1,color:best?gold:ink,weight:900,direction:/^\d/.test(value)?'ltr':'rtl'});
