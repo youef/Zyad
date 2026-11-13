@@ -12,7 +12,8 @@ const png=async p=>{
 const source=await png('assets/branding/logo.png');
 assert(source.size>1000&&source.width>=100&&source.height>=100,'Official source must be a high-quality logo');
 const config=JSON.parse(await read('data/config.json'));
-assert(typeof config.brand.logo==='string'&&(/^(?:assets\/branding\/logo(?:-transparent)?\.png|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$/.test(config.brand.logo)),'Official logo or valid administrator-provided transparent override expected');
+assert(typeof config.brand.logo==='string'&&(/^(?:assets\/branding\/(?:logo(?:-transparent)?\.png|awan-icon\.svg)|data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+)$/.test(config.brand.logo)),'Official logo or valid administrator-provided transparent override expected');
+const iconSvg=await read('assets/branding/awan-icon.svg').then(x=>x.toString('utf8'));assert(iconSvg.includes('<svg')&&iconSvg.includes('viewBox'),'Awan Saudi vector logo missing');
 const transparent=await png('assets/branding/logo-transparent.png');assert(transparent.width>30&&transparent.height>30,'Transparent brand missing');
 assert(typeof config.brand.name==='string'&&config.brand.name.length<=80,'Custom brand name may intentionally be blank when only the logo is shown');
 for(const size of [180,192,512]){
@@ -25,7 +26,7 @@ for(const t of templates){
 }
 for(const path of ['index.html','admin/index.html','studio/index.html','studio/calendar.html','library/index.html','settings/index.html','templates/index.html']){
  const html=await read(path).then(x=>x.toString('utf8'));
- assert(html.includes('branding/logo-transparent.png')&&html.includes('branding.css'),'Missing official logo in '+path);
+ assert((html.includes('branding/logo-transparent.png')||html.includes('branding/awan-icon.svg'))&&html.includes('branding.css'),'Missing official logo in '+path);
 }
 for(const file of ['assets/design.js','assets/calendar-design.js','assets/list-calendar.js','assets/heritage-premium.js']){
  const s=await read(file).then(x=>x.toString('utf8'));
