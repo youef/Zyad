@@ -234,7 +234,16 @@ export function renderAwanPremiumCard(c,cfg,iso,tools,definition){
   greg:localeDate(iso,{day:'numeric',month:'long',year:'numeric'}),
   hijri:tools.hijriDate(iso,cfg),p,en
  });
- if(tools.logo)drawHangingLogo(c,tools.logo,{x:75,y:95,width:114,height:102,light:family==='night'});
+ // Full-width modern/timeline headers use their RIGHT accent band for branding;
+ // keeping the logo at the old left corner would cover Arabic day letters.
+ if(tools.logo){
+  const rightBand=family==='modern'||family==='timeline';
+  drawHangingLogo(c,tools.logo,{
+   x:rightBand?855:75,y:rightBand?104:95,
+   width:rightBand?102:114,height:100,
+   light:rightBand||family==='night'
+  });
+ }
  const rows=contentRows(cfg,en),reading=rows.length>0;
  // Quote height responds to the amount of text rather than leaving a
  // cavernous empty rectangle for one short hadith. Reclaimed space goes to
