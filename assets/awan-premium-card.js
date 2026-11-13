@@ -225,7 +225,13 @@ export function renderAwanPremiumCard(c,cfg,iso,tools,definition){
  });
  if(tools.logo)drawHangingLogo(c,tools.logo,{x:75,y:95,width:114,height:102,light:family==='night'});
  const rows=contentRows(cfg,en),reading=rows.length>0;
- const quoteY=502,quoteH=reading?(rows.length>1?267:238):0;
+ // Quote height responds to the amount of text rather than leaving a
+ // cavernous empty rectangle for one short hadith. Reclaimed space goes to
+ // larger, clearer event tiles without crowding the QR/ad footer.
+ const quoteLength=rows.reduce((total,row)=>total+Array.from(row.body||'').length,0);
+ const quoteY=502,quoteH=!reading?0:rows.length>1
+  ?clamp(205+quoteLength*.26,216,292)
+  :clamp(112+quoteLength*.72,148,257);
  if(reading)familyQuote(c,family,rows,{x:75,y:quoteY,w:930,h:quoteH,p,en});
  const sectionY=reading?quoteY+quoteH+32:513;
  events(c,cfg,iso,tools,p,sectionY,g.ad.y-18,family);
