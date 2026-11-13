@@ -86,6 +86,7 @@ jobs:
           node scripts/check-all-banners.mjs
           node scripts/check-follow-panel.mjs
           node scripts/check-icon-render.mjs
+          node scripts/check-inspiration-gallery.mjs
       - name: Render and archive today's poster
         run: |
           node scripts/render.mjs || node scripts/render.mjs
