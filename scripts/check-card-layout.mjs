@@ -18,7 +18,7 @@ assert.equal(formatCounter(Number.NaN),'—');
 function makeContext(w,h){
  const invalid=[],labels=[];
  const context={
-  font:'',save(){},restore(){},beginPath(){},closePath(){},rect(x,y,bw,bh){if(x<0||y<0||x+bw>w+1||y+bh>h+1)invalid.push({x,y,bw,bh})},
+  font:'',save(){},restore(){},beginPath(){},moveTo(){},lineTo(){},closePath(){},rect(x,y,bw,bh){if(x<0||y<0||x+bw>w+1||y+bh>h+1)invalid.push({x,y,bw,bh})},
   roundRect(){},clip(){},fill(){},stroke(){},fillRect(){},strokeRect(){},
   createLinearGradient(){return {addColorStop(){}}},measureText(value){return {width:Array.from(String(value)).length*Number(this.font.match(/([\\d.]+)px/)?.[1]||24)*.53}},
   fillText(value,x,y,maxWidth){assert(Number.isFinite(x)&&Number.isFinite(y));assert(x>=-1&&x<=w+1);assert(y>=-1&&y<=h+1);if(maxWidth!=null)assert(maxWidth>0);labels.push(String(value));}
