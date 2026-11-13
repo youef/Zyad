@@ -1,13 +1,49 @@
-import assert from 'node:assert/strict';import {chromium} from 'playwright';import {serve,root} from './serve.mjs';import {readFile,writeFile} from 'node:fs/promises';import {join} from 'node:path';
-const s=await serve(),origin='http://127.0.0.1:'+s.address().port;let browser;
-try{browser=await chromium.launch();const c=await browser.newContext({viewport:{width:1280,height:900}}),p=await c.newPage();await p.goto(origin+'/studio/?template=countdown&date=2026-11-04&target=2026-12-01&title='+encodeURIComponent('موعدنا'));assert(await p.evaluate(()=>window.__studioReady));assert.equal(await p.locator('#label').inputValue(),'موعدنا');
-// Mouse drag changes actual normalized coordinates and undo restores them.
-await p.locator('#save').click();await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('حُفظ'));const old=await p.evaluate(async()=>{const {getAll}=await import('/assets/storage.js');return (await getAll())[0];});const b=await p.locator('#card').boundingBox(),x=b.x+b.width*.5,y=b.y+b.height*.33;await p.mouse.move(x,y);await p.mouse.down();await p.mouse.move(x+25,y+20,{steps:5});await p.mouse.up();await p.locator('#save').click();await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('حُفظ'));const moved=await p.evaluate(async()=>{const {getAll}=await import('/assets/storage.js');return (await getAll())[0];});assert.notEqual(moved.layers.find(l=>l.id==='title').x,old.layers.find(l=>l.id==='title').x);await p.locator('#undo').click();
-// Corrupt projects are rejected before changing current state.
-await p.locator('#import-project').setInputFiles({name:'invalid.json',mimeType:'application/json',buffer:Buffer.from('{"version":99}')});await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('غير صالح'));
-// Inject an encoding failure, verify recovery with a real subsequent download.
-await p.evaluate(()=>{window.originalBlob=HTMLCanvasElement.prototype.toBlob;HTMLCanvasElement.prototype.toBlob=function(fn){fn(null);};});await p.locator('#download').click();await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('المتصفح لا يدعم'));await p.evaluate(()=>HTMLCanvasElement.prototype.toBlob=window.originalBlob);await p.locator('#scale').selectOption('2');const [dl]=await Promise.all([p.waitForEvent('download'),p.locator('#download').click()]);const png=await readFile(await dl.path());assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[2160,3840]);
-// v1 migration copies originals and keeps a backup; it never deletes old data.
-await p.evaluate(async()=>{const db=await new Promise(r=>{const q=indexedDB.open('zyad-studio',1);q.onupgradeneeded=()=>q.result.createObjectStore('drafts',{keyPath:'id'});q.onsuccess=()=>r(q.result);});await new Promise(r=>{const t=db.transaction('drafts','readwrite');t.objectStore('drafts').put({id:91,name:'مسودة قديمة',saved:Date.now(),design:{index:0,dimensions:[1080,1920],background:'#123f35',layers:[{text:'النص السابق',x:.5,y:.4,size:60,color:'#fff'}]}});t.oncomplete=r;});db.close();const {copyLegacyDrafts}=await import('/assets/migration.js');await copyLegacyDrafts();const {get}=await import('/assets/storage.js');if(!(await get('legacy-91')))throw Error('Migration missing');if(!(await get('legacy-backup-v1','settings')).rows.length)throw Error('Backup missing');});
-await p.goto(origin+'/settings/');await p.locator('#appearance').selectOption('dark');assert.equal(await p.locator('html').getAttribute('data-theme'),'dark');await p.reload();assert.equal(await p.locator('html').getAttribute('data-theme'),'dark');await p.screenshot({path:join(root,'images/verification/settings-dark.png')});
-await writeFile(join(root,'images/verification/extra-results.json'),JSON.stringify({status:'passed',checks:['mouse drag + undo','malformed project rejection','export failure + successful retry','2x PNG 2160x3840','v1 migration and backup','dark appearance persists']},null,2));console.log('PASS: drag, import validation, export failure/retry, 2x PNG, legacy migration and dark mode.');await c.close();}finally{await browser?.close();await new Promise(r=>s.close(r));}
+import assert from 'node:assert/strict';
+import {chromium} from 'playwright';
+import {serve,root} from './serve.mjs';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {join} from 'node:path';
+import {CARD_PRESETS} from '../assets/templates.js';
+const server=await serve(),origin='http://127.0.0.1:'+server.address().port;
+const browser=await chromium.launch({headless:true});const target=join(root,'images/verification');
+await mkdir(target,{recursive:true});
+try{
+ const context=await browser.newContext({viewport:{width:1280,height:900},acceptDownloads:true});
+ const page=await context.newPage(),errors=[];page.on('pageerror',error=>errors.push(error.message));
+ await page.goto(origin+'/?date=2026-11-13');
+ await page.waitForFunction(()=>Boolean(window.__posterReady));
+ assert(await page.evaluate(()=>window.__posterReady));
+ const friday=await page.locator('#daily-inspiration').innerText();
+ assert(friday.includes('الصلاة على النبي ﷺ')||friday.includes('اللهم صل'),'Friday inspiration missing');
+ const favorite=CARD_PRESETS.find(p=>p.id==='friday')||CARD_PRESETS[0];
+ const result=await page.evaluate(id=>{
+  const api=window.zyadVisitorFavorites;
+  if(!api)throw Error('Favorite controls missing');
+  const initial=api.read().includes(id);
+  if(initial)api.toggle(id);
+  api.toggle(id);
+  const added=api.read().includes(id);
+  api.toggle(id);
+  const removed=!api.read().includes(id);
+  return {added,removed};
+ },favorite.id);
+ assert(result.added&&result.removed,'Visitor favorites are not persistent');
+ await page.locator('#social-output-size').selectOption('instagram-post');
+ await page.waitForFunction(()=>{const c=document.querySelector('#poster');return !!c&&c.width>0&&Math.abs(c.width/c.height-.8)<.015;});
+ const [first]=await Promise.all([page.waitForEvent('download'),page.locator('#download').click()]);
+ const png=await readFile(await first.path());
+ assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[1080,1350]);
+ const [hi]=await Promise.all([page.waitForEvent('download'),page.locator('#download-4k').click()]);
+ const hd=await readFile(await hi.path());
+ assert.deepEqual([hd.readUInt32BE(16),hd.readUInt32BE(20)],[2160,2700]);
+ await page.locator('#chosen-date').fill('2026-11-14');
+ await page.locator('#chosen-date').dispatchEvent('change');
+ await page.waitForFunction(()=>window.zyadCalendar.getDate()==='2026-11-14');
+ await page.waitForFunction(()=>document.body.dataset.fridayCard==='false');
+ assert(!String(await page.locator('#daily-inspiration').innerText()).includes('يتجدد الحديث والذكر والصلاة على النبي كل جمعة'),'Friday reminder leaked into Saturday');
+ await page.screenshot({path:join(target,'export-and-friday.png')});
+ assert.deepEqual(errors,[],'Visitor app JavaScript errors: '+errors.join(' | '));
+ await writeFile(join(target,'extra-results.json'),JSON.stringify({status:'passed',checks:['Friday dynamic content','favorites add/remove','1080x1350 output','2160x2700 output','no Friday on Saturday']},null,2));
+ console.log('PASS: Friday variation, visitor favorites, true-size PNG and 2x export, no browser errors.');
+ await context.close();
+}finally{await browser.close();await new Promise(resolve=>server.close(resolve));}
