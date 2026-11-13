@@ -15,7 +15,8 @@ assert.equal(getLanguage(),'en');
 assert.equal(eventLabel({id:'salary',label:'الراتب'}),'Salary');
 assert.equal(translate('الأحد'),'Sunday');
 assert.match(localeDate('2026-11-11',{month:'long',day:'numeric'}),/November/);
-assert.equal(CARD_PRESETS.length,42);
+assert(CARD_PRESETS.length>=42,'Template gallery unexpectedly lost designs');
+assert.equal(new Set(CARD_PRESETS.map(p=>p.id)).size,CARD_PRESETS.length,'Duplicate template IDs');
 for(const p of CARD_PRESETS){
  assert(/[A-Za-z]/.test(presetName(p)),p.id+' has no English name');
  assert(presetDescription(p).length>0,p.id+' has no English description');
@@ -41,4 +42,4 @@ storage.set('zyad-language','ar');
 assert.equal(getLanguage(),'ar');
 assert.equal(eventLabel({id:'salary',label:'الراتب'}),'الراتب');
 assert.match(localeDate('2026-11-11',{weekday:'long'}),/الأربعاء/);
-console.log('PASS: Arabic and English names, descriptions, event dates, 42 templates, 64 daily readings and RTL restoration.');
+console.log('PASS: Arabic and English names, descriptions, event dates, all gallery templates, 64 daily readings and RTL restoration.');

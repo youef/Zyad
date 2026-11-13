@@ -96,6 +96,7 @@ function filterCalendarGallery(){
  const selected=CARD_PRESETS.find(p=>p.id===activePreset);const selectedName=$('#gallery-selected-name');if(selectedName)selectedName.textContent=selected?.name||'بطاقة اليوم';const selectedCategory=$('#gallery-selected-category');if(selectedCategory)selectedCategory.textContent=selected?.category||'تصميم يومي';
 }
 setupGalleryControls();
+const sidebarCount=document.querySelector('.side-links a[href="#template-gallery"] small');if(sidebarCount)sidebarCount.textContent=String(CARD_PRESETS.length);
 $('#calendar-search').addEventListener('input',e=>{gallerySearch=e.target.value.trim();filterCalendarGallery();});
 $('#gallery-sort')?.addEventListener('change',e=>{gallerySort=e.target.value;filterCalendarGallery();});
 window.addEventListener('hashchange',filterCalendarGallery);
