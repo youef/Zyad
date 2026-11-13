@@ -1,9 +1,9 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 import {drawListHeader} from './list-header.js';
 import {drawHangingLogo} from './brand-art.js';
-import {hasCardMessage} from './daily.js?v=i18n4';
+import {hasCardMessage} from './daily.js?v=friday1';
 import {hasBanner} from './advertising.js?v=img1';
-import {box,text,paragraph,line,circle,rgba} from './calendar-design.js?v=i18n4';import {drawIcon,eventIcon,EVENT_COLORS} from './event-icons.js';import {drawDailyPanel} from './daily-panel.js?v=i18n4';
+import {box,text,paragraph,line,circle,rgba} from './calendar-design.js?v=friday1';import {drawIcon,eventIcon,EVENT_COLORS} from './event-icons.js';import {drawDailyPanel} from './daily-panel.js?v=friday1';
 export function renderListCalendar(c,cfg,iso,tools,definition){const p=cfg.theme,s=definition.calendar,style=s.listStyle,items=(cfg.counters||[]).filter(i=>i.enabled!==false).slice(0,24),date=new Date(iso+'T12:00:00Z'),weekday=localeDate(iso,{weekday:'long'}),greg=localeDate(iso,{dateStyle:'long'}),hijri=tools.hijriDate(iso,cfg);c.fillStyle=p.cream;c.fillRect(0,0,1080,1920);
  drawListHeader(c,{cfg,style,p,iso,weekday,greg,hijri});drawHangingLogo(c,tools.logo,{x:48,y:20,width:172,height:114,light:['saudi','brush'].includes(style)});
  let top=367;if(hasCardMessage(cfg)){const h=cfg.daily?268:184;box(c,52,top,976,h,22,rgba('#ffffff',.85),rgba(p.gold,.4));if(!drawDailyPanel(c,cfg,52,top,976,h,p)){paragraph(c,cfg.card?.quote||'',540,top+h*.44,872,h-70,p.ink,29);text(c,cfg.card?.attribution||'',540,top+h-25,18,p.ink,860);}top+=h+28;}

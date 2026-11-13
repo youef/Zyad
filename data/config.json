@@ -348,6 +348,8 @@
     "mode": "daily",
     "showHadith": true,
     "showDua": false,
+    "fridayEnabled": true,
+    "fridayReminders": true,
     "offset": 0,
     "excludedIds": [],
     "customDuas": []

@@ -1,0 +1,9 @@
+/* The extra Friday selection below the date's card. */
+#daily-inspiration{display:grid;gap:10px;margin-top:12px}
+.friday-inspiration-card{border:1px solid rgba(185,146,85,.3);border-radius:17px;padding:13px 15px;background:rgba(185,146,85,.05);color:inherit;min-width:0}
+.friday-inspiration-card small{display:block;font-size:.78rem;opacity:.78;margin-bottom:6px;font-weight:750}
+.friday-inspiration-card p{line-height:1.9;margin:0;font-size:.95rem;overflow-wrap:anywhere}
+.friday-inspiration-card a,.friday-inspiration-card .friday-reference{display:inline-block;margin-top:7px;font-size:.75rem;color:inherit;opacity:.72;text-decoration:underline;text-underline-offset:3px}
+.friday-inspiration-heading{font-weight:850;margin:0 0 1px;font-size:1rem}
+.friday-inspiration-note{font-size:.78rem;opacity:.73;line-height:1.8;margin:0 3px}
+body[data-friday-card="true"] .ios-insight{border-color:rgba(197,163,106,.5)}

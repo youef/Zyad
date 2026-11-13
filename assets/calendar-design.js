@@ -1,9 +1,9 @@
 import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 // Print-resolution calendar art. Dates, quotes, counters, branding and QR stay live.
 import {drawHangingLogo} from './brand-art.js';
-import {hasCardMessage} from './daily.js?v=i18n4';
+import {hasCardMessage} from './daily.js?v=friday1';
 import {hasBanner} from './advertising.js?v=img1';
-import {drawDailyPanel} from './daily-panel.js?v=i18n4';
+import {drawDailyPanel} from './daily-panel.js?v=friday1';
 import {footerGeometry} from './follow-panel.js?v=i18n4';
 const W=1080,H=1920,FONT='"Cairo",Tahoma,Arial,sans-serif';
 const rgba=(hex,a)=>{const s=/^#[a-f\d]{6}$/i.test(hex)?hex:'#174c3d';return `rgba(${parseInt(s.slice(1,3),16)},${parseInt(s.slice(3,5),16)},${parseInt(s.slice(5,7),16)},${a})`;};

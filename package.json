@@ -6,7 +6,7 @@
   "description": "Arabic Saudi daily calendar card for GitHub Pages",
   "scripts": {
     "render": "node scripts/render.mjs",
-    "test": "node scripts/check.mjs && node scripts/check-contracts.mjs && node scripts/check-branding.mjs && node scripts/check-ios-ui.mjs && node scripts/check-admin-security.mjs && node scripts/check-payments.mjs && node scripts/check-i18n.mjs",
+    "test": "node scripts/check.mjs && node scripts/check-contracts.mjs && node scripts/check-branding.mjs && node scripts/check-ios-ui.mjs && node scripts/check-admin-security.mjs && node scripts/check-payments.mjs && node scripts/check-i18n.mjs && node scripts/check-friday.mjs",
     "test:browser": "node scripts/check-platform.mjs",
     "dev": "node scripts/serve.mjs",
     "test:app": "node scripts/check-app.mjs && node scripts/check-settings.mjs"

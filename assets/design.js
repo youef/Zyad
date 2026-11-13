@@ -2,8 +2,8 @@ import {getLanguage,translate,localeDate} from './locale.js?v=i18n4';
 
 /* Saudi premium calendar templates rendered offline on Canvas. */
 import {drawHangingLogo} from './brand-art.js';
-import {drawDailyPanel} from './daily-panel.js?v=i18n4';
-import {hasCardMessage} from './daily.js?v=i18n4';
+import {drawDailyPanel} from './daily-panel.js?v=friday1';
+import {hasCardMessage} from './daily.js?v=friday1';
 import {hasBanner} from './advertising.js?v=img1';
 const FONT='"Cairo",Tahoma,Arial,sans-serif';
 function rgba(hex,alpha){const c=/^#[a-f\d]{6}$/i.test(hex)?hex:'#064b43';return 'rgba('+[1,3,5].map(i=>parseInt(c.slice(i,i+2),16)).join(',')+','+alpha+')';}

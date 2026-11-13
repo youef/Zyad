@@ -6,6 +6,12 @@ function text(c,value,x,y,size,color,weight=700,max=900){
  while(c.measureText(value).width>max&&n>20){n-=2;c.font=weight+' '+n+'px "Cairo",Tahoma,Arial,sans-serif';}
  c.fillText(value,x,y,max);
 }
+function wrappedText(c,value,x,y,maxWidth=810,size=46,color='#173b38'){
+ let fontSize=size,rows=[];
+ const measure=()=>{c.font='800 '+fontSize+'px "Cairo",Tahoma,Arial,sans-serif';rows=[];let part='';for(const word of String(value||'').split(/\s+/)){const s=part?part+' '+word:word;if(part&&c.measureText(s).width>maxWidth){rows.push(part);part=word;}else part=s;}if(part)rows.push(part);};
+ measure();while(rows.length>3&&fontSize>28){fontSize-=2;measure();}
+ const gap=fontSize*1.55;rows.slice(0,3).forEach((line,i)=>text(c,line,x,y+(i-(Math.min(rows.length,3)-1)/2)*gap,fontSize,color,800,maxWidth));
+}
 function panel(c,x,y,w,h,fill,stroke,r=27){
  c.fillStyle=fill;round(c,x,y,w,h,r);c.fill();c.strokeStyle=stroke;c.lineWidth=2;c.stroke();
 }
@@ -33,16 +39,27 @@ export function drawInspirationCard(c,cfg,iso,preset){
  text(c,'هجري  |  '+hijri,540,474,37,ink,700,830);
  text(c,'ميلادي  |  '+greg,540,529,33,ink,700,830);
  panel(c,85,605,910,575,'#ffffffc9',gold,37);
- text(c,'✦ رسالة اليوم ✦',540,690,49,green,900,800);
+ text(c,cfg.daily?.special==='friday'?'✦ من هدي الجمعة ✦':'✦ رسالة اليوم ✦',540,690,49,green,900,800);
  c.strokeStyle=gold;c.lineWidth=2;c.beginPath();c.moveTo(235,750);c.lineTo(845,750);c.stroke();
- text(c,'ازرع أثرًا جميلًا،',540,836,66,ink,900,810);
- text(c,'فالكلمة الطيبة تبقى',540,931,61,green,800,820);
- text(c,'والخير يزهر في القلوب',540,1030,52,ink,800,820);
+ if(cfg.daily?.special==='friday'){
+  wrappedText(c,cfg.daily.hadith?.text||'أكثروا من الصلاة على النبي ﷺ',540,911,805,53,ink);
+  text(c,cfg.daily.hadith?.reference||'',540,1103,23,green,700,800);
+ }else{
+  text(c,'ازرع أثرًا جميلًا،',540,836,66,ink,900,810);
+  text(c,'فالكلمة الطيبة تبقى',540,931,61,green,800,820);
+  text(c,'والخير يزهر في القلوب',540,1030,52,ink,800,820);
+ }
  if(preset!=='pearl'){bloom(c,180,1090,'#80b5ca',.68);bloom(c,910,1110,'#9ccbd5',.52);}
  panel(c,85,1240,910,300,'#ffffffc9',gold,37);
- text(c,'❖ تأمل اليوم ❖',540,1310,46,green,900,800);
- text(c,'اجعل يومك بدايةً لخيرٍ جديد',540,1400,52,ink,800,820);
- text(c,'وتفاءل بما عند الله من جميل العطاء',540,1472,36,green,700,820);
+ if(cfg.daily?.special==='friday'){
+  text(c,'❖ ذكر وصلاة على النبي ﷺ ❖',540,1310,43,green,900,840);
+  text(c,cfg.daily.dhikr?.text||'',540,1400,38,ink,800,820);
+  text(c,cfg.daily.salawat?.text||'',540,1472,35,green,700,830);
+ }else{
+  text(c,'❖ تأمل اليوم ❖',540,1310,46,green,900,800);
+  text(c,'اجعل يومك بدايةً لخيرٍ جديد',540,1400,52,ink,800,820);
+  text(c,'وتفاءل بما عند الله من جميل العطاء',540,1472,36,green,700,820);
+ }
  panel(c,85,1590,910,165,green,green,38);
  text(c,'بطاقة يومية | '+day,540,1645,43,'#fff9e9',900,820);
  text(c,'حفظ ومشاركة · تصميم أوان السعودية',540,1712,28,'#fff9e9',600,830);

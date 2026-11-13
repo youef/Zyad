@@ -1,15 +1,15 @@
 import {localizedConfig,localeDate,getLanguage,translate} from './locale.js?v=i18n4';
 import {nextPaymentDate} from './payment-schedule.js?v=pay2';
-import {renderPremium} from './design.js?v=i18n4';
+import {renderPremium} from './design.js?v=friday1';
 import {bannerForPoster} from './advertising.js?v=working24';
-import {drawInspirationCard} from './inspiration-card.js?v=1';
+import {drawInspirationCard} from './inspiration-card.js?v=friday1';
 import {buildFollowQr,drawCombinedFooter} from './follow-panel.js?v=i18n4';
-import {renderHeritage} from './heritage-premium.js?v=i18n4';
+import {renderHeritage} from './heritage-premium.js?v=friday1';
 import {presetInfo} from './templates.js';
-import {renderCalendar} from './calendar-design.js?v=i18n4';
-import {renderListCalendar} from './list-calendar.js?v=i18n4';
-import {drawDailyPanel} from './daily-panel.js';
-import {resolveContent} from './daily.js?v=i18n4';
+import {renderCalendar} from './calendar-design.js?v=friday1';
+import {renderListCalendar} from './list-calendar.js?v=friday1';
+import {drawDailyPanel} from './daily-panel.js?v=friday1';
+import {resolveContent} from './daily.js?v=friday1';
 import {fontStack,loadTypeface} from './typography.js';
 import './vendor/qrcode.js';
 /* Shared pure card renderer: no user text is inserted into HTML. */

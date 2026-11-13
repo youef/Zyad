@@ -2,8 +2,8 @@ import {SOCIAL_SIZES,getSocialSize,adaptPoster,exportBlob,socialControls} from '
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=social3';
-import {dailyTemplate} from './daily.js?v=i18n4';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=friday1';
+import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
 const canvas=$('#poster'),dateInput=$('#chosen-date'),status=$('#page-status');
@@ -197,9 +197,39 @@ async function refresh(){
   if(id!==renderId)return;
   canvas.width=socialPreview.width;canvas.height=socialPreview.height;canvas.getContext('2d').drawImage(socialPreview,0,0);
   mountPlanner(config,dateInput.value);
+  renderDailyInspiration();
   window.dispatchEvent(new CustomEvent('zyad-calendar-updated',{detail:{config:JSON.parse(JSON.stringify(config)),date:dateInput.value,automatic}}));
   say('بطاقة '+CARD_PRESETS.find(x=>x.id===activePreset)?.name+' جاهزة للتنزيل والمشاركة.');
  }catch(e){console.error(e);say('تعذر عرض البطاقة: '+e.message);}
+}
+function renderDailyInspiration(){
+ const root=$('#daily-inspiration');if(!root||!config)return;
+ const info=dailyContent(config,dateInput.value),friday=info.special==='friday',en=getLanguage()==='en';
+ root.replaceChildren();
+ const detail=root.closest('.ios-insight');
+ const summary=detail?.querySelector('summary strong');
+ if(summary)summary.textContent=friday?(en?'Friday remembrance & blessings':'أنوار الجمعة · ذكر وصلاة على النبي ﷺ'):(en?'A moment of inspiration':'لحظة إلهام وطمأنينة');
+ if(detail)detail.open=friday;
+ document.body.dataset.fridayCard=String(friday);
+ const items=friday?[
+  [en?'Friday hadith':'حديث الجمعة',info.hadith],
+  [en?'Remembrance (not Friday-specific)':'ذكر عام',info.dhikr],
+  [en?'Blessings on the Prophet':'الصلاة على النبي ﷺ',info.salawat],
+  [en?'General supplication':'دعاء عام',info.supplication]
+ ]:[
+  [en?'Hadith':'حديث اليوم',info.hadith],
+  [en?'Supplication':'دعاء اليوم',info.dua]
+ ];
+ if(friday){const heading=document.createElement('p');heading.className='friday-inspiration-heading';heading.textContent=en?'A renewed selection every Friday':'يتجدد الحديث والذكر والصلاة على النبي كل جمعة';root.append(heading);}
+ for(const [label,item] of items){
+  if(!item)continue;const article=document.createElement('article');article.className='friday-inspiration-card';
+  const title=document.createElement('small');title.textContent=label;const body=document.createElement('p');body.textContent=item.text;
+  article.append(title,body);
+  if(item.url?.startsWith('https://sunnah.com/')){const a=document.createElement('a');a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=item.reference||'المصدر';article.append(a);}
+  else if(item.reference){const source=document.createElement('small');source.className='friday-reference';source.textContent=item.reference;article.append(source);}
+  root.append(article);
+ }
+ if(friday){const note=document.createElement('p');note.className='friday-inspiration-note';note.textContent=en?'The remembrance and personal supplications are general; they are not attributed to a special Friday narration.':'الأذكار والأدعية العامة لا تُنسب إلى سنة خاصة بيوم الجمعة.';root.append(note);}
 }
 function setDate(v){dateInput.value=v;if(automatic&&(publishedConfig.design?.autoRotate||publishedConfig.smartRules?.some(r=>r.enabled!==false))){activePreset=dailyTemplate(publishedConfig,v,CARD_PRESETS);config=activeConfig(activePreset);}updateUrl();renderGallery();refresh();}
 $('#prev').addEventListener('click',()=>setDate(isoAdd(dateInput.value,-1)));
