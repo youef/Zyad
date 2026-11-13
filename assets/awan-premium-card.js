@@ -218,8 +218,19 @@ export function renderAwanPremiumCard(c,cfg,iso,tools,definition){
  background(c,p,g,variant,seed);
  familyBackdrop(c,family,{x:53,y:92,w:974,h:g.ad.y+g.ad.h+19-92,p});
  const en=getLanguage()==='en';
+ // Families vary in macro composition too: not just border and icon shapes.
+ // Every headline remains above the quote boundary with 20+ px of air.
+ const headerFrames={
+  royal:[111,138,858,326],modern:[72,117,936,316],
+  heritage:[122,136,836,331],night:[90,115,900,350],
+  desert:[98,134,884,316],botanical:[133,135,814,338],
+  geometric:[99,122,882,335],ramadan:[137,117,806,346],
+  editorial:[74,130,932,317],journal:[96,128,888,336],
+  timeline:[72,129,936,316]
+ };
+ const [hx,hy,hw,hh]=headerFrames[family]||headerFrames.royal;
  familyHeader(c,family,{
-  x:111,y:138,w:858,h:326,day:localeDate(iso,{weekday:'long'}),
+  x:hx,y:hy,w:hw,h:hh,day:localeDate(iso,{weekday:'long'}),
   greg:localeDate(iso,{day:'numeric',month:'long',year:'numeric'}),
   hijri:tools.hijriDate(iso,cfg),p,en
  });
@@ -229,7 +240,9 @@ export function renderAwanPremiumCard(c,cfg,iso,tools,definition){
  // cavernous empty rectangle for one short hadith. Reclaimed space goes to
  // larger, clearer event tiles without crowding the QR/ad footer.
  const quoteLength=rows.reduce((total,row)=>total+Array.from(row.body||'').length,0);
- const quoteY=502,quoteH=!reading?0:rows.length>1
+ const quoteOffset={modern:489,heritage:507,night:507,desert:489,botanical:511,geometric:507,
+  ramadan:508,editorial:489,journal:504,timeline:492};
+ const quoteY=quoteOffset[family]||502,quoteH=!reading?0:rows.length>1
   ?clamp(205+quoteLength*.26,216,292)
   :clamp(112+quoteLength*.72,148,257);
  if(reading)familyQuote(c,family,rows,{x:75,y:quoteY,w:930,h:quoteH,p,en});
