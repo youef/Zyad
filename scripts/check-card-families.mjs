@@ -1,3 +1,4 @@
+import {GALLERY_PRESETS,galleryLayoutKey,galleryPresetId} from '../assets/gallery-selection.js';
 import assert from 'node:assert/strict';
 import {CARD_PRESETS} from '../assets/templates.js';
 import {CARD_FAMILIES,familyFor,familyPalette,familyHeader,familyQuote,familyTile,familyColumns} from '../assets/card-style-families.js';
@@ -57,3 +58,11 @@ for(const name of ['night','desert']){
  assert.notEqual(before.sage,after.sage,'Theme color has no effect on '+name+' background');
 }
 console.log('PASS:',CARD_PRESETS.length,'live designs across',found.size,'layout families; headings, hadith, long names, numbers and two aspect ratios');
+
+assert.equal(GALLERY_PRESETS.length,27);
+assert.equal(new Set(GALLERY_PRESETS.map(galleryLayoutKey)).size,GALLERY_PRESETS.length);
+for(const preset of CARD_PRESETS){
+ const visible=GALLERY_PRESETS.find(p=>p.id===galleryPresetId(preset.id));
+ assert.equal(visible&&galleryLayoutKey(visible),galleryLayoutKey(preset),preset.id);
+}
+assert.equal(galleryPresetId('missing-template'),undefined);

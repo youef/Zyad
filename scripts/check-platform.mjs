@@ -3,7 +3,7 @@ import {chromium} from 'playwright';
 import {serve,root} from './serve.mjs';
 import {readFile,writeFile,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
-import {CARD_PRESETS} from '../assets/templates.js';
+import {GALLERY_PRESETS} from '../assets/gallery-selection.js';
 import {SOCIAL_SIZES} from '../assets/social-sizes.js';
 import {familyFor,CARD_FAMILIES} from '../assets/card-style-families.js';
 // This project is visitor-only; studio/library/settings URLs intentionally redirect to the public app.
@@ -18,7 +18,7 @@ try{
   await page.waitForFunction(()=>Boolean(window.__posterReady));
   assert(await page.evaluate(()=>window.__posterReady),'Card renderer initialization failed');
   assert.equal(await page.locator('.visitor-tabs a.native-tab-link').count(),5);
-  assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
+  assert.equal(await page.locator('.public-template-card').count(),GALLERY_PRESETS.length);
   assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+2),'Horizontal home overflow');
   // Visual selections must respect exact social size rather than squeezing a tall poster.
   const result=await page.evaluate(async()=>{
@@ -37,8 +37,8 @@ try{
   assert.equal(SOCIAL_SIZES.length,13);
   await page.evaluate(()=>location.hash='#template-gallery');
   await page.locator('#template-gallery').waitFor({state:'visible'});
-  assert.equal(await page.locator('.public-template-card').count(),CARD_PRESETS.length);
-  const supported=CARD_FAMILIES.filter(f=>CARD_PRESETS.some(p=>familyFor(p)===f));
+  assert.equal(await page.locator('.public-template-card').count(),GALLERY_PRESETS.length);
+  const supported=CARD_FAMILIES.filter(f=>GALLERY_PRESETS.some(p=>familyFor(p)===f));
   assert.equal(await page.locator('#gallery-family-filters button[data-family]').count(),supported.length+1);
   // The mobile filter rail is intentionally horizontal. A pointer click on
   // an off-screen chip may time out in Chromium even though swipe scrolling
@@ -48,10 +48,10 @@ try{
   assert.equal(await page.locator('#gallery-family-filters button[data-family="heritage"]')
    .getAttribute('aria-pressed'),'true');
   assert.equal(await page.locator('.public-template-card:visible').count(),
-   CARD_PRESETS.filter(p=>familyFor(p)==='heritage').length,'Heritage shape filter');
+   GALLERY_PRESETS.filter(p=>familyFor(p)==='heritage').length,'Heritage shape filter');
   await page.locator('#gallery-family-filters button[data-family="all"]')
    .evaluate(el=>el.click());
-  assert.equal(await page.locator('.public-template-card:visible').count(),CARD_PRESETS.length,'Reset shape filter');
+  assert.equal(await page.locator('.public-template-card:visible').count(),GALLERY_PRESETS.length,'Reset shape filter');
   const card=page.locator('[data-preset="inspire-oasis"] .public-template-select');
   const sheet=page.locator('#card-preview');
   await card.click();

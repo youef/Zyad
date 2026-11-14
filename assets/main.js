@@ -2,6 +2,7 @@ import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-siz
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=awan-ios1';
 import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=awan-ios2';
 import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=awan-ios2';
+import {GALLERY_PRESETS,galleryPresetId} from './gallery-selection.js?v=1';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
 import {saToday,isoAdd,renderPoster,downloadFile} from './card.js?v=awan-ios2';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
@@ -31,16 +32,16 @@ let automatic=localStorage.getItem('zyad-template-mode')!=='manual';
 let galleryObserver=null,galleryRevision=0;
 let gallerySearch='',galleryCategory='الكل',galleryFamily='all',gallerySort='default';
 const favKey='zyad-visitor-template-favorites';
-const readFavorites=()=>{try{const value=JSON.parse(localStorage.getItem(favKey)||'[]');return Array.isArray(value)?value.filter(validPreset):[]}catch{return []}};
+const readFavorites=()=>{try{const value=JSON.parse(localStorage.getItem(favKey)||'[]');return Array.isArray(value)?[...new Set(value.map(galleryPresetId).filter(Boolean))]:[]}catch{return []}};
 const isFavorite=id=>readFavorites().includes(id);
-const categories=['الكل',...new Set(CARD_PRESETS.map(p=>p.category||'تصاميم متنوعة'))];
+const categories=['الكل',...new Set(GALLERY_PRESETS.map(p=>p.category||'تصاميم متنوعة'))];
 function setupGalleryControls(){
  const root=$('#gallery-categories');
  if(!root)return;
  root.replaceChildren();
  for(const category of categories){
   const button=document.createElement('button');
-  button.type='button';button.textContent=category==='الكل'?'الكل · '+CARD_PRESETS.length:category+' · '+CARD_PRESETS.filter(p=>(p.category||'تصاميم متنوعة')===category).length;button.dataset.category=category;
+  button.type='button';button.textContent=category==='الكل'?'الكل · '+GALLERY_PRESETS.length:category+' · '+GALLERY_PRESETS.filter(p=>(p.category||'تصاميم متنوعة')===category).length;button.dataset.category=category;
   button.className='gallery-category-chip'+(galleryCategory===category?' active':'');
   button.setAttribute('aria-pressed',String(galleryCategory===category));
   button.onclick=()=>{
@@ -50,9 +51,11 @@ function setupGalleryControls(){
   };
   root.append(button);
  }
- $('#gallery-total-count').textContent=String(CARD_PRESETS.length);
+ $('#gallery-total-count').textContent=String(GALLERY_PRESETS.length);
 }
 function favoriteTemplate(id){
+ id=galleryPresetId(id);
+ if(!id)return;
  const set=new Set(readFavorites());
  if(set.has(id))set.delete(id);else set.add(id);
  try{localStorage.setItem(favKey,JSON.stringify([...set]));}catch{}
@@ -70,7 +73,7 @@ function filterCalendarGallery(){
  const favoriteIds=readFavorites(),fav=new Set(favoriteIds);
  let visible=0;
  for(const card of cards){
-  const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);
+  const p=GALLERY_PRESETS.find(t=>t.id===card.dataset.preset);
   if(!p)continue;
   const q=gallerySearch.toLocaleLowerCase('ar');
   const text=`${p.name} ${presetName(p)} ${p.description} ${presetDescription(p)} ${p.category||''}`.toLocaleLowerCase('ar');
@@ -78,13 +81,13 @@ function filterCalendarGallery(){
   card.hidden=!show;if(show)visible++;
  }
  const rank=card=>{
-  const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);
+  const p=GALLERY_PRESETS.find(t=>t.id===card.dataset.preset);
   if(gallerySort==='name')return presetName(p);
   return fav.has(card.dataset.preset)?'0':'1';
  };
  const grid=$('#public-template-grid');
  if(grid){
-  const order=new Map(CARD_PRESETS.map((preset,i)=>[preset.id,preset.inspiration?i-CARD_PRESETS.length:i]));
+  const order=new Map(GALLERY_PRESETS.map((preset,i)=>[preset.id,preset.inspiration?i-GALLERY_PRESETS.length:i]));
   const sorted=cards.slice().sort((a,b)=>{
    const preference=gallerySort==='name'?rank(a).localeCompare(rank(b),getLanguage())
     :gallerySort==='favorites'?rank(a).localeCompare(rank(b)):0;
@@ -120,7 +123,7 @@ function updateFamilyFilterLabels(){
  wrap.querySelector('.gallery-family-caption').textContent=english?'Choose a card shape':'اختر شكل البطاقة';
  for(const button of wrap.querySelectorAll('[data-family]')){
   const id=button.dataset.family;
-  const count=id==='all'?CARD_PRESETS.length:CARD_PRESETS.filter(p=>familyFor(p)===id).length;
+  const count=id==='all'?GALLERY_PRESETS.length:GALLERY_PRESETS.filter(p=>familyFor(p)===id).length;
   const name=id==='all'?(english?'All shapes':'جميع الأشكال'):
    (english?FAMILY_NAMES_EN[id]:FAMILY_NAMES[id]);
   button.textContent=name+' · '+count;
@@ -133,7 +136,7 @@ function setupFamilyFilters(){
  wrap.setAttribute('aria-label','فلترة حسب شكل البطاقة');
  const heading=document.createElement('div');heading.className='gallery-family-caption';heading.textContent='اختر شكل البطاقة';
  const rail=document.createElement('div');rail.className='gallery-family-rail';rail.setAttribute('role','group');rail.setAttribute('aria-label','أشكال القوالب');
- const choices=[['all','جميع الأشكال',CARD_PRESETS.length],...CARD_FAMILIES.map(f=>[f,FAMILY_NAMES[f],CARD_PRESETS.filter(p=>familyFor(p)===f).length]).filter(x=>x[2]>0)];
+ const choices=[['all','جميع الأشكال',GALLERY_PRESETS.length],...CARD_FAMILIES.map(f=>[f,FAMILY_NAMES[f],GALLERY_PRESETS.filter(p=>familyFor(p)===f).length]).filter(x=>x[2]>0)];
  for(const [id,name,count] of choices){
   const button=document.createElement('button');button.type='button';button.dataset.family=id;
   button.className='gallery-family-chip'+(id==='all'?' active':'');button.textContent=name+' · '+count;
@@ -150,7 +153,7 @@ function setupFamilyFilters(){
 }
 setupGalleryControls();
 setupFamilyFilters();
-const sidebarCount=document.querySelector('.side-links a[href="#template-gallery"] small');if(sidebarCount)sidebarCount.textContent=String(CARD_PRESETS.length);
+const sidebarCount=document.querySelector('.side-links a[href="#template-gallery"] small');if(sidebarCount)sidebarCount.textContent=String(GALLERY_PRESETS.length);
 $('#calendar-search').addEventListener('input',e=>{gallerySearch=e.target.value.trim();filterCalendarGallery();});
 $('#gallery-sort')?.addEventListener('change',e=>{gallerySort=e.target.value;filterCalendarGallery();});
 window.addEventListener('hashchange',filterCalendarGallery);
@@ -177,172 +180,7 @@ function updateUrl(){
  history.replaceState(null,'',url.pathname+url.search+url.hash);
 }
 const preview=$('#card-preview');
-const previewCanvas=preview.querySelector('canvas');
-const previewArt=previewCanvas.parentElement;
-const previewSize=$('#preview-size'),previewFormat=$('#preview-format');
-const previewStatus=preview.querySelector('[role="status"]'),previewDownload=$('#preview-download');
-const previewCopy={
- close:['إغلاق','Close'],size:['المقاس','Size'],format:['صيغة الصورة','Image format'],
- save:['حفظ الصورة','Save image'],use:['استخدام في بطاقة اليوم','Use for daily card'],
- loading:['جارٍ تجهيز المعاينة…','Preparing preview…'],
- retry:['تعذر تجهيز المعاينة. جرّب مقاسًا آخر.','Preview unavailable. Try another size.'],
- saving:['جارٍ تجهيز الصورة…','Preparing image…'],
- failed:['تعذر حفظ الصورة. حاول مرة أخرى.','Could not save the image. Try again.']
-};
-const previewText=key=>previewCopy[key][getLanguage()==='en'?1:0];
-let previewPreset=null,previewRevision=0,previewTrigger=null;
-const alternateSizeNames=['WhatsApp Story','Snapchat Story','Instagram Story','Instagram Portrait','Instagram Square','Instagram Landscape','TikTok','Reels','YouTube Shorts','Facebook Post','X Post','Pinterest','Portrait Poster'];
-function syncPreviewLanguage(){
- const english=getLanguage()==='en';
- $('#card-preview-title').textContent=presetName(previewPreset);
- preview.querySelectorAll('[data-preview-text]').forEach(node=>{
-  node.textContent=previewText(node.dataset.previewText);
- });
- preview.querySelector('.awan-sheet-close').setAttribute('aria-label',previewText('close'));
- previewCanvas.setAttribute('aria-label',english?'Card preview':'معاينة البطاقة');
- const oldSize=previewSize.value;
- previewSize.replaceChildren(...SOCIAL_SIZES.map((size,index)=>new Option(
-  (english?alternateSizeNames[index]:size.name)+' · '+size.width+' × '+size.height,size.id
- )));
- previewSize.value=oldSize||socialSize();
-}
-async function paintPreview(){
- const id=++previewRevision;
- const {width,height}=getSocialSize(previewSize.value);
- previewCanvas.hidden=true;
- previewArt.setAttribute('aria-busy','true');
- previewDownload.disabled=true;
- previewStatus.textContent=previewText('loading');
- try{
-  const image=document.createElement('canvas');
-  await renderPoster(image,activeConfig(previewPreset.id),dateInput.value,{
-   preview:true,scale:.55,dimensions:[width,height]
-  });
-  if(id!==previewRevision)return;
-  previewCanvas.width=image.width;
-  previewCanvas.height=image.height;
-  previewCanvas.getContext('2d').drawImage(image,0,0);
-  previewCanvas.hidden=false;
-  previewDownload.disabled=false;
-  previewStatus.textContent=width+' × '+height;
- }catch{
-  if(id===previewRevision)previewStatus.textContent=previewText('retry');
- }finally{
-  if(id===previewRevision)previewArt.setAttribute('aria-busy','false');
- }
-}
-function openCardPreview(preset,trigger){
- previewPreset=preset;
- previewTrigger=trigger;
- syncPreviewLanguage();
- previewSize.value=socialSize();
- previewFormat.value={png:'PNG',jpeg:'JPEG',webp:'WebP'}[socialFormat()];
- preview.showModal();
- void paintPreview();
-}
-previewSize.onchange=paintPreview;
-preview.addEventListener('click',event=>{
- if(event.target===preview){
-  const {left,right,top,bottom}=preview.getBoundingClientRect();
-  if(event.clientX<left||event.clientX>right||event.clientY<top||event.clientY>bottom)preview.close();
- }
-});
-preview.addEventListener('close',()=>{
- if(preview.open)return;
- ++previewRevision;
- previewTrigger?.focus({preventScroll:true});
-});
-previewDownload.onclick=async()=>{
- const revision=previewRevision;
- previewDownload.disabled=true;
- previewStatus.textContent=previewText('saving');
- try{
-  const extension=await socialDownload(activeConfig(previewPreset.id),dateInput.value,previewPreset.id,
-   1,previewSize.value,previewFormat.value.toLowerCase());
-  if(revision===previewRevision)previewStatus.textContent=getLanguage()==='en'?'Image downloaded · '+extension.toUpperCase():'تم تنزيل الصورة · '+extension.toUpperCase();
- }catch{
-  if(revision===previewRevision)previewStatus.textContent=previewText('failed');
- }finally{
-  if(revision===previewRevision)previewDownload.disabled=false;
- }
-};
-$('#preview-use').onclick=()=>{
- automatic=false;
- activePreset=previewPreset.id;
- try{
-  localStorage.setItem('zyad-public-template',activePreset);
-  localStorage.setItem('zyad-template-mode','manual');
- }catch{}
- config=activeConfig(activePreset);
- updateUrl();
- const format=$('#social-output-format');
- format.value=previewFormat.value.toLowerCase();
- const size=$('#social-output-size');
- const changed=size.value!==previewSize.value;
- size.value=previewSize.value;
- if(changed)size.dispatchEvent(new Event('change'));
- else{renderGallery();void refresh();}
- preview.close();
- location.hash='poster-section';
-};
-async function exportPreset(id){
- const extension=await socialDownload(activeConfig(id),dateInput.value,id);
- $('#gallery-status').textContent=getLanguage()==='en'?'Image downloaded · '+extension.toUpperCase():'تم تنزيل الصورة · '+extension.toUpperCase();
-}
-function renderGallery(){
- const revision=++galleryRevision;galleryObserver?.disconnect();
- const grid=$('#public-template-grid');if(!grid)return;grid.replaceChildren();
- // Render every card live, using selected date and size; never load stale screenshots.
- const queue=[];let working=false;
- async function processQueue(){
-  if(working)return;working=true;
-  while(queue.length&&revision===galleryRevision){
-   const card=queue.shift();
-   if(!card?.isConnected||card.hidden||card.dataset.previewState==='ready')continue;
-   const image=card.querySelector('.gallery-template-image');
-   try{
-    const art=card.querySelector('.public-template-art');
-    const temp=document.createElement('canvas'),size=getSocialSize(socialSize());await renderPoster(temp,activeConfig(card.dataset.preset),dateInput.value,{preview:true,scale:.35,dimensions:[size.width,size.height]});art.width=temp.width;art.height=temp.height;art.getContext('2d').drawImage(temp,0,0);
-    if(revision!==galleryRevision)break;
-    art.style.aspectRatio=size.width+'/'+size.height;art.hidden=false;image.classList.remove('is-loaded');image.classList.add('is-error');card.querySelector('.public-template-fallback').hidden=true;
-    card.querySelector('.preview-date').textContent='معاينة البطاقة';
-    card.dataset.previewState='ready';
-   }catch(error){
-    card.querySelector('.preview-date').textContent='معاينة بديلة متاحة';
-    card.dataset.previewState='fallback';
-   }
-   // Return control to Safari between expensive canvas renders.
-   await new Promise(resolve=>setTimeout(resolve,0));
-  }
-  working=false;
- }
- galleryObserver=new IntersectionObserver(entries=>{
-  for(const entry of entries){
-   if(!entry.isIntersecting)continue;
-   const card=entry.target;galleryObserver.unobserve(card);
-   if(card.dataset.previewState==='ready')continue;
-   queue.push(card);void processQueue();
-  }
- },{rootMargin:'120px'});
- for(const preset of CARD_PRESETS){
-  const item=document.createElement('article');item.className='public-template-card';item.dataset.preset=preset.id;
-  if(preset.id===activePreset)item.classList.add('active');
-  const select=document.createElement('button');select.type='button';select.className='public-template-select';
-  select.setAttribute('aria-haspopup','dialog');select.setAttribute('aria-label',presetName(preset));
-  const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='gallery-template-image';img.alt='بطاقة قالب '+preset.name;
-  // The thumbnail is painted on canvas, so it cannot show stale downloaded artwork.
-  const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">'+translate('أوان السعودية')+'</span><span class="visitor-preview-date">'+translate('بطاقة اليوم')+'</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
-  const art=document.createElement('canvas');art.className='public-template-art';art.width=540;art.height=960;art.hidden=true;art.setAttribute('aria-label','معاينة '+preset.name+' بتاريخ '+dateInput.value);
-  const badge=document.createElement('span');badge.className='gallery-card-badge';badge.textContent=translate(preset.category||'تصميم');
-  const chosen=document.createElement('span');chosen.className='gallery-card-chosen';chosen.textContent='✓ المختار';
-  const heading=document.createElement('strong');heading.textContent=presetName(preset);
-  const desc=document.createElement('small');desc.textContent=presetDescription(preset);
-  const previewDate=document.createElement('small');previewDate.className='preview-date';previewDate.textContent='معاينة التصميم';
-  const frame=document.createElement('span');frame.className='gallery-card-frame';const previewSize=getSocialSize(socialSize());frame.style.aspectRatio=previewSize.width+'/'+previewSize.height;frame.style.setProperty('--poster-ratio',previewSize.width+'/'+previewSize.height);frame.append(img,fallback,art);
-  const meta=document.createElement('span');meta.className='gallery-card-meta';meta.append(badge,chosen);
-  select.append(frame,heading,meta,desc,previewDate);
-  select.onclick=()=>openCardPreview(preset,select);
-  const actions=document.createElement('div');actions.className='visitor-template-actions';const favorite=document.createElement('button');favorite.className='visitor-template-fav';favorite.type='button';favorite.textContent=isFavorite(preset.id)?'♥':'♡';favorite.setAttribute('aria-label',isFavorite(preset.id)?'إزالة من المفضلة':'إضافة إلى المفضلة');favorite.setAttribute('aria-pressed',String(isFavorite(preset.id)));favorite.onclick=()=>favoriteTemplate(preset.id);const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
+const previewCanvas=prev…2573 tokens truncated…eElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
   download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ الحفظ…';try{await exportPreset(preset.id);}catch{ $('#gallery-status').textContent=previewText('failed'); }finally{download.disabled=false;download.textContent='حفظ الصورة ↓';}};
   actions.append(download,favorite);item.append(select,actions);grid.append(item);galleryObserver.observe(item);
  }
