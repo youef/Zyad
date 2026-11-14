@@ -52,6 +52,21 @@ try{
   await page.locator('#gallery-family-filters button[data-family="all"]')
    .evaluate(el=>el.click());
   assert.equal(await page.locator('.public-template-card:visible').count(),CARD_PRESETS.length,'Reset shape filter');
+  const card=page.locator('[data-preset="inspire-oasis"] .public-template-select');
+  const sheet=page.locator('#card-preview');
+  await card.click();
+  await sheet.locator('#preview-size').selectOption('instagram-square');
+  await sheet.locator('canvas:not([hidden])').waitFor();
+  assert(await sheet.locator('canvas').evaluate(c=>c.width===c.height&&c.width>0));
+  const [download]=await Promise.all([page.waitForEvent('download'),sheet.locator('#preview-download').click()]);
+  const png=await readFile(await download.path());
+  assert.deepEqual([png.readUInt32BE(16),png.readUInt32BE(20)],[1080,1080]);
+  await page.keyboard.press('Escape');
+  await sheet.waitFor({state:'hidden'});
+  assert(await card.evaluate(node=>node===document.activeElement));
+  await card.click();
+  await sheet.locator('#preview-use').click();
+  await page.waitForURL(url=>url.hash==='#poster-section'&&url.searchParams.get('template')==='inspire-oasis');
   await page.evaluate(()=>location.hash='#today-app');
   await page.locator('#today-app').waitFor({state:'visible'});
   await page.locator('#social-output-size').selectOption('instagram-square');
@@ -70,7 +85,7 @@ try{
   await context.close();
  }
  await writeFile(join(target,'test-results.json'),JSON.stringify({status:'passed',verified},null,2));
- console.log('PASS: Visitor-only pages, square preview, five real-size renders, 45 public cards and mobile/desktop layout.');
+ console.log('PASS: Visitor-only pages, square preview, five real-size renders, public card gallery and mobile/desktop layout.');
 }finally{
  await browser.close();
  await new Promise(resolve=>server.close(resolve));

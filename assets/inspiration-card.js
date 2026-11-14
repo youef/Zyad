@@ -23,6 +23,8 @@ function writing(c,words,bounds,{size=34,minSize=15,maxLines=2,weight=760,color=
 }
 function colors(preset,cfg){
  const options={
+  oasis:{background:'#dce9d8',paper:'#f6f7eb',panel:'#fffef6',deep:'#235844',gold:'#856337',soft:'#506d56',quiet:'#d8e8d6',accent:'#9ab991'},
+  twilight:{background:'#eae2f6',paper:'#fbf5fc',panel:'#fffbff',deep:'#4b3b68',gold:'#825363',soft:'#68577d',quiet:'#e6d9ee',accent:'#c09ab8'},
   sadu:{background:'#f5e1d1',paper:'#fdf1e3',panel:'#fff9ef',deep:'#75372e',gold:'#89532e',soft:'#775248',quiet:'#eacdb5',accent:'#ac613f'},
   dawn:{background:'#ece8fb',paper:'#fbf4fc',panel:'#fffaff',deep:'#55466f',gold:'#80546a',soft:'#6c587e',quiet:'#e8d9ef',accent:'#cea7b7'},
   coast:{background:'#d9f0ef',paper:'#f1fbf9',panel:'#f9fffe',deep:'#135969',gold:'#3a6977',soft:'#3f6571',quiet:'#cbeae6',accent:'#83c4bd'},
@@ -80,6 +82,29 @@ function makeBackground(c,L,p,preset){
  }
 }
 const collectionArt={
+ oasis(c,p){
+  c.fillStyle=p.deep;c.fillRect(0,0,100,100);
+  c.fillStyle='#37725a';c.fillRect(0,86,100,14);
+  for(const [x,y] of [[8,37],[91,27],[96,49]]){
+   rule(c,x,y,x,87,p.accent,.7);
+   for(const offset of [-6,-4,4,6]){
+    c.beginPath();c.moveTo(x,y);c.quadraticCurveTo(x+offset*.7,y-13,x+offset,y+5);
+    c.strokeStyle=p.accent;c.lineWidth=.65;c.stroke();
+   }
+  }
+ },
+ twilight(c,p){
+  c.fillStyle=p.deep;c.fillRect(0,0,100,100);
+  for(const [x,y] of [[8,21],[18,15],[83,23],[92,12]]){
+   c.fillStyle=p.quiet;c.fillRect(x,y,.7,2.2);
+  }
+  for(const [y,color] of [[67,'#725c92'],[85,'#514674']]){
+   c.beginPath();c.moveTo(0,100);c.lineTo(0,y+18);c.lineTo(16,y);
+   c.lineTo(32,y+26);c.lineTo(76,y+16);c.lineTo(92,y-2);
+   c.lineTo(100,y+12);c.lineTo(100,100);c.closePath();c.fillStyle=color;c.fill();
+  }
+ },
+
  sadu(c,p){
   c.fillStyle=p.deep;c.fillRect(0,0,100,100);
   for(const y of [9,91]){
@@ -125,7 +150,7 @@ function collectionHeader(c,r,p,preset,brand,day,en){
  c.translate(r.x,r.y);c.scale(r.w/100,r.h/100);
  collectionArt[preset](c,p);
  c.restore();
- const dark=preset==='sadu'||preset==='dawn';
+ const dark=['sadu','dawn','oasis','twilight'].includes(preset);
  const ink=dark?'#fff8ef':p.deep;
  const inset=preset==='coast' ? .08 : .19;
  const width=preset==='coast' ? .64 : .62;

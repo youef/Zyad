@@ -1,9 +1,9 @@
 import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-sizes.js?v=1';
 import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=awan-ios1';
-import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=awan-ios1';
-import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=awan-ios1';
+import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=awan-ios2';
+import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=awan-ios2';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=awan-ios1';
+import {saToday,isoAdd,renderPoster,downloadFile} from './card.js?v=awan-ios2';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
@@ -12,14 +12,17 @@ const socialPanel=socialControls();
 document.querySelector('#poster-section .action-buttons')?.before(socialPanel);
 const socialSize=()=>document.getElementById('social-output-size')?.value||'whatsapp';
 const socialFormat=()=>document.getElementById('social-output-format')?.value||'png';
-async function socialCanvas(cfg,date,quality=1){
- const output=document.createElement('canvas'),size=getSocialSize(socialSize());
+async function socialCanvas(cfg,date,quality=1,sizeId=socialSize()){
+ const output=document.createElement('canvas'),size=getSocialSize(sizeId);
  await renderPoster(output,cfg,date,{scale:quality===2?2:1,dimensions:[size.width,size.height]});
  return output;
 }
-async function socialDownload(cfg,date,preset,quality=1){
- const output=await socialCanvas(cfg,date,quality),format=socialFormat();
- downloadFile('calendar-'+date+'-'+preset+'-'+socialSize()+(quality>1?'-HD':'')+'.'+format,await exportBlob(output,format));
+async function socialDownload(cfg,date,preset,quality=1,sizeId=socialSize(),format=socialFormat()){
+ const output=await socialCanvas(cfg,date,quality,sizeId);
+ const blob=await exportBlob(output,format);
+ const extension=blob.type.split('/')[1]||'png';
+ downloadFile('calendar-'+date+'-'+preset+'-'+sizeId+(quality>1?'-HD':'')+'.'+extension,blob);
+ return extension;
 }
 document.addEventListener('zyad-social-size-change',()=>{if(config){renderGallery();void refresh();}});
 
@@ -173,10 +176,118 @@ function updateUrl(){
  if(automatic||activePreset===(publishedConfig.design?.preset||'royal'))url.searchParams.delete('template');else url.searchParams.set('template',activePreset);
  history.replaceState(null,'',url.pathname+url.search+url.hash);
 }
+const preview=$('#card-preview');
+const previewCanvas=preview.querySelector('canvas');
+const previewArt=previewCanvas.parentElement;
+const previewSize=$('#preview-size'),previewFormat=$('#preview-format');
+const previewStatus=preview.querySelector('[role="status"]'),previewDownload=$('#preview-download');
+const previewCopy={
+ close:['إغلاق','Close'],size:['المقاس','Size'],format:['صيغة الصورة','Image format'],
+ save:['حفظ الصورة','Save image'],use:['استخدام في بطاقة اليوم','Use for daily card'],
+ loading:['جارٍ تجهيز المعاينة…','Preparing preview…'],
+ retry:['تعذر تجهيز المعاينة. جرّب مقاسًا آخر.','Preview unavailable. Try another size.'],
+ saving:['جارٍ تجهيز الصورة…','Preparing image…'],
+ failed:['تعذر حفظ الصورة. حاول مرة أخرى.','Could not save the image. Try again.']
+};
+const previewText=key=>previewCopy[key][getLanguage()==='en'?1:0];
+let previewPreset=null,previewRevision=0,previewTrigger=null;
+const alternateSizeNames=['WhatsApp Story','Snapchat Story','Instagram Story','Instagram Portrait','Instagram Square','Instagram Landscape','TikTok','Reels','YouTube Shorts','Facebook Post','X Post','Pinterest','Portrait Poster'];
+function syncPreviewLanguage(){
+ const english=getLanguage()==='en';
+ $('#card-preview-title').textContent=presetName(previewPreset);
+ preview.querySelectorAll('[data-preview-text]').forEach(node=>{
+  node.textContent=previewText(node.dataset.previewText);
+ });
+ preview.querySelector('.awan-sheet-close').setAttribute('aria-label',previewText('close'));
+ previewCanvas.setAttribute('aria-label',english?'Card preview':'معاينة البطاقة');
+ const oldSize=previewSize.value;
+ previewSize.replaceChildren(...SOCIAL_SIZES.map((size,index)=>new Option(
+  (english?alternateSizeNames[index]:size.name)+' · '+size.width+' × '+size.height,size.id
+ )));
+ previewSize.value=oldSize||socialSize();
+}
+async function paintPreview(){
+ const id=++previewRevision;
+ const {width,height}=getSocialSize(previewSize.value);
+ previewCanvas.hidden=true;
+ previewArt.setAttribute('aria-busy','true');
+ previewDownload.disabled=true;
+ previewStatus.textContent=previewText('loading');
+ try{
+  const image=document.createElement('canvas');
+  await renderPoster(image,activeConfig(previewPreset.id),dateInput.value,{
+   preview:true,scale:.55,dimensions:[width,height]
+  });
+  if(id!==previewRevision)return;
+  previewCanvas.width=image.width;
+  previewCanvas.height=image.height;
+  previewCanvas.getContext('2d').drawImage(image,0,0);
+  previewCanvas.hidden=false;
+  previewDownload.disabled=false;
+  previewStatus.textContent=width+' × '+height;
+ }catch{
+  if(id===previewRevision)previewStatus.textContent=previewText('retry');
+ }finally{
+  if(id===previewRevision)previewArt.setAttribute('aria-busy','false');
+ }
+}
+function openCardPreview(preset,trigger){
+ previewPreset=preset;
+ previewTrigger=trigger;
+ syncPreviewLanguage();
+ previewSize.value=socialSize();
+ previewFormat.value={png:'PNG',jpeg:'JPEG',webp:'WebP'}[socialFormat()];
+ preview.showModal();
+ void paintPreview();
+}
+previewSize.onchange=paintPreview;
+preview.addEventListener('click',event=>{
+ if(event.target===preview){
+  const {left,right,top,bottom}=preview.getBoundingClientRect();
+  if(event.clientX<left||event.clientX>right||event.clientY<top||event.clientY>bottom)preview.close();
+ }
+});
+preview.addEventListener('close',()=>{
+ if(preview.open)return;
+ ++previewRevision;
+ previewTrigger?.focus({preventScroll:true});
+});
+previewDownload.onclick=async()=>{
+ const revision=previewRevision;
+ previewDownload.disabled=true;
+ previewStatus.textContent=previewText('saving');
+ try{
+  const extension=await socialDownload(activeConfig(previewPreset.id),dateInput.value,previewPreset.id,
+   1,previewSize.value,previewFormat.value.toLowerCase());
+  if(revision===previewRevision)previewStatus.textContent=getLanguage()==='en'?'Image downloaded · '+extension.toUpperCase():'تم تنزيل الصورة · '+extension.toUpperCase();
+ }catch{
+  if(revision===previewRevision)previewStatus.textContent=previewText('failed');
+ }finally{
+  if(revision===previewRevision)previewDownload.disabled=false;
+ }
+};
+$('#preview-use').onclick=()=>{
+ automatic=false;
+ activePreset=previewPreset.id;
+ try{
+  localStorage.setItem('zyad-public-template',activePreset);
+  localStorage.setItem('zyad-template-mode','manual');
+ }catch{}
+ config=activeConfig(activePreset);
+ updateUrl();
+ const format=$('#social-output-format');
+ format.value=previewFormat.value.toLowerCase();
+ const size=$('#social-output-size');
+ const changed=size.value!==previewSize.value;
+ size.value=previewSize.value;
+ if(changed)size.dispatchEvent(new Event('change'));
+ else{renderGallery();void refresh();}
+ preview.close();
+ location.hash='poster-section';
+};
 async function exportPreset(id){
- const snapshot=activeConfig(id),cv=document.createElement('canvas'),iso=dateInput.value;
- await socialDownload(snapshot,iso,id);
- say('تم تنزيل بطاقة '+CARD_PRESETS.find(x=>x.id===id).name+'.');
+ const extension=await socialDownload(activeConfig(id),dateInput.value,id);
+ $('#gallery-status').textContent=getLanguage()==='en'?'Image downloaded · '+extension.toUpperCase():'تم تنزيل الصورة · '+extension.toUpperCase();
 }
 function renderGallery(){
  const revision=++galleryRevision;galleryObserver?.disconnect();
@@ -217,7 +328,7 @@ function renderGallery(){
   const item=document.createElement('article');item.className='public-template-card';item.dataset.preset=preset.id;
   if(preset.id===activePreset)item.classList.add('active');
   const select=document.createElement('button');select.type='button';select.className='public-template-select';
-  select.setAttribute('aria-pressed',String(preset.id===activePreset));select.setAttribute('aria-label','عرض '+preset.name);
+  select.setAttribute('aria-haspopup','dialog');select.setAttribute('aria-label',presetName(preset));
   const img=document.createElement('img');img.loading='lazy';img.decoding='async';img.className='gallery-template-image';img.alt='بطاقة قالب '+preset.name;
   // The thumbnail is painted on canvas, so it cannot show stale downloaded artwork.
   const fallback=document.createElement('span');fallback.className='public-template-fallback '+preset.id;fallback.style.setProperty('--template-primary',preset.theme?.green||'#0a5947');fallback.style.setProperty('--template-gold',preset.theme?.gold||'#b99355');fallback.innerHTML='<span class="visitor-preview-emblem">'+preset.symbol+'</span><span class="visitor-preview-brand">'+translate('أوان السعودية')+'</span><span class="visitor-preview-date">'+translate('بطاقة اليوم')+'</span><span class="visitor-preview-ornament">✦ ❖ ✦</span>';
@@ -230,9 +341,9 @@ function renderGallery(){
   const frame=document.createElement('span');frame.className='gallery-card-frame';const previewSize=getSocialSize(socialSize());frame.style.aspectRatio=previewSize.width+'/'+previewSize.height;frame.style.setProperty('--poster-ratio',previewSize.width+'/'+previewSize.height);frame.append(img,fallback,art);
   const meta=document.createElement('span');meta.className='gallery-card-meta';meta.append(badge,chosen);
   select.append(frame,heading,meta,desc,previewDate);
-  select.onclick=async()=>{automatic=false;activePreset=preset.id;try{localStorage.setItem('zyad-public-template',activePreset);localStorage.setItem('zyad-template-mode','manual');}catch{}config=activeConfig(activePreset);updateUrl();grid.querySelectorAll('.public-template-card').forEach(node=>{const yes=node.dataset.preset===activePreset;node.classList.toggle('active',yes);node.querySelector('.public-template-select').setAttribute('aria-pressed',String(yes));});filterCalendarGallery();await refresh();};
+  select.onclick=()=>openCardPreview(preset,select);
   const actions=document.createElement('div');actions.className='visitor-template-actions';const favorite=document.createElement('button');favorite.className='visitor-template-fav';favorite.type='button';favorite.textContent=isFavorite(preset.id)?'♥':'♡';favorite.setAttribute('aria-label',isFavorite(preset.id)?'إزالة من المفضلة':'إضافة إلى المفضلة');favorite.setAttribute('aria-pressed',String(isFavorite(preset.id)));favorite.onclick=()=>favoriteTemplate(preset.id);const download=document.createElement('button');download.className='public-template-download';download.type='button';download.textContent='حفظ الصورة ↓';
-  download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ الحفظ…';try{await exportPreset(preset.id);}catch(e){say('تعذر حفظ التصميم: '+e.message);}finally{download.disabled=false;download.textContent='حفظ الصورة ↓';}};
+  download.onclick=async()=>{download.disabled=true;download.textContent='جارٍ الحفظ…';try{await exportPreset(preset.id);}catch{ $('#gallery-status').textContent=previewText('failed'); }finally{download.disabled=false;download.textContent='حفظ الصورة ↓';}};
   actions.append(download,favorite);item.append(select,actions);grid.append(item);galleryObserver.observe(item);
  }
  const empty=document.createElement('p');empty.id='visitor-gallery-empty';empty.className='visitor-gallery-empty';empty.hidden=true;grid.append(empty);filterCalendarGallery();
@@ -287,14 +398,14 @@ dateInput.addEventListener('change',()=>{if(dateInput.value)setDate(dateInput.va
 function exportAction(id,action){$(id).addEventListener('click',async()=>{const button=$(id);if(button.disabled||!config)return;button.disabled=true;const snapshot=JSON.parse(JSON.stringify(config)),iso=dateInput.value,preset=activePreset;try{await action(snapshot,iso,preset);}catch(e){if(e.name!=='AbortError')say('تعذر تجهيز البطاقة: '+e.message);}finally{button.disabled=false;}});}
 exportAction('#download',async(snapshot,iso,preset)=>{await socialDownload(snapshot,iso,preset);say('تم تجهيز الصورة بالتنسيق والمقاس المختار.');});
 exportAction('#download-4k',async(snapshot,iso,preset)=>{await socialDownload(snapshot,iso,preset,2);say('تم تجهيز الصورة بجودة عالية حسب المقاس المختار.');});
-exportAction('#share',async(snapshot,iso,preset)=>{const c=await socialCanvas(snapshot,iso),format=socialFormat(),file=new File([await exportBlob(c,format)],`calendar-${iso}-${preset}-${socialSize()}.${format}`,{type:format==='jpeg'?'image/jpeg':'image/'+format});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'أوان السعودية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
+exportAction('#share',async(snapshot,iso,preset)=>{const sizeId=socialSize(),format=socialFormat(),c=await socialCanvas(snapshot,iso,1,sizeId),blob=await exportBlob(c,format);const file=new File([blob],`calendar-${iso}-${preset}-${sizeId}.${blob.type.split('/')[1]||'png'}`,{type:blob.type});if(navigator.canShare?.({files:[file]})){await navigator.share({files:[file],title:snapshot.brand?.name||'أوان السعودية'});}else{downloadFile(file.name,file);say('تم تنزيل صورة البطاقة؛ مشاركة الملفات غير متاحة على هذا الجهاز.');}});
 function updateLanguageBrand(){
  const brand=getLanguage()==='en'?(config?.brand?.nameEn||'Awan Saudi'):(config?.brand?.name?.trim()||'أوان السعودية');
  const b=document.querySelector('#brand-title'),f=document.querySelector('#footer-brand');
  if(b)b.textContent=brand;if(f)f.textContent=brand;
  document.title=brand+' | '+(getLanguage()==='en'?'Calendar & Events':'التقويم والمواعيد');
 }
-window.addEventListener('zyad-language-change',()=>{updateFamilyFilterLabels();if(!config)return;updateLanguageBrand();renderGallery();void refresh();});
+window.addEventListener('zyad-language-change',()=>{updateFamilyFilterLabels();if(preview.open){syncPreviewLanguage();void paintPreview();}if(!config)return;updateLanguageBrand();renderGallery();void refresh();});
 window.zyadVisitorFavorites={read:readFavorites,toggle:favoriteTemplate};window.zyadCalendar={getConfig:()=>config?JSON.parse(JSON.stringify(config)):null,getDate:()=>dateInput.value,setDate,automatic:()=>automatic,rotate:()=>{automatic=true;localStorage.setItem('zyad-template-mode','auto');setDate(dateInput.value);}};
 async function loadArchive(){try{const r=await fetch('data/history.json?nocache='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('not found');const list=await r.json();const grid=$('#archive-grid');if(!Array.isArray(list)||!list.length)return;grid.replaceChildren();for(const rec of list.slice(0,24)){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)||!/^images\/[\w.-]+\.png$/.test(rec.path))continue;
