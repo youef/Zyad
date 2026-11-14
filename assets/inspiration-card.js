@@ -1,4 +1,4 @@
-/* Awan Saudi — three independent inspiration card designs.
+/* Awan Saudi — inspiration card designs.
  * Layout is measured against the shared advertisement/follow footer.
  * The message panels NEVER enter the banner, QR, or subscription area.
  */
@@ -23,6 +23,10 @@ function writing(c,words,bounds,{size=34,minSize=15,maxLines=2,weight=760,color=
 }
 function colors(preset,cfg){
  const options={
+  sadu:{background:'#f5e1d1',paper:'#fdf1e3',panel:'#fff9ef',deep:'#75372e',gold:'#89532e',soft:'#775248',quiet:'#eacdb5',accent:'#ac613f'},
+  dawn:{background:'#ece8fb',paper:'#fbf4fc',panel:'#fffaff',deep:'#55466f',gold:'#80546a',soft:'#6c587e',quiet:'#e8d9ef',accent:'#cea7b7'},
+  coast:{background:'#d9f0ef',paper:'#f1fbf9',panel:'#f9fffe',deep:'#135969',gold:'#3a6977',soft:'#3f6571',quiet:'#cbeae6',accent:'#83c4bd'},
+  olive:{background:'#e9ead7',paper:'#faf7ec',panel:'#fffdf4',deep:'#3c5837',gold:'#746038',soft:'#55694b',quiet:'#dee5ca',accent:'#b3bf90'},
   botanical:{background:'#edf2e9',paper:'#fcfaf3',panel:'#fffefa',deep:'#125747',gold:'#b99755',soft:'#668376',quiet:'#e2ebe3',accent:'#daebe4'},
   royal:{background:'#d6e2d9',paper:'#f8f3e7',panel:'#fffdf6',deep:'#08483a',gold:'#bf9851',soft:'#607c67',quiet:'#eff0e6',accent:'#e4ebdf'},
   pearl:{background:'#eef3f0',paper:'#fffefa',panel:'#f6faf7',deep:'#286a61',gold:'#bea372',soft:'#6a8782',quiet:'#e5eee9',accent:'#e2f0eb'}
@@ -75,8 +79,65 @@ function makeBackground(c,L,p,preset){
   rounded(c,m*.95,m*.96,w-m*1.90,3,2,p.gold);
  }
 }
+const collectionArt={
+ sadu(c,p){
+  c.fillStyle=p.deep;c.fillRect(0,0,100,100);
+  for(const y of [9,91]){
+   rule(c,0,y,100,y,p.accent,.9);
+   for(let x=2;x<100;x+=5){
+    c.beginPath();c.moveTo(x-1.6,y);c.lineTo(x,y-4);c.lineTo(x+1.6,y);
+    c.lineTo(x,y+4);c.closePath();c.fillStyle=x%2?p.accent:p.quiet;c.fill();
+   }
+  }
+ },
+ dawn(c,p){
+  const sky=c.createLinearGradient(0,0,0,100);
+  sky.addColorStop(0,p.deep);sky.addColorStop(1,p.accent);
+  c.fillStyle=sky;c.fillRect(0,0,100,100);
+  c.beginPath();c.ellipse(84,29,3.6,12,0,0,Math.PI*2);c.fillStyle='#ffe9cf';c.fill();
+  for(const [y,color] of [[77,'#ac849d'],[90,'#805f86']]){
+   c.beginPath();c.moveTo(0,y);c.bezierCurveTo(30,y+19,48,y-30,100,y-15);
+   c.lineTo(100,100);c.lineTo(0,100);c.closePath();c.fillStyle=color;c.fill();
+  }
+ },
+ coast(c,p){
+  c.fillStyle=p.quiet;c.fillRect(0,0,100,100);
+  for(let i=0;i<4;i++){
+   const edge=77+i*4;
+   c.beginPath();c.moveTo(edge,0);c.bezierCurveTo(edge+17,30,edge-13,73,edge+1,100);
+   c.lineTo(100,100);c.lineTo(100,0);c.closePath();c.fillStyle=i%2?p.accent:p.panel;c.fill();
+  }
+ },
+ olive(c,p){
+  c.fillStyle=p.paper;c.fillRect(0,0,100,100);
+  rule(c,4,11,96,11,p.gold,.6);rule(c,4,89,96,89,p.gold,.6);
+  for(const x of [9,90]){
+   rule(c,x-3,76,x+3,24,p.soft,.4);
+   for(let i=0;i<5;i++){
+    c.beginPath();c.ellipse(x+(i%2?-2:2),33+i*8,2.7,3.2,i%2?.4:-.4,0,Math.PI*2);
+    c.fillStyle=i%2?p.accent:p.soft;c.fill();
+   }
+  }
+ }
+};
+function collectionHeader(c,r,p,preset,brand,day,en){
+ c.save();c.beginPath();c.roundRect(r.x,r.y,r.w,r.h,Math.min(36,r.h*.19));c.clip();
+ c.translate(r.x,r.y);c.scale(r.w/100,r.h/100);
+ collectionArt[preset](c,p);
+ c.restore();
+ const dark=preset==='sadu'||preset==='dawn';
+ const ink=dark?'#fff8ef':p.deep;
+ const inset=preset==='coast' ? .08 : .19;
+ const width=preset==='coast' ? .64 : .62;
+ writing(c,brand,{x:r.x+r.w*inset,y:r.y+r.h*.18,w:r.w*width,h:r.h*.20},
+  {size:clamp(r.h*.22,16,34),minSize:13,maxLines:1,color:ink,en});
+ writing(c,day,{x:r.x+r.w*inset,y:r.y+r.h*.39,w:r.w*width,h:r.h*.42},
+  {size:clamp(r.h*.46,32,106),minSize:24,maxLines:1,color:ink,en,weight:900});
+}
 function header(c,L,p,preset,cfg,day,en){
  const r=L.header,wide=L.wide;
+ const brand=cfg.brand?.[en?'nameEn':'name']|| (en?'Awan Saudi':'أوان السعودية');
+ if(collectionArt[preset]){collectionHeader(c,r,p,preset,brand,day,en);return;}
  const dark=preset==='royal',base=dark?p.deep:preset==='botanical'?p.accent:p.panel;
  rounded(c,r.x,r.y,r.w,r.h,clamp(r.h*.22,19,46),base,dark?p.gold:p.gold+'a5',dark?2.5:1.6);
  if(dark)rounded(c,r.x+7,r.y+7,r.w-14,r.h-14,clamp(r.h*.19,15,40),null,'rgba(242,221,167,.27)',1.2);
@@ -87,7 +148,6 @@ function header(c,L,p,preset,cfg,day,en){
    r.x+r.w*.91,r.y+r.h*.24,Math.min(68,r.h*.28),
    {style:cfg.design?.iconStyle||'duotone',accent:p.gold,contrast:p.deep,featured:true});
  }
- const brand=cfg.brand?.[en?'nameEn':'name']|| (en?'Awan Saudi':'أوان السعودية');
  const mainColor=dark?'#fff9e9':p.deep,subColor=dark?'#e3cca0':p.soft;
  if(wide){
   writing(c,brand,{x:r.x+r.w*.53,y:r.y+r.h*.14,w:r.w*.40,h:r.h*.30},{size:clamp(r.h*.32,22,39),minSize:16,maxLines:1,color:mainColor,en,align:en?'left':'right',weight:850});

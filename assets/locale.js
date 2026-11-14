@@ -165,7 +165,7 @@ Object.assign(map,{
  'التقويم':'Calendar','الرئيسية':'Home'
 });
 export function presetName(p,lang=getLanguage()){
- return lang==='en'?(ENGLISH_PRESET_NAMES[p?.id]||translate(p?.name||'',lang)):p?.name||'';
+ return lang==='en'?(p?.nameEn||ENGLISH_PRESET_NAMES[p?.id]||translate(p?.name||'',lang)):p?.name||'';
 }
 export function presetDescription(p,lang=getLanguage()){
  if(lang!=='en')return p?.description||'';

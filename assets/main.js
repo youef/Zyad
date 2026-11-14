@@ -1,9 +1,9 @@
 import {SOCIAL_SIZES,getSocialSize,exportBlob,socialControls} from './social-sizes.js?v=1';
-import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=i18n4';
-import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=social3';
-import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=families4';
+import {presetName,presetDescription,translate,getLanguage} from './locale.js?v=awan-ios1';
+import {CARD_PRESETS,validPreset,duplicateForPreset} from './templates.js?v=awan-ios1';
+import {familyFor,CARD_FAMILIES} from './card-style-families.js?v=awan-ios1';
 import {mountPlanner} from './planner.js?v=calendar-ui1';
-import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=cardsafe1';
+import {saToday,isoAdd,renderPoster,getPngBlob,downloadFile} from './card.js?v=awan-ios1';
 import {dailyTemplate,dailyContent} from './daily.js?v=friday1';
 import {get,validateDesign} from './storage.js';
 const $=sel=>document.querySelector(sel);
@@ -76,15 +76,20 @@ function filterCalendarGallery(){
  }
  const rank=card=>{
   const p=CARD_PRESETS.find(t=>t.id===card.dataset.preset);
-  if(gallerySort==='name')return p?.name||'';
+  if(gallerySort==='name')return presetName(p);
   return fav.has(card.dataset.preset)?'0':'1';
  };
  const grid=$('#public-template-grid');
- if(grid&&gallerySort!=='default'){
-  const sorted=cards.slice().sort((a,b)=>gallerySort==='name'?rank(a).localeCompare(rank(b),'ar'):rank(a).localeCompare(rank(b))||CARD_PRESETS.findIndex(p=>p.id===a.dataset.preset)-CARD_PRESETS.findIndex(p=>p.id===b.dataset.preset));
+ if(grid){
+  const order=new Map(CARD_PRESETS.map((preset,i)=>[preset.id,preset.inspiration?i-CARD_PRESETS.length:i]));
+  const sorted=cards.slice().sort((a,b)=>{
+   const preference=gallerySort==='name'?rank(a).localeCompare(rank(b),getLanguage())
+    :gallerySort==='favorites'?rank(a).localeCompare(rank(b)):0;
+   return preference||order.get(a.dataset.preset)-order.get(b.dataset.preset);
+  });
   for(const card of sorted)grid.append(card);
- }else if(grid){
-  for(const p of CARD_PRESETS){const card=cards.find(c=>c.dataset.preset===p.id);if(card)grid.append(card);}
+  const emptyState=$('#visitor-gallery-empty');
+  if(emptyState)grid.append(emptyState);
  }
  const empty=$('#visitor-gallery-empty');
  if(empty){
@@ -94,7 +99,7 @@ function filterCalendarGallery(){
  const count=$('#gallery-visible-count');if(count)count.textContent=visible+' تصميم';
  const title=$('#template-gallery .gallery-head h2');if(title)title.textContent=favoriteMode?'المفضلة':'اختر بطاقتك';
  const label=$('#visitor-favorites-description');if(label)label.hidden=!favoriteMode;
- const selected=CARD_PRESETS.find(p=>p.id===activePreset);const selectedName=$('#gallery-selected-name');if(selectedName)selectedName.textContent=selected?.name||'بطاقة اليوم';const selectedCategory=$('#gallery-selected-category');if(selectedCategory)selectedCategory.textContent=selected?.category||'تصميم يومي';
+ const selected=CARD_PRESETS.find(p=>p.id===activePreset);const selectedName=$('#gallery-selected-name');if(selectedName)selectedName.textContent=selected?presetName(selected):translate('بطاقة اليوم');const selectedCategory=$('#gallery-selected-category');if(selectedCategory)selectedCategory.textContent=translate(selected?.category||'تصميم يومي');
 }
 const FAMILY_NAMES={
  royal:'ملكي فاخر',modern:'عصري بسيط',heritage:'تراثي نجدي',night:'ليلي',

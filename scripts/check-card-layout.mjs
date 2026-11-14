@@ -5,7 +5,7 @@ import {CARD_ICON_NAMES,eventGlyph,CARD_ICON_STYLES} from '../assets/card-icons.
 import {SOCIAL_SIZES} from '../assets/social-sizes.js';
 import {footerGeometry} from '../assets/follow-panel.js';
 import {renderResponsiveCard} from '../assets/responsive-card.js';
-import {inspirationLayout} from '../assets/inspiration-card.js';
+import {drawInspirationCard,inspirationLayout} from '../assets/inspiration-card.js';
 import {CARD_PRESETS} from '../assets/templates.js';
 import {remaining,hijriDate} from '../assets/card.js';
 import {resolveContent} from '../assets/daily.js';
@@ -20,7 +20,7 @@ assert.equal(formatCounter(Number.NaN),'—');
 function makeContext(w,h){
  const invalid=[],labels=[];
  const context={
-  font:'',save(){},restore(){},beginPath(){},moveTo(){},lineTo(){},closePath(){},rect(x,y,bw,bh){if(x<0||y<0||x+bw>w+1||y+bh>h+1)invalid.push({x,y,bw,bh})},
+  font:'',save(){},restore(){},beginPath(){},moveTo(){},lineTo(){},closePath(){},bezierCurveTo(){},ellipse(){},translate(){},scale(){},rect(x,y,bw,bh){if(x<0||y<0||x+bw>w+1||y+bh>h+1)invalid.push({x,y,bw,bh})},
   roundRect(){},clip(){},fill(){},stroke(){},fillRect(){},strokeRect(){},
   createLinearGradient(){return {addColorStop(){}}},measureText(value){return {width:Array.from(String(value)).length*Number(this.font.match(/([\\d.]+)px/)?.[1]||24)*.53}},
   fillText(value,x,y,maxWidth){assert(Number.isFinite(x)&&Number.isFinite(y));assert(x>=-1&&x<=w+1);assert(y>=-1&&y<=h+1);if(maxWidth!=null)assert(maxWidth>0);labels.push(String(value));}
@@ -57,6 +57,19 @@ const inspirationIds=['inspire-botanical','inspire-royal','inspire-pearl'];
 for(const id of inspirationIds){
  assert(CARD_PRESETS.some(p=>p.id===id&&p.inspiration),'Missing inspiration template: '+id);
 }
+const collection=['sadu','dawn','coast','olive'];
+for(const preset of SOCIAL_SIZES){
+ for(const style of collection){
+  const definition=CARD_PRESETS.find(p=>p.id==='inspire-'+style);
+  assert.equal(definition?.inspiration,style);
+  const {context,invalid,labels}=makeContext(preset.width,preset.height);
+  drawInspirationCard(context,{...friday,design:{...friday.design,showIcons:false}},date,style,{
+   dimensions:[preset.width,preset.height]
+  });
+  assert(labels.includes('الجمعة'),'Friday heading missing for '+definition.id);
+  assert.equal(invalid.length,0);
+ }
+}
 for(const preset of SOCIAL_SIZES){
  const layout=inspirationLayout([preset.width,preset.height]),footer=layout.footer;
  const end=layout.secondary?layout.secondary.y+layout.secondary.h:layout.quote.y+layout.quote.h;
@@ -66,4 +79,4 @@ for(const preset of SOCIAL_SIZES){
  assert(footer.ad.y+footer.ad.h<footer.follow.y,'Ad overlaps subscription: '+preset.id);
  assert(footer.follow.y+footer.follow.h<footer.noteY,'Subscription overlaps disclaimer: '+preset.id);
 }
-console.log('PASS: 13 social dimensions, no inspiration text/ad collisions, all three distinct inspiration presets, Friday card');
+console.log('PASS: 13 social dimensions, no inspiration text/ad collisions, seven inspiration presets, Friday card');

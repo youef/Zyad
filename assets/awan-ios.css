@@ -1,0 +1,133 @@
+body.visitor-only {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Arabic", Cairo, Tahoma, sans-serif;
+  --ios-radius: 22px;
+  --awan-separator: color-mix(in srgb, var(--ios-text) 11%, transparent);
+}
+
+body.visitor-only .app-workspace > main,
+body.visitor-only .app-workspace > :is(.app-header, .app-date-strip) {
+  max-inline-size: 1180px;
+  margin-inline: auto;
+}
+
+body.visitor-only :is(.app-header h1, .gallery-head h2, .planner-heading h2, .vs-title, .archive-section h2) {
+  font-size: clamp(29px, 6vw, 42px) !important;
+  line-height: 1.25 !important;
+  font-weight: 850;
+  letter-spacing: normal;
+}
+
+body.visitor-only :is(.gallery-head, .planner-heading) {
+  padding: 8px 0 6px !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: var(--ios-text) !important;
+}
+
+body.visitor-only .gallery-head::after { content: none; }
+body.visitor-only :is(.planner-heading p, .gallery-head p) { color: var(--ios-muted) !important; }
+body.visitor-only :is(.gallery-head h2, .planner-heading h2) { color: var(--ios-text) !important; }
+body.visitor-only :is(.gallery-kicker, .planner-hero-copy > .eyebrow, .ios-overline, .quality-tag) { display: none; }
+
+body.visitor-only .gallery-total-pill {
+  min-inline-size: 60px;
+  padding: 6px 10px;
+  background: var(--ios-tint);
+  border: 0;
+  border-radius: 16px;
+}
+body.visitor-only .gallery-total-pill :is(strong, small) { color: var(--ios-accent); }
+
+body.visitor-only :is(.app-date-strip, .app-panel, .gallery-selected, .gallery-controls, .vs-surface, .vs-more-grid) {
+  background: var(--ios-surface) !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  box-shadow: none !important;
+}
+
+body.visitor-only .gallery-search-field [data-icon] { right: auto; inset-inline-start: 14px; }
+body.visitor-only .gallery-controls .gallery-search-field input { padding-inline: 44px 13px !important; }
+body.visitor-only .gallery-family-filters {
+  border: 0;
+  border-radius: 0;
+  border-block-start: 1px solid var(--awan-separator);
+  background: transparent;
+  margin: 0;
+  padding: 12px 0 0;
+}
+body.visitor-only .gallery-family-caption { color: var(--ios-muted); }
+body.visitor-only :is(.gallery-family-chip, .gallery-controls .gallery-category-chip) {
+  min-block-size: 44px;
+  background: var(--ios-subtle);
+  color: var(--ios-text);
+  border-color: transparent;
+}
+body.visitor-only .gallery-family-chip[aria-pressed="true"] {
+  background: var(--dock-active-bg);
+  color: var(--dock-active-ink);
+}
+
+body.visitor-only .public-template-card {
+  padding: 8px !important;
+  border: 0 !important;
+  border-radius: 19px !important;
+  box-shadow: none !important;
+  align-self: stretch;
+}
+body.visitor-only .gallery-card-frame { border-radius: 13px; }
+body.visitor-only .public-template-card .public-template-select strong { font-size: 15px !important; }
+body.visitor-only .public-template-card .public-template-select small:not(.preview-date) { font-size: 12px !important; }
+body.visitor-only .public-template-card .preview-date { display: none; }
+body.visitor-only .public-template-card .gallery-card-meta .gallery-card-badge {
+  background: var(--ios-tint);
+  color: var(--ios-accent);
+}
+body.visitor-only .visitor-template-actions .public-template-download {
+  background: var(--ios-tint) !important;
+  color: var(--ios-accent) !important;
+  font-size: 12px !important;
+}
+
+body.visitor-only .vs-more-grid { display: grid; gap: 0; overflow: hidden; }
+body.visitor-only .vs-more-grid .vs-more-link {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+body.visitor-only .vs-more-grid .vs-more-link + .vs-more-link { border-block-start: 1px solid var(--awan-separator); }
+body.visitor-only :is(.event-row, .stat-card, .archive-grid > *) {
+  background: var(--ios-surface);
+  color: var(--ios-text);
+  box-shadow: none;
+}
+body.visitor-only .stat-card { border-color: var(--awan-separator); }
+body.visitor-only :is(button, a, input, select):focus-visible {
+  outline: 2px solid var(--ios-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 800px) {
+  body.visitor-only.smart-app .app-workspace {
+    padding-inline: max(14px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-right));
+    padding-block-end: calc(108px + env(safe-area-inset-bottom));
+  }
+  :root[dir="rtl"] body.visitor-only.smart-app .app-workspace {
+    padding-inline: max(14px, env(safe-area-inset-right)) max(14px, env(safe-area-inset-left));
+  }
+  body.visitor-only .app-tabs.visitor-tabs {
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    border-radius: 26px !important;
+    gap: 2px !important;
+  }
+  body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link { border-radius: 19px !important; }
+  body.visitor-only .app-tabs.visitor-tabs > a.native-tab-link .tab-label { font-size: 10px !important; }
+  body.visitor-only .date-controls .icon-btn { min-inline-size: 44px; min-block-size: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.visitor-only :is(.vs-more-link, .app-tabs.visitor-tabs > a.native-tab-link) {
+    transition: none !important;
+  }
+}

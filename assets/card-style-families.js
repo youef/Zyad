@@ -4,6 +4,7 @@ import {fitText,formatCounter} from './text-layout.js?v=2';
 import {drawIconBadge} from './card-icons.js?v=awan1';
 
 const MAP={
+ 'inspire-sadu':'heritage','inspire-dawn':'desert','inspire-coast':'modern','inspire-olive':'botanical',
  royal:'royal',crown:'royal',crest:'royal',laurel:'royal','inspire-royal':'royal',
  modern:'modern',swiss:'modern',statement:'modern',brand:'modern',
  heritage:'heritage',najdi:'heritage',roots:'heritage',dome:'heritage',
