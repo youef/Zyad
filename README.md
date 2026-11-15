@@ -1,5 +1,10 @@
 # بطاقتي الذكية | Zyad Smart Cards — 3.0
 
+### Legendary UI Designer · مهارة تصميم واجهات احترافية
+
+[المهارة القابلة لإعادة الاستخدام](.agents/skills/legendary-ui-designer/SKILL.md) · [نظام التصميم](.agents/skills/legendary-ui-designer/references/DESIGN-SYSTEM.md) · [اختبارات الواجهات](.agents/skills/legendary-ui-designer/references/QUALITY-GATES.md) · [تفاصيل التطبيق](docs/LEGENDARY-UI-IMPLEMENTATION.md). يتضمن التطبيق بحثًا ذكيًا محليًا وبيانات بطاقات حية، ويمكن التحقق باستخدام `npm test` و`npm run test:browser`.
+
+
 واجهة تطبيق عربية للمواعيد وبطاقة اليوم، مع 42 قالب تقويم و24 قالب تصميم حر، وأربعة خطوط عربية ومحتوى يومي بمصادره. التطبيق واستوديو التقويم والإدارة تتبادل البطاقة القابلة للتحرير.
 
 - [تقرير التطوير والاختبارات](docs/APP-UPGRADE.md)

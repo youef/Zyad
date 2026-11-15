@@ -80,6 +80,7 @@ jobs:
           node scripts/check-settings.mjs
           node scripts/check-calendars.mjs
           node scripts/check-platform.mjs
+          node scripts/check-legendary-ui-browser.mjs
           node scripts/check-extra.mjs
           node scripts/check-native-visual.mjs
           node scripts/check-inline-ad.mjs
