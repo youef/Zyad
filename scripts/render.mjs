@@ -158,6 +158,7 @@ try{
   if(runtimeErrors.length)throw Error('Admin page JS errors: '+runtimeErrors.join(' | '));
   // Public template buttons must switch the actual image and preserve URL state.
   await page.evaluate(()=>location.hash='template-gallery');await page.locator('#template-gallery').waitFor({state:'visible'});await page.locator('#public-template-grid .public-template-select').nth(4).click();
+  await page.locator('#card-preview[open] #preview-use').click();
   await page.waitForFunction(()=>new URLSearchParams(location.search).get('template')==='pearl');
   if(await page.locator('.public-template-card.active').count()!==1)throw Error('Public template selection failed');
   const publicSelection=await page.locator('.public-template-card.active').getAttribute('data-preset');

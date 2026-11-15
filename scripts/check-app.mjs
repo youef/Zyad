@@ -11,6 +11,9 @@ try{
   p.on('pageerror',e=>errors.push(e.message));
   await p.goto(base+'/?date=2026-11-05');
   assert(await p.evaluate(()=>window.__posterReady));
+  assert.equal(await p.locator('.awan-quick-action').count(),4,'Quick navigation missing');
+  assert.equal(await p.locator('.awan-density-options button').count(),2,'Gallery layout controls missing');
+  assert(await p.locator('#poster').evaluate(c=>c.width>0&&c.height>0),'Poster not rendered');
   await p.locator('.event-row').first().waitFor();
   assert.equal(await p.locator('.public-template-card').count(),GALLERY_PRESETS.length);
   assert((await p.locator('#today-gregorian').textContent()).trim().length>0,'Gregorian date missing');

@@ -5,7 +5,7 @@ import {fileURLToPath} from 'node:url';
 import {resolve,dirname} from 'node:path';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const files=[
- 'assets/main.js','assets/home.js','assets/card.js','assets/engine.js',
+ 'assets/awan-experience.js','assets/main.js','assets/home.js','assets/card.js','assets/engine.js',
  'assets/calendar-design.js','assets/list-calendar.js','assets/design.js',
  'assets/heritage-premium.js','assets/follow-panel.js','assets/daily-panel.js',
  'assets/responsive-card.js','assets/awan-premium-card.js','assets/card-style-families.js','assets/text-layout.js','assets/card-icons.js',
