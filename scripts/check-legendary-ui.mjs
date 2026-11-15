@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {join} from 'node:path';
+const read=p=>readFileSync(join(process.cwd(),p),'utf8');
+const skill=read('.agents/skills/legendary-ui-designer/SKILL.md');
+assert(skill.startsWith('---\nname: legendary-ui-designer\n'));
+for(const x of ['Non-negotiable contract','Definition of done','references/DESIGN-SYSTEM.md'])assert(skill.includes(x));
+for(const p of ['DESIGN-SYSTEM.md','SCREEN-CONTRACT.md','QUALITY-GATES.md'])assert(read('.agents/skills/legendary-ui-designer/references/'+p).length>900);
+const css=read('assets/awan-experience.css');
+for(const x of ['--awan-ui-bg','--awan-ui-surface','--awan-ui-text','--awan-ui-accent','--awan-ui-radius-lg','awan-command-dialog','awan-card-context','prefers-reduced-motion','safe-area-inset-bottom'])assert(css.includes(x),x);
+const script=read('assets/awan-command.js');
+for(const x of ['dialog.showModal()','awan-card-retry','zyad-language-change','aria-labelledby','location.hash','#template-gallery'])assert(script.includes(x),x);
+execFileSync(process.execPath,['--check',join(process.cwd(),'assets/awan-command.js')]);
+assert(read('index.html').includes('assets/awan-command.js'));
+assert(read('sw.js').includes('assets/awan-command.js'));
+console.log('PASS: Legendary skill, tokens, command UI, keyboard, localization, retry and offline resources.');
